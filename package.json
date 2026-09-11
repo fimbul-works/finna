@@ -1,0 +1,106 @@
+{
+  "name": "@fimbul-works/random",
+  "description": "A comprehensive collection of high-performance 32-bit and 64-bit pseudo-random number generators (PRNG), statistical distributions, and procedural generation utilities for TypeScript and JavaScript",
+  "version": "1.1.0",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "author": "FimbulWorks <contact@fimbul.works>",
+  "homepage": "https://github.com/fimbul-works/random#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fimbul-works/random.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fimbul-works/random/issues"
+  },
+  "keywords": [
+    "random",
+    "prng",
+    "rng",
+    "pseudo-random",
+    "random-number-generator",
+    "procedural-generation",
+    "procgen",
+    "game-dev",
+    "seed",
+    "seedable",
+    "stateful",
+    "32-bit",
+    "64-bit",
+    "bigint",
+    "xoshiro",
+    "xoroshiro",
+    "xorshift",
+    "romu",
+    "splitmix",
+    "wyrand",
+    "lehmer",
+    "sfc32",
+    "mulberry32",
+    "alea",
+    "mersenne-twister",
+    "pcg",
+    "shuffle",
+    "sampling",
+    "gaussian",
+    "poisson",
+    "distributions",
+    "geometry-sampling",
+    "functional",
+    "tree-shakeable",
+    "typescript"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf dist",
+    "clean:bundles": "rm -rf bundles",
+    "build": "pnpm clean && pnpm build:esm && pnpm build:cjs && pnpm build:docs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "build:bundles": "pnpm clean:bundles && NODE_OPTIONS='--max-old-space-size=4096' tsdown",
+    "build:all": "pnpm build && pnpm build:bundles && pnpm sizes",
+    "build:docs": "typedoc",
+    "format": "npx biome format --write",
+    "test": "vitest",
+    "sizes": "npx bundle-size",
+    "benchmark": "pnpm benchmark:quality && pnpm benchmark:speed",
+    "benchmark:quality": "tsx benchmark/quality.ts",
+    "benchmark:speed": "tsx benchmark/speed.ts",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@fimbul-works/hash": "^1.1.0",
+    "@fimbul-works/nested-path": "^1.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.11",
+    "@fimbul-works/bundle-size": "^1.0.0",
+    "@types/node": "^26.4.1",
+    "mitata": "^1.0.34",
+    "picocolors": "^1.1.1",
+    "randomness": "^1.7.0",
+    "tsdown": "^0.22.14",
+    "tsx": "^4.23.13",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.13.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  }
+}
