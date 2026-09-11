@@ -14,23 +14,23 @@ import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
  */
 export function createPredicate<T = any>(filter: any, ctx: QueryContext = createQueryContext()): Predicate<T> {
   if (filter instanceof RegExp) {
-    return (actual: any) => typeof actual === "string" && (filter as RegExp).test(actual);
+    return ((actual: any) => typeof actual === "string" && (filter as RegExp).test(actual)) as Predicate<T>;
   }
 
   if (filter instanceof Date) {
     const t = (filter as Date).getTime();
-    return (actual: any) => (actual instanceof Date ? (actual as Date).getTime() === t : actual === t);
+    return ((actual: any) => (actual instanceof Date ? (actual as Date).getTime() === t : actual === t)) as Predicate<T>;
   }
 
   if (isOperatorObject(filter)) {
     const predicates = Object.entries(filter).map(([op, expected]) =>
       createOperatorPredicate(op as QueryOperator, expected, ctx),
     );
-    return (actual: any, root?: any) => predicates.every((p) => p(actual, root));
+    return ((actual: any, root?: any) => predicates.every((p) => p(actual, root))) as Predicate<T>;
   }
 
   if (isObject(filter) && !(filter instanceof Date) && !(filter instanceof RegExp)) {
-    return (actual: any, root?: any) => {
+    return ((actual: any, root?: any) => {
       if (!isObject(actual) || actual instanceof Date || actual instanceof RegExp) {
         return false;
       }
@@ -38,10 +38,10 @@ export function createPredicate<T = any>(filter: any, ctx: QueryContext = create
         const subPredicate = createPredicate(subFilter, ctx);
         return subPredicate((actual as any)[key], root);
       });
-    };
+    }) as Predicate<T>;
   }
 
-  return (actual: any) => isDeepEqual(actual, filter);
+  return ((actual: any) => isDeepEqual(actual, filter)) as Predicate<T>;
 }
 
 /**

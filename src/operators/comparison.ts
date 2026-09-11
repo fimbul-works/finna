@@ -20,13 +20,13 @@ export function createComparisonPredicate<T = any>(
 ): Predicate<T> {
   switch (operator) {
     case QUERY_GT:
-      return (actual: any, root?: any) => actual > resolveValue(expected, root);
+      return ((actual: any, root?: any) => actual > resolveValue(expected, root)) as Predicate<T>;
     case QUERY_GTE:
-      return (actual: any, root?: any) => actual >= resolveValue(expected, root);
+      return ((actual: any, root?: any) => actual >= resolveValue(expected, root)) as Predicate<T>;
     case QUERY_LT:
-      return (actual: any, root?: any) => actual < resolveValue(expected, root);
+      return ((actual: any, root?: any) => actual < resolveValue(expected, root)) as Predicate<T>;
     case QUERY_LTE:
-      return (actual: any, root?: any) => actual <= resolveValue(expected, root);
+      return ((actual: any, root?: any) => actual <= resolveValue(expected, root)) as Predicate<T>;
   }
 
   throw new Error(`Invalid comparison query operator: ${operator}`);

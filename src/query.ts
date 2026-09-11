@@ -45,10 +45,10 @@ export function compileQuery<T extends Record<string, any>>(
     };
   });
 
-  return (value: T, root?: any) => {
+  return ((value: T, root?: any) => {
     const targetValue = root ?? value;
     return predicates.every((f) => f(value, targetValue));
-  };
+  }) as Predicate<T>;
 }
 
 /**

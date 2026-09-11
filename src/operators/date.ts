@@ -29,12 +29,12 @@ export function createDatePredicate<T = any>(operator: DateOperator, expected: a
   // $utc is a context modifier
   if (operator === QUERY_UTC) {
     const predicate = createPredicate(expected, { ...ctx, useUTC: true });
-    return (actual: any) => predicate(actual);
+    return ((actual: any) => predicate(actual)) as Predicate<T>;
   }
 
   const predicate = typeof expected === "number" ? (v: number) => v === expected : createPredicate(expected, ctx);
 
-  return (actual: any) => {
+  return ((actual: any) => {
     let date: Date;
     if (actual instanceof Date) {
       date = actual;
@@ -82,7 +82,7 @@ export function createDatePredicate<T = any>(operator: DateOperator, expected: a
     }
 
     return predicate(value);
-  };
+  }) as Predicate<T>;
 }
 
 /**

@@ -25,13 +25,13 @@ export function createEqualityPredicate<T = any>(
 
   switch (operator) {
     case QUERY_EQ:
-      return (actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root));
+      return ((actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root))) as Predicate<T>;
     case QUERY_NOT_EQ:
-      return (actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root));
+      return ((actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root))) as Predicate<T>;
     case QUERY_IN:
-      return (actual: any) => Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item));
+      return ((actual: any) => Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item))) as Predicate<T>;
     case QUERY_NOT_IN:
-      return (actual: any) => Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item));
+      return ((actual: any) => Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item))) as Predicate<T>;
   }
 
   throw new Error(`Invalid equality query operator: ${operator}`);

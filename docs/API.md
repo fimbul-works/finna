@@ -304,7 +304,7 @@ True if operator belongs to the group
 ### Predicate
 
 ```ts
-type Predicate<T> = (val, root?) => boolean;
+type Predicate<T> = (val, root?) => val is T;
 ```
 
 A predicate function that takes a value and returns true if it matches.
@@ -324,7 +324,7 @@ A predicate function that takes a value and returns true if it matches.
 
 #### Returns
 
-`boolean`
+`val is T`
 
 `true` if matched, `false` otherwise
 

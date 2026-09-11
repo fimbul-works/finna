@@ -13,9 +13,9 @@ import type { ElementOperator, OperatorGroupTuple, Predicate, QueryContext } fro
 export function createElementPredicate(operator: ElementOperator, expected: any, _ctx: QueryContext): Predicate {
   switch (operator) {
     case QUERY_EXISTS:
-      return (actual: any) => (expected ? actual !== undefined : actual === undefined);
+      return ((actual: any) => (expected ? actual !== undefined : actual === undefined)) as Predicate;
     case QUERY_TYPE:
-      return (actual: any) => {
+      return ((actual: any) => {
         if (expected === "null") return actual === null;
         if (expected === "undefined") return actual === undefined;
         if (expected === "array") return Array.isArray(actual);
@@ -24,7 +24,7 @@ export function createElementPredicate(operator: ElementOperator, expected: any,
           return actual !== null && typeof actual === "object" && !Array.isArray(actual) && !(actual instanceof Date);
         }
         return typeof actual === expected;
-      };
+      }) as Predicate;
   }
 
   throw new Error(`Invalid element query operator: ${operator}`);

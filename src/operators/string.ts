@@ -20,25 +20,25 @@ export function createStringPredicate<T = any>(
 ): Predicate<T> {
   switch (operator) {
     case QUERY_REGEX:
-      return (actual: any) => {
+      return ((actual: any) => {
         const re = expected instanceof RegExp ? expected : new RegExp(String(expected));
         return typeof actual === "string" && re.test(actual);
-      };
+      }) as Predicate<T>;
     case QUERY_STARTS_WITH:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         const val = resolveValue(expected, root);
         return typeof actual === "string" && actual.startsWith(String(val));
-      };
+      }) as Predicate<T>;
     case QUERY_ENDS_WITH:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         const val = resolveValue(expected, root);
         return typeof actual === "string" && actual.endsWith(String(val));
-      };
+      }) as Predicate<T>;
     case QUERY_INCLUDES:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         const val = resolveValue(expected, root);
         return typeof actual === "string" && actual.includes(String(val));
-      };
+      }) as Predicate<T>;
   }
 
   throw new Error(`Invalid string query operator: ${operator}`);

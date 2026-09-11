@@ -26,36 +26,36 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
 
   switch (operator) {
     case QUERY_ALL:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
           return expected.every((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return actual.every((item: any) => p(item, root));
-      };
+      }) as Predicate<T>;
     case QUERY_SOME:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
           return expected.some((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return actual.some((item: any) => p(item, root));
-      };
+      }) as Predicate<T>;
     case QUERY_NONE:
-      return (actual: any, root?: any) => {
+      return ((actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
           return !expected.some((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return !actual.some((item: any) => p(item, root));
-      };
+      }) as Predicate<T>;
     case QUERY_SIZE: {
-      const p: Predicate<number> =
+      const p: any =
         typeof expected === "number" ? (s: number) => s === expected : createPredicate(expected, ctx);
-      return (actual: any, root?: any) => checkArray(actual) && p(actual.length, root);
+      return ((actual: any, root?: any) => checkArray(actual) && p(actual.length, root)) as Predicate<T>;
     }
   }
 
