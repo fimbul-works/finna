@@ -823,7 +823,7 @@ function query<T>(
    value, 
    q, 
    ctx?
-): boolean;
+): value is T;
 ```
 
 Checks if the given query matches.
@@ -844,7 +844,7 @@ Checks if the given query matches.
 
 #### Returns
 
-`boolean`
+`value is T`
 
 `true` if the value matches, `false` otherwise
 

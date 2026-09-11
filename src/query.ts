@@ -58,12 +58,12 @@ export function compileQuery<T extends Record<string, any>>(
  * @param {T} value - The value to check
  * @param {Query<T>} q - The query to match against
  * @param {QueryContext} [ctx=createQueryContext()] - Optional query context
- * @returns {boolean} `true` if the value matches, `false` otherwise
+ * @returns {value is T} `true` if the value matches, `false` otherwise
  */
 export function query<T extends Record<string, any>>(
   value: T,
   q: Query<T>,
   ctx: QueryContext = createQueryContext(),
-): boolean {
+): value is T {
   return compileQuery(q, ctx)(value, value);
 }
