@@ -1,37 +1,33 @@
 import { QUERY_EQ, QUERY_IN, QUERY_NOT_EQ, QUERY_NOT_IN } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { EqualityOperator, OperatorGroupTuple, Predicate, QueryContext } from "../types.js";
+import type { EqualityOperator, Predicate, QueryContext } from "../types.js";
 import { isDeepEqual } from "../util.js";
 import { resolveValue } from "./field.js";
 
 /**
  * Creates a predicate for equality operators.
  *
- * @template T - Type of the value to compare
- *
  * @param {EqualityOperator} operator - The equality operator (e.g. '$eq', '$ne', '$in', '$nin')
  * @param {any} expected - The expected value or array of values
  * @param {QueryContext} ctx - Query context
- * @returns {Predicate<T>} A predicate function for the equality operator
+ * @returns {Predicate} A predicate function for the equality operator
  */
-export function createEqualityPredicate<T = any>(
-  operator: EqualityOperator,
-  expected: any,
-  ctx: QueryContext,
-): Predicate<T> {
+export function createEqualityPredicate(operator: EqualityOperator, expected: any, ctx: QueryContext): Predicate {
   if ((operator === QUERY_IN || operator === QUERY_NOT_IN) && !Array.isArray(expected)) {
     ctx.warnings.add(`Operator ${operator} expects an array, but got ${typeof expected}`);
   }
 
   switch (operator) {
     case QUERY_EQ:
-      return ((actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root))) as Predicate<T>;
+      return ((actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root))) as Predicate;
     case QUERY_NOT_EQ:
-      return ((actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root))) as Predicate<T>;
+      return ((actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root))) as Predicate;
     case QUERY_IN:
-      return ((actual: any) => Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item))) as Predicate<T>;
+      return ((actual: any) =>
+        Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item))) as Predicate;
     case QUERY_NOT_IN:
-      return ((actual: any) => Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item))) as Predicate<T>;
+      return ((actual: any) =>
+        Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item))) as Predicate;
   }
 
   throw new Error(`Invalid equality query operator: ${operator}`);

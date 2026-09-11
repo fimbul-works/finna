@@ -1,19 +1,17 @@
 import { QUERY_ALL, QUERY_NONE, QUERY_SIZE, QUERY_SOME } from "../constants.js";
-import { createPredicate } from "../predicate.js";
 import { registerOperators } from "../operator-registry.js";
+import { createPredicate } from "../predicate.js";
 import type { ArrayOperator, Predicate, QueryContext } from "../types.js";
 
 /**
  * Creates a predicate for array operators.
  *
- * @template T - Type of the value to compare
- *
  * @param {ArrayOperator} operator - The array operator (e.g. '$all', '$some', '$none', '$size')
  * @param {any} expected - The expected values or nested filter for size
  * @param {QueryContext} ctx - Query context
- * @returns {Predicate<T>} A predicate function for the array operator
+ * @returns {Predicate} A predicate function for the array operator
  */
-export function createArrayPredicate<T = any>(operator: ArrayOperator, expected: any, ctx: QueryContext): Predicate<T> {
+export function createArrayPredicate(operator: ArrayOperator, expected: any, ctx: QueryContext): Predicate {
   const checkArray = (actual: any) => {
     if (!Array.isArray(actual)) {
       if (actual !== null && actual !== undefined) {
@@ -27,35 +25,40 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
   switch (operator) {
     case QUERY_ALL:
       return ((actual: any, root?: any) => {
-        if (!checkArray(actual)) return false;
+        if (!checkArray(actual)) {
+          return false;
+        }
         if (Array.isArray(expected)) {
           return expected.every((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return actual.every((item: any) => p(item, root));
-      }) as Predicate<T>;
+      }) as Predicate;
     case QUERY_SOME:
       return ((actual: any, root?: any) => {
-        if (!checkArray(actual)) return false;
+        if (!checkArray(actual)) {
+          return false;
+        }
         if (Array.isArray(expected)) {
           return expected.some((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return actual.some((item: any) => p(item, root));
-      }) as Predicate<T>;
+      }) as Predicate;
     case QUERY_NONE:
       return ((actual: any, root?: any) => {
-        if (!checkArray(actual)) return false;
+        if (!checkArray(actual)) {
+          return false;
+        }
         if (Array.isArray(expected)) {
           return !expected.some((val) => actual.indexOf(val) !== -1);
         }
         const p = createPredicate(expected, ctx);
         return !actual.some((item: any) => p(item, root));
-      }) as Predicate<T>;
+      }) as Predicate;
     case QUERY_SIZE: {
-      const p: any =
-        typeof expected === "number" ? (s: number) => s === expected : createPredicate(expected, ctx);
-      return ((actual: any, root?: any) => checkArray(actual) && p(actual.length, root)) as Predicate<T>;
+      const p: any = typeof expected === "number" ? (s: number) => s === expected : createPredicate(expected, ctx);
+      return ((actual: any, root?: any) => checkArray(actual) && p(actual.length, root)) as Predicate;
     }
   }
 

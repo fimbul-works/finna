@@ -1,9 +1,9 @@
 import {
-  registerComparisonOperators,
-  registerEqualityOperators,
   registerArrayOperators,
+  registerComparisonOperators,
   registerDateOperators,
   registerElementOperators,
+  registerEqualityOperators,
   registerStringOperators,
 } from "./operators/index.js";
 import type { OperatorGroupTuple } from "./types.js";

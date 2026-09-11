@@ -1,6 +1,6 @@
 import { QUERY_EXISTS, QUERY_TYPE } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { ElementOperator, OperatorGroupTuple, Predicate, QueryContext } from "../types.js";
+import type { ElementOperator, Predicate, QueryContext } from "../types.js";
 
 /**
  * Creates a predicate for element operators.

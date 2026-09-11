@@ -1,8 +1,8 @@
 export {
-  registerOperators,
-  unregisterOperators,
   clearOperators,
   registerAllOperators,
+  registerOperators,
+  unregisterOperators,
 } from "./operator-registry.js";
 export {
   registerArrayOperators,

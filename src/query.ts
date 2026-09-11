@@ -21,34 +21,27 @@ export function compileQuery<T extends Record<string, any>>(
     // Logical operators
     if (key === QUERY_AND) {
       const predicates = (filter as Query<T>[]).map((q) => compileQuery<T>(q, ctx));
-      return (doc: T) => predicates.every((m) => m(doc));
+      return (value: T, root?: T) => predicates.every((m) => m(value, root));
     }
     if (key === QUERY_OR) {
       const predicates = (filter as Query<T>[]).map((q) => compileQuery<T>(q, ctx));
-      return (doc: T) => predicates.some((m) => m(doc));
+      return (value: T, root?: T) => predicates.some((m) => m(value, root));
     }
     if (key === QUERY_NOT) {
       const predicate = compileQuery<T>(filter as Query<T>, ctx);
-      return (doc: T) => !predicate(doc);
+      return (value: T, root?: T) => !predicate(value, root);
     }
     if (key === QUERY_NOR) {
       const predicates = (filter as Query<T>[]).map((q) => compileQuery<T>(q, ctx));
-      return (doc: T) => !predicates.some((m) => m(doc));
+      return (value: T, root?: T) => !predicates.some((m) => m(value, root));
     }
 
     // Field matching
     const predicate = createPredicate(filter, ctx);
-    return (value: T, root?: any) => {
-      const targetValue = root ?? value;
-      const actual = getAtPath(value, key);
-      return predicate(actual, targetValue);
-    };
+    return (value: T, root?: any) => predicate(getAtPath(value, key), root ?? value);
   });
 
-  return ((value: T, root?: any) => {
-    const targetValue = root ?? value;
-    return predicates.every((f) => f(value, targetValue));
-  }) as Predicate<T>;
+  return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as Predicate<T>;
 }
 
 /**

@@ -230,6 +230,6 @@ export type OperatorGroupTuple = [OperatorStringMatchesFn, OperatorRegisterFn];
  * @callback Predicate
  * @param {T} val - The value to test
  * @param {any} root - The root value for field comparisons
- * @returns {val is T} `true` if matched, `false` otherwise
+ * @returns {boolean} `true` if matched, `false` otherwise
  */
-export type Predicate<T = any> = (val: T, root?: any) => val is T;
+export type Predicate<T = any> = (val: T, root?: any) => boolean;

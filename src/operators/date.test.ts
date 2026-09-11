@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import "../index.js";
-import { createDatePredicate } from "./date.js";
 import { createQueryContext } from "../query-context.js";
+import { createDatePredicate } from "./date.js";
 
 describe("createDatePredicate", () => {
   const date = new Date("2023-10-23T12:30:45.500Z");

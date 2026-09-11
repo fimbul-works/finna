@@ -9,32 +9,31 @@ import {
   QUERY_WEEKDAY,
   QUERY_YEAR,
 } from "../constants.js";
-import { createPredicate } from "../predicate.js";
 import { registerOperators } from "../operator-registry.js";
+import { createPredicate } from "../predicate.js";
 import type { DateOperator, Predicate, QueryContext } from "../types.js";
 
 /**
  * Creates a predicate for date operators.
  *
- * @template T - Type of the value to compare
- *
  * @param {DateOperator} operator - The date operator (e.g. '$year', '$month', '$utc')
  * @param {any} expected - The expected value or nested date filter
  * @param {QueryContext | boolean} [ctx=false] - Query context or useUTC flag
- * @returns {Predicate<T>} A predicate function for the date operator
+ * @returns {Predicate} A predicate function for the date operator
  */
-export function createDatePredicate<T = any>(operator: DateOperator, expected: any, ctx: QueryContext): Predicate<T> {
+export function createDatePredicate(operator: DateOperator, expected: any, ctx: QueryContext): Predicate {
   const { useUTC } = ctx;
 
   // $utc is a context modifier
   if (operator === QUERY_UTC) {
     const predicate = createPredicate(expected, { ...ctx, useUTC: true });
-    return ((actual: any) => predicate(actual)) as Predicate<T>;
+    return ((actual: any, root?: any) => predicate(actual, root)) as Predicate;
   }
 
-  const predicate = typeof expected === "number" ? (v: number) => v === expected : createPredicate(expected, ctx);
+  const predicate: Predicate =
+    typeof expected === "number" ? (((v: number) => v === expected) as any) : createPredicate(expected, ctx);
 
-  return ((actual: any) => {
+  return ((actual: any, root?: any) => {
     let date: Date;
     if (actual instanceof Date) {
       date = actual;
@@ -81,8 +80,8 @@ export function createDatePredicate<T = any>(operator: DateOperator, expected: a
         throw new Error(`Invalid date query operator: ${operator}`);
     }
 
-    return predicate(value);
-  }) as Predicate<T>;
+    return predicate(value, root);
+  }) as Predicate;
 }
 
 /**

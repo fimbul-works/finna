@@ -1,5 +1,5 @@
-import { createQueryContext } from "./query-context.js";
 import { operatorGroups } from "./operator-registry.js";
+import { createQueryContext } from "./query-context.js";
 import type { Predicate, QueryContext, QueryOperator } from "./types.js";
 import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
 
@@ -19,7 +19,8 @@ export function createPredicate<T = any>(filter: any, ctx: QueryContext = create
 
   if (filter instanceof Date) {
     const t = (filter as Date).getTime();
-    return ((actual: any) => (actual instanceof Date ? (actual as Date).getTime() === t : actual === t)) as Predicate<T>;
+    return ((actual: any) =>
+      actual instanceof Date ? (actual as Date).getTime() === t : actual === t) as Predicate<T>;
   }
 
   if (isOperatorObject(filter)) {

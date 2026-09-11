@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { createOperatorPredicate, createPredicate, registerAllOperators } from "./index.js";
+import { clearOperators, operatorGroups, registerOperators } from "./operator-registry.js";
 import { createQueryContext } from "./query-context.js";
-import { operatorGroups, clearOperators, registerOperators } from "./operator-registry.js";
 
 describe("operator registry", () => {
   beforeEach(() => {
