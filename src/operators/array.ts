@@ -1,4 +1,6 @@
+import { QUERY_ALL, QUERY_NONE, QUERY_SIZE, QUERY_SOME } from "../constants.js";
 import { createPredicate } from "../predicate.js";
+import { registerOperators } from "../operator-registry.js";
 import type { ArrayOperator, Predicate, QueryContext } from "../types.js";
 
 /**
@@ -23,7 +25,7 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
   };
 
   switch (operator) {
-    case "$all":
+    case QUERY_ALL:
       return (actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
@@ -32,7 +34,7 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
         const p = createPredicate(expected, ctx);
         return actual.every((item: any) => p(item, root));
       };
-    case "$some":
+    case QUERY_SOME:
       return (actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
@@ -41,7 +43,7 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
         const p = createPredicate(expected, ctx);
         return actual.some((item: any) => p(item, root));
       };
-    case "$none":
+    case QUERY_NONE:
       return (actual: any, root?: any) => {
         if (!checkArray(actual)) return false;
         if (Array.isArray(expected)) {
@@ -50,12 +52,28 @@ export function createArrayPredicate<T = any>(operator: ArrayOperator, expected:
         const p = createPredicate(expected, ctx);
         return !actual.some((item: any) => p(item, root));
       };
-    case "$size": {
+    case QUERY_SIZE: {
       const p: Predicate<number> =
         typeof expected === "number" ? (s: number) => s === expected : createPredicate(expected, ctx);
       return (actual: any, root?: any) => checkArray(actual) && p(actual.length, root);
     }
-    default:
-      return () => false;
   }
+
+  throw new Error(`Invalid array query operator: ${operator}`);
 }
+
+/**
+ * Checks whether an operator is an array operator.
+ *
+ * @param {string} op - Operator string to test
+ * @returns {boolean} `true` if it's an array operator
+ */
+const isArrayOperator = (op: string): op is ArrayOperator =>
+  op === QUERY_ALL || op === QUERY_SOME || op === QUERY_NONE || op === QUERY_SIZE;
+
+/**
+ * Registers array operators into the query engine.
+ *
+ * @returns {() => void} Unregister function
+ */
+export const registerArrayOperators = (): (() => void) => registerOperators([isArrayOperator, createArrayPredicate]);

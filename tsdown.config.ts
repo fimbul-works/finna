@@ -2,6 +2,8 @@ import { defineConfig, type UserConfig } from "tsdown";
 
 const entryPoints: Record<string, string> = {
   bundle: "src/index.ts",
+  core: "src/index.core.ts",
+  constants: "src/constants.ts",
 };
 
 const commonConfig: UserConfig = {

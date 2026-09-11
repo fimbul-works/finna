@@ -179,23 +179,6 @@ export type Query<T> = {
   };
 
 /**
- * Sort order: 1 for ascending, -1 for descending.
- */
-export type SortOrder = 1 | -1;
-
-/**
- * Options for query execution.
- */
-export interface QueryOptions {
-  /** Map of field paths to sort order */
-  $sort?: Record<string, SortOrder>;
-  /** Number of matches to skip */
-  $skip?: number;
-  /** Maximum number of matches to return */
-  $limit?: number;
-}
-
-/**
  * Context for a query execution.
  */
 export interface QueryContext extends Record<string, any> {
@@ -215,6 +198,29 @@ export type QueryOperator =
   | DateOperator
   | ArrayOperator
   | ElementOperator;
+
+/**
+ * Function that determines whether an operator string matches an operator group.
+ *
+ * @param {string} operator - Operator string to test
+ * @returns {boolean} True if operator belongs to the group
+ */
+export type OperatorStringMatchesFn = (operator: string) => boolean;
+
+/**
+ * Function that creates a predicate for an operator.
+ *
+ * @param {any} operator - The operator string
+ * @param {any} expected - The expected value or nested filter
+ * @param {QueryContext} context - Query context
+ * @returns {Predicate} Predicate function
+ */
+export type OperatorRegisterFn = (operator: any, expected: any, context: QueryContext) => Predicate;
+
+/**
+ * Tuple representation of an operator group: [matchesFn, registerFn].
+ */
+export type OperatorGroupTuple = [OperatorStringMatchesFn, OperatorRegisterFn];
 
 /**
  * A predicate function that takes a value and returns true if it matches.

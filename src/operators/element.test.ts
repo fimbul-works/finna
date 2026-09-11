@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createQueryContext } from "../predicate.js";
+import { createQueryContext } from "../query-context.js";
 import { createElementPredicate } from "./element.js";
 
 describe("createElementPredicate", () => {

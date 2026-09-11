@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createPredicate } from "./predicate.js";
+import { createPredicate } from "./index.js";
 
 describe("createPredicate (Integration)", () => {
   describe("recursive matching", () => {

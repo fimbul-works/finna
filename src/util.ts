@@ -1,4 +1,4 @@
-import { getAtPath } from "@fimbul-works/nested-path";
+import { QUERY_PREFIX } from "./constants.js";
 
 /**
  * Check if a value is an object.
@@ -62,28 +62,13 @@ export function isOperatorObject(val: any): val is Record<string, any> {
     return false;
   }
 
-  const hasOperators = keys.some((k) => k.startsWith("$"));
+  const hasOperators = keys.some((k) => k.startsWith(QUERY_PREFIX));
   if (hasOperators) {
-    if (!keys.every((k) => k.startsWith("$"))) {
+    if (!keys.every((k) => k.startsWith(QUERY_PREFIX))) {
       throw new Error("Mixing operator keys with regular keys is not allowed.");
     }
     return true;
   }
 
   return false;
-}
-
-/**
- * Resolves a value, which could be a literal or a field reference.
- *
- * @param {any} value - Value to resolve
- * @param {any} root - Root value for field resolution
- * @returns {any} Resolved value
- */
-export function resolveValue(value: any, root?: any): any {
-  if (isObject(value) && "$field" in value && typeof value.$field === "string") {
-    if (!root) return undefined;
-    return getAtPath(root, value.$field);
-  }
-  return value;
 }

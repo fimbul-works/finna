@@ -1,4 +1,6 @@
-import type { ElementOperator, Predicate, QueryContext } from "../types.js";
+import { QUERY_EXISTS, QUERY_TYPE } from "../constants.js";
+import { registerOperators } from "../operator-registry.js";
+import type { ElementOperator, OperatorGroupTuple, Predicate, QueryContext } from "../types.js";
 
 /**
  * Creates a predicate for element operators.
@@ -10,9 +12,9 @@ import type { ElementOperator, Predicate, QueryContext } from "../types.js";
  */
 export function createElementPredicate(operator: ElementOperator, expected: any, _ctx: QueryContext): Predicate {
   switch (operator) {
-    case "$exists":
+    case QUERY_EXISTS:
       return (actual: any) => (expected ? actual !== undefined : actual === undefined);
-    case "$type":
+    case QUERY_TYPE:
       return (actual: any) => {
         if (expected === "null") return actual === null;
         if (expected === "undefined") return actual === undefined;
@@ -23,7 +25,23 @@ export function createElementPredicate(operator: ElementOperator, expected: any,
         }
         return typeof actual === expected;
       };
-    default:
-      return () => false;
   }
+
+  throw new Error(`Invalid element query operator: ${operator}`);
 }
+
+/**
+ * Checks whether an operator is an element operator.
+ *
+ * @param {string} op - Operator string to test
+ * @returns {boolean} `true` if it's an element operator
+ */
+const isElementOperator = (op: string): op is ElementOperator => op === QUERY_EXISTS || op === QUERY_TYPE;
+
+/**
+ * Registers element operators into the query engine.
+ *
+ * @returns {() => void} Unregister function
+ */
+export const registerElementOperators = (): (() => void) =>
+  registerOperators([isElementOperator, createElementPredicate]);

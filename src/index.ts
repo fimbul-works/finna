@@ -1,5 +1,7 @@
-export * from "./factories/index.js";
-export * from "./matcher.js";
+import { registerAllOperators } from "./operator-registry.js";
+
+export * from "./index.core.js";
 export * from "./predicate.js";
-export * from "./types.js";
-export * from "./util.js";
+export * from "./constants.js";
+
+registerAllOperators();

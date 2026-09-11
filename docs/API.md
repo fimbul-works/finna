@@ -1,4 +1,4 @@
-# @fimbul-works/random
+# @fimbul-works/query
 
 ## Interfaces
 
@@ -154,20 +154,6 @@ Context for a query execution.
 
 ***
 
-### QueryOptions
-
-Options for query execution.
-
-#### Properties
-
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="property-limit"></a> `$limit?` | `number` | Maximum number of matches to return |
-| <a id="property-skip"></a> `$skip?` | `number` | Number of matches to skip |
-| <a id="property-sort"></a> `$sort?` | `Record`\<`string`, [`SortOrder`](#sortorder)\> | Map of field paths to sort order |
-
-***
-
 ### StringOperators
 
 String-specific query operators.
@@ -243,6 +229,16 @@ Supported operator strings for internal matching logic.
 
 ***
 
+### OperatorGroupTuple
+
+```ts
+type OperatorGroupTuple = [OperatorStringMatchesFn, OperatorRegisterFn];
+```
+
+Tuple representation of an operator group: [matchesFn, registerFn].
+
+***
+
 ### OperatorQuery
 
 ```ts
@@ -256,6 +252,52 @@ Full operator query for a value.
 | Type Parameter |
 | ------ |
 | `V` |
+
+***
+
+### OperatorRegisterFn
+
+```ts
+type OperatorRegisterFn = (operator, expected, context) => Predicate;
+```
+
+Function that creates a predicate for an operator.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | `any` | The operator string |
+| `expected` | `any` | The expected value or nested filter |
+| `context` | [`QueryContext`](#querycontext) | Query context |
+
+#### Returns
+
+[`Predicate`](#predicate)
+
+Predicate function
+
+***
+
+### OperatorStringMatchesFn
+
+```ts
+type OperatorStringMatchesFn = (operator) => boolean;
+```
+
+Function that determines whether an operator string matches an operator group.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | `string` | Operator string to test |
+
+#### Returns
+
+`boolean`
+
+True if operator belongs to the group
 
 ***
 
@@ -353,16 +395,6 @@ Sortable types for comparison operators ($gt, $lt, etc.)
 
 ***
 
-### SortOrder
-
-```ts
-type SortOrder = 1 | -1;
-```
-
-Sort order: 1 for ascending, -1 for descending.
-
-***
-
 ### StringOperator
 
 ```ts
@@ -389,151 +421,293 @@ type TypeString =
 
 Type strings supported by $type operator.
 
+## Variables
+
+### QUERY\_ALL
+
+```ts
+const QUERY_ALL: string;
+```
+
+***
+
+### QUERY\_AND
+
+```ts
+const QUERY_AND: string;
+```
+
+***
+
+### QUERY\_DATE
+
+```ts
+const QUERY_DATE: string;
+```
+
+***
+
+### QUERY\_ENDS\_WITH
+
+```ts
+const QUERY_ENDS_WITH: string;
+```
+
+***
+
+### QUERY\_EQ
+
+```ts
+const QUERY_EQ: string;
+```
+
+***
+
+### QUERY\_EXISTS
+
+```ts
+const QUERY_EXISTS: string;
+```
+
+***
+
+### QUERY\_FIELD
+
+```ts
+const QUERY_FIELD: string;
+```
+
+***
+
+### QUERY\_GT
+
+```ts
+const QUERY_GT: string;
+```
+
+***
+
+### QUERY\_GTE
+
+```ts
+const QUERY_GTE: string;
+```
+
+***
+
+### QUERY\_HOUR
+
+```ts
+const QUERY_HOUR: string;
+```
+
+***
+
+### QUERY\_IN
+
+```ts
+const QUERY_IN: string;
+```
+
+***
+
+### QUERY\_INCLUDES
+
+```ts
+const QUERY_INCLUDES: string;
+```
+
+***
+
+### QUERY\_LT
+
+```ts
+const QUERY_LT: string;
+```
+
+***
+
+### QUERY\_LTE
+
+```ts
+const QUERY_LTE: string;
+```
+
+***
+
+### QUERY\_MINUTE
+
+```ts
+const QUERY_MINUTE: string;
+```
+
+***
+
+### QUERY\_MONTH
+
+```ts
+const QUERY_MONTH: string;
+```
+
+***
+
+### QUERY\_MS
+
+```ts
+const QUERY_MS: string;
+```
+
+***
+
+### QUERY\_NONE
+
+```ts
+const QUERY_NONE: string;
+```
+
+***
+
+### QUERY\_NOR
+
+```ts
+const QUERY_NOR: string;
+```
+
+***
+
+### QUERY\_NOT
+
+```ts
+const QUERY_NOT: string;
+```
+
+***
+
+### QUERY\_NOT\_EQ
+
+```ts
+const QUERY_NOT_EQ: string;
+```
+
+***
+
+### QUERY\_NOT\_IN
+
+```ts
+const QUERY_NOT_IN: string;
+```
+
+***
+
+### QUERY\_OR
+
+```ts
+const QUERY_OR: string;
+```
+
+***
+
+### QUERY\_PREFIX
+
+```ts
+const QUERY_PREFIX: "$" = "$";
+```
+
+***
+
+### QUERY\_REGEX
+
+```ts
+const QUERY_REGEX: string;
+```
+
+***
+
+### QUERY\_SECOND
+
+```ts
+const QUERY_SECOND: string;
+```
+
+***
+
+### QUERY\_SIZE
+
+```ts
+const QUERY_SIZE: string;
+```
+
+***
+
+### QUERY\_SOME
+
+```ts
+const QUERY_SOME: string;
+```
+
+***
+
+### QUERY\_STARTS\_WITH
+
+```ts
+const QUERY_STARTS_WITH: string;
+```
+
+***
+
+### QUERY\_TYPE
+
+```ts
+const QUERY_TYPE: string;
+```
+
+***
+
+### QUERY\_UTC
+
+```ts
+const QUERY_UTC: string;
+```
+
+***
+
+### QUERY\_WEEKDAY
+
+```ts
+const QUERY_WEEKDAY: string;
+```
+
+***
+
+### QUERY\_YEAR
+
+```ts
+const QUERY_YEAR: string;
+```
+
 ## Functions
 
-### createArrayPredicate()
+### clearOperators()
 
 ```ts
-function createArrayPredicate<T>(
-   operator, 
-   expected, 
-   ctx
-): Predicate<T>;
+function clearOperators(): void;
 ```
 
-Creates a predicate for array operators.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to compare |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `operator` | keyof [`ArrayOperators`](#arrayoperators)\<`any`\> | The array operator (e.g. '$all', '$some', '$none', '$size') |
-| `expected` | `any` | The expected values or nested filter for size |
-| `ctx` | [`QueryContext`](#querycontext) | Query context |
+Clears all registered operator groups.
 
 #### Returns
 
-[`Predicate`](#predicate)\<`T`\>
-
-A predicate function for the array operator
+`void`
 
 ***
 
-### createComparisonPredicate()
+### compileQuery()
 
 ```ts
-function createComparisonPredicate<T>(
-   operator, 
-   expected, 
-   _ctx
-): Predicate<T>;
+function compileQuery<T>(query, ctx?): Predicate<T>;
 ```
 
-Creates a predicate for comparison operators.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to compare |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `operator` | keyof [`ComparisonOperators`](#comparisonoperators)\<`any`\> | The comparison operator (e.g. '$gt', '$gte', '$lt', '$lte') |
-| `expected` | `any` | The expected value |
-| `_ctx` | [`QueryContext`](#querycontext) | Query context |
-
-#### Returns
-
-[`Predicate`](#predicate)\<`T`\>
-
-A predicate function for the comparison operator
-
-***
-
-### createDatePredicate()
-
-```ts
-function createDatePredicate<T>(
-   operator, 
-   expected, 
-   ctxOrUTC?
-): Predicate<T>;
-```
-
-Creates a predicate for date operators.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to compare |
-
-#### Parameters
-
-| Parameter | Type | Default value | Description |
-| ------ | ------ | ------ | ------ |
-| `operator` | keyof [`DateOperators`](#dateoperators) | `undefined` | The date operator (e.g. '$year', '$month', '$utc') |
-| `expected` | `any` | `undefined` | The expected value or nested date filter |
-| `ctxOrUTC?` | `boolean` \| [`QueryContext`](#querycontext) | `false` | Query context or useUTC flag |
-
-#### Returns
-
-[`Predicate`](#predicate)\<`T`\>
-
-A predicate function for the date operator
-
-***
-
-### createEqualityPredicate()
-
-```ts
-function createEqualityPredicate<T>(
-   operator, 
-   expected, 
-   ctx
-): Predicate<T>;
-```
-
-Creates a predicate for equality operators.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to compare |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `operator` | keyof [`EqualityOperators`](#equalityoperators)\<`any`\> | The equality operator (e.g. '$eq', '$ne', '$in', '$nin') |
-| `expected` | `any` | The expected value or array of values |
-| `ctx` | [`QueryContext`](#querycontext) | Query context |
-
-#### Returns
-
-[`Predicate`](#predicate)\<`T`\>
-
-A predicate function for the equality operator
-
-***
-
-### createMatcher()
-
-```ts
-function createMatcher<T>(query, contextOrUTC?): Predicate<T>;
-```
-
-Creates a matcher function for the given query.
+Compiles a predicate function from a query object.
 The returned function can be used to test values efficiently.
 
 #### Type Parameters
@@ -544,23 +718,57 @@ The returned function can be used to test values efficiently.
 
 #### Parameters
 
-| Parameter | Type | Default value | Description |
-| ------ | ------ | ------ | ------ |
-| `query` | [`Query`](#query)\<`T`\> | `undefined` | The query to compile into a matcher |
-| `contextOrUTC?` | `boolean` \| [`QueryContext`](#querycontext) | `false` | Query context or useUTC flag |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `query` | [`Query`](#query)\<`T`\> | The query to compile into a matcher |
+| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
 
 #### Returns
 
 [`Predicate`](#predicate)\<`T`\>
 
-A matcher function
+A query predicate function
+
+***
+
+### createOperatorPredicate()
+
+```ts
+function createOperatorPredicate<T>(
+   operator, 
+   expected, 
+   ctx
+): Predicate<T>;
+```
+
+Create a predicate for a specific operator.
+
+#### Type Parameters
+
+| Type Parameter | Default type | Description |
+| ------ | ------ | ------ |
+| `T` | `any` |  |
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | [`QueryOperator`](#queryoperator) | The operator string (e.g. '$eq', '$gt') |
+| `expected` | `any` | The expected value or nested filter |
+| `ctx` | [`QueryContext`](#querycontext) | Query context |
+
+#### Returns
+
+[`Predicate`](#predicate)\<`T`\>
+
+A predicate function for the operator
 
 ***
 
 ### createPredicate()
 
 ```ts
-function createPredicate<T>(filter, contextOrUTC?): Predicate<T>;
+function createPredicate<T>(filter, ctx?): Predicate<T>;
 ```
 
 Create a predicate function from a query value.
@@ -573,121 +781,16 @@ Create a predicate function from a query value.
 
 #### Parameters
 
-| Parameter | Type | Default value | Description |
-| ------ | ------ | ------ | ------ |
-| `filter` | `any` | `undefined` | The query filter to create a predicate for |
-| `contextOrUTC?` | `boolean` \| [`QueryContext`](#querycontext) | `false` | Connection context or useUTC flag |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `filter` | `any` | The query filter to create a predicate for |
+| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
 
 #### Returns
 
 [`Predicate`](#predicate)\<`T`\>
 
 A predicate function for the given filter
-
-***
-
-### createQueryContext()
-
-```ts
-function createQueryContext(useUTC?): QueryContext;
-```
-
-Creates a new query context.
-
-#### Parameters
-
-| Parameter | Type | Default value |
-| ------ | ------ | ------ |
-| `useUTC` | `boolean` | `false` |
-
-#### Returns
-
-[`QueryContext`](#querycontext)
-
-***
-
-### createStringPredicate()
-
-```ts
-function createStringPredicate<T>(
-   operator, 
-   expected, 
-   _ctx
-): Predicate<T>;
-```
-
-Creates a predicate for string operators.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to compare |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `operator` | keyof [`StringOperators`](#stringoperators) | The string operator (e.g. '$regex', '$startsWith', '$endsWith', '$includes') |
-| `expected` | `any` | The expected value or regex |
-| `_ctx` | [`QueryContext`](#querycontext) | Query context |
-
-#### Returns
-
-[`Predicate`](#predicate)\<`T`\>
-
-A predicate function for the string operator
-
-***
-
-### isDeepEqual()
-
-```ts
-function isDeepEqual(a, b): boolean;
-```
-
-Performs a deep equality check between two values.
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `a` | `any` | First value |
-| `b` | `any` | Second value |
-
-#### Returns
-
-`boolean`
-
-`true` if values are deeply equal, `false` otherwise
-
-***
-
-### isObject()
-
-```ts
-function isObject<T>(value): value is T;
-```
-
-Check if a value is an object.
-
-#### Type Parameters
-
-| Type Parameter | Default type |
-| ------ | ------ |
-| `T` *extends* `object` | `object` |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `value` | `any` | The value to check |
-
-#### Returns
-
-`value is T`
-
-`true` if the value is an object, `false` otherwise
 
 ***
 
@@ -713,10 +816,14 @@ Checks if a value is an operator object (all keys start with $).
 
 ***
 
-### matches()
+### query()
 
 ```ts
-function matches<T>(value, query): boolean;
+function query<T>(
+   value, 
+   q, 
+   ctx?
+): boolean;
 ```
 
 Checks if the given query matches.
@@ -732,7 +839,8 @@ Checks if the given query matches.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `value` | `T` | The value to check |
-| `query` | [`Query`](#query)\<`T`\> | The query to match against |
+| `q` | [`Query`](#query)\<`T`\> | The query to match against |
+| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
 
 #### Returns
 
@@ -742,23 +850,154 @@ Checks if the given query matches.
 
 ***
 
-### resolveValue()
+### registerAllOperators()
 
 ```ts
-function resolveValue(value, root?): any;
+function registerAllOperators(): void;
 ```
 
-Resolves a value, which could be a literal or a field reference.
+Registers all built-in operator groups into the query engine.
+
+#### Returns
+
+`void`
+
+***
+
+### registerArrayOperators()
+
+```ts
+function registerArrayOperators(): () => void;
+```
+
+Registers array operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### registerComparisonOperators()
+
+```ts
+function registerComparisonOperators(): () => void;
+```
+
+Registers comparison operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### registerDateOperators()
+
+```ts
+function registerDateOperators(): () => void;
+```
+
+Registers date operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### registerElementOperators()
+
+```ts
+function registerElementOperators(): () => void;
+```
+
+Registers element operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### registerEqualityOperators()
+
+```ts
+function registerEqualityOperators(): () => void;
+```
+
+Registers equality operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### registerOperators()
+
+```ts
+function registerOperators(operatorGroupTuple): () => void;
+```
+
+Registers an operator group tuple in the registry.
 
 #### Parameters
 
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
-| `value` | `any` | Value to resolve |
-| `root?` | `any` | Root value for field resolution |
+| `operatorGroupTuple` | [`OperatorGroupTuple`](#operatorgrouptuple) | Operator group tuple to register |
 
 #### Returns
 
-`any`
+Unregister function
 
-Resolved value
+() => `void`
+
+***
+
+### registerStringOperators()
+
+```ts
+function registerStringOperators(): () => void;
+```
+
+Registers string operators into the query engine.
+
+#### Returns
+
+Unregister function
+
+() => `void`
+
+***
+
+### unregisterOperators()
+
+```ts
+function unregisterOperators(operatorGroupTuple): boolean;
+```
+
+Unregisters an operator group tuple from the registry.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operatorGroupTuple` | [`OperatorGroupTuple`](#operatorgrouptuple) | Operator group tuple to unregister |
+
+#### Returns
+
+`boolean`
+
+True if group was found and removed

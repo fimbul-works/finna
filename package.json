@@ -1,54 +1,20 @@
 {
-  "name": "@fimbul-works/random",
-  "description": "A comprehensive collection of high-performance 32-bit and 64-bit pseudo-random number generators (PRNG), statistical distributions, and procedural generation utilities for TypeScript and JavaScript",
-  "version": "1.1.0",
+  "name": "@fimbul-works/query",
+  "description": "",
+  "version": "1.0.0",
   "type": "module",
   "private": false,
   "license": "MIT",
   "author": "FimbulWorks <contact@fimbul.works>",
-  "homepage": "https://github.com/fimbul-works/random#readme",
+  "homepage": "https://github.com/fimbul-works/query#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fimbul-works/random.git"
+    "url": "git+https://github.com/fimbul-works/query.git"
   },
   "bugs": {
-    "url": "https://github.com/fimbul-works/random/issues"
+    "url": "https://github.com/fimbul-works/query/issues"
   },
   "keywords": [
-    "random",
-    "prng",
-    "rng",
-    "pseudo-random",
-    "random-number-generator",
-    "procedural-generation",
-    "procgen",
-    "game-dev",
-    "seed",
-    "seedable",
-    "stateful",
-    "32-bit",
-    "64-bit",
-    "bigint",
-    "xoshiro",
-    "xoroshiro",
-    "xorshift",
-    "romu",
-    "splitmix",
-    "wyrand",
-    "lehmer",
-    "sfc32",
-    "mulberry32",
-    "alea",
-    "mersenne-twister",
-    "pcg",
-    "shuffle",
-    "sampling",
-    "gaussian",
-    "poisson",
-    "distributions",
-    "geometry-sampling",
-    "functional",
-    "tree-shakeable",
     "typescript"
   ],
   "main": "./dist/cjs/index.js",
@@ -59,6 +25,16 @@
       "types": "./dist/esm/index.d.ts",
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
+    },
+    "./core": {
+      "types": "./dist/esm/index.core.d.ts",
+      "import": "./dist/esm/index.core.js",
+      "require": "./dist/cjs/index.core.js"
+    },
+    "./constants": {
+      "types": "./dist/esm/constants.d.ts",
+      "import": "./dist/esm/constants.js",
+      "require": "./dist/cjs/constants.js"
     }
   },
   "files": [
@@ -67,7 +43,7 @@
     "README.md",
     "LICENSE"
   ],
-  "sideEffects": false,
+  "sideEffects": true,
   "scripts": {
     "clean": "rm -rf dist",
     "clean:bundles": "rm -rf bundles",
@@ -86,7 +62,6 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@fimbul-works/hash": "^1.1.0",
     "@fimbul-works/nested-path": "^1.0.0"
   },
   "devDependencies": {
