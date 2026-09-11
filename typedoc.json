@@ -32,5 +32,6 @@
   "parametersFormat": "table",
   "interfacePropertiesFormat": "table",
   "classPropertiesFormat": "table",
-  "typeDeclarationFormat": "table"
+  "typeDeclarationFormat": "table",
+  "disableSources": true
 }

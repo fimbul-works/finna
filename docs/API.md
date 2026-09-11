@@ -4,8 +4,6 @@
 
 ### ArrayOperators
 
-Defined in: types.ts:121
-
 Array-specific query operators.
 
 #### Type Parameters
@@ -16,18 +14,16 @@ Array-specific query operators.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-all"></a> `$all?` | [`Query`](#query)\<`E`\> \| `E`[] | Must contain all specified values or match sub-query | types.ts:123 |
-| <a id="property-none"></a> `$none?` | [`Query`](#query)\<`E`\> \| `E`[] | Must not contain any of the specified values or match sub-query | types.ts:127 |
-| <a id="property-size"></a> `$size?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Size of the array | types.ts:129 |
-| <a id="property-some"></a> `$some?` | [`Query`](#query)\<`E`\> \| `E`[] | Must contain at least one of the specified values or match sub-query | types.ts:125 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-all"></a> `$all?` | [`Query`](#query)\<`E`\> \| `E`[] | Must contain all specified values or match sub-query |
+| <a id="property-none"></a> `$none?` | [`Query`](#query)\<`E`\> \| `E`[] | Must not contain any of the specified values or match sub-query |
+| <a id="property-size"></a> `$size?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Size of the array |
+| <a id="property-some"></a> `$some?` | [`Query`](#query)\<`E`\> \| `E`[] | Must contain at least one of the specified values or match sub-query |
 
 ***
 
 ### ComparisonOperators
-
-Defined in: types.ts:35
 
 Combined comparison operators for sortable types.
 
@@ -39,55 +35,49 @@ Combined comparison operators for sortable types.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-gt"></a> `$gt?` | [`FieldReference`](#fieldreference) \| `V` | - | types.ts:36 |
-| <a id="property-gte"></a> `$gte?` | [`FieldReference`](#fieldreference) \| `V` | Greater than or equal to operator | types.ts:38 |
-| <a id="property-lt"></a> `$lt?` | [`FieldReference`](#fieldreference) \| `V` | Less than operator | types.ts:40 |
-| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `V` | Less than or equal to operator | types.ts:42 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-gt"></a> `$gt?` | [`FieldReference`](#fieldreference) \| `V` | - |
+| <a id="property-gte"></a> `$gte?` | [`FieldReference`](#fieldreference) \| `V` | Greater than or equal to operator |
+| <a id="property-lt"></a> `$lt?` | [`FieldReference`](#fieldreference) \| `V` | Less than operator |
+| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `V` | Less than or equal to operator |
 
 ***
 
 ### DateOperators
 
-Defined in: types.ts:92
-
 Date-specific query operators.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-date"></a> `$date?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of month operator (1-31) | types.ts:98 |
-| <a id="property-hour"></a> `$hour?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Hour operator (0-23) | types.ts:102 |
-| <a id="property-minute"></a> `$minute?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Minute operator (0-59) | types.ts:104 |
-| <a id="property-month"></a> `$month?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Month operator (0-11) | types.ts:96 |
-| <a id="property-ms"></a> `$ms?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Millisecond operator (0-999) | types.ts:108 |
-| <a id="property-second"></a> `$second?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Second operator (0-59) | types.ts:106 |
-| <a id="property-utc"></a> `$utc?` | [`DateOperators`](#dateoperators) | Switch to UTC context for nested date operators | types.ts:110 |
-| <a id="property-weekday"></a> `$weekday?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of week operator (0-6, 0 is Sunday) | types.ts:100 |
-| <a id="property-year"></a> `$year?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Year operator | types.ts:94 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-date"></a> `$date?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of month operator (1-31) |
+| <a id="property-hour"></a> `$hour?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Hour operator (0-23) |
+| <a id="property-minute"></a> `$minute?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Minute operator (0-59) |
+| <a id="property-month"></a> `$month?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Month operator (0-11) |
+| <a id="property-ms"></a> `$ms?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Millisecond operator (0-999) |
+| <a id="property-second"></a> `$second?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Second operator (0-59) |
+| <a id="property-utc"></a> `$utc?` | [`DateOperators`](#dateoperators) | Switch to UTC context for nested date operators |
+| <a id="property-weekday"></a> `$weekday?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of week operator (0-6, 0 is Sunday) |
+| <a id="property-year"></a> `$year?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Year operator |
 
 ***
 
 ### ElementOperators
 
-Defined in: types.ts:77
-
 Element-specific query operators.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-exists"></a> `$exists?` | `boolean` | Check if property exists in root value | types.ts:79 |
-| <a id="property-type"></a> `$type?` | [`TypeString`](#typestring) | Check property type | types.ts:81 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-exists"></a> `$exists?` | `boolean` | Check if property exists in root value |
+| <a id="property-type"></a> `$type?` | [`TypeString`](#typestring) | Check property type |
 
 ***
 
 ### EqualityOperators
-
-Defined in: types.ts:16
 
 Equality operators.
 
@@ -99,32 +89,28 @@ Equality operators.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-eq"></a> `$eq?` | [`FieldReference`](#fieldreference) \| `V` | Equality operator | types.ts:18 |
-| <a id="property-in"></a> `$in?` | `V`[] | In operator | types.ts:22 |
-| <a id="property-ne"></a> `$ne?` | [`FieldReference`](#fieldreference) \| `V` | Inequality operator | types.ts:20 |
-| <a id="property-nin"></a> `$nin?` | `V`[] | Not in operator | types.ts:24 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-eq"></a> `$eq?` | [`FieldReference`](#fieldreference) \| `V` | Equality operator |
+| <a id="property-in"></a> `$in?` | `V`[] | In operator |
+| <a id="property-ne"></a> `$ne?` | [`FieldReference`](#fieldreference) \| `V` | Inequality operator |
+| <a id="property-nin"></a> `$nin?` | `V`[] | Not in operator |
 
 ***
 
 ### FieldReference
 
-Defined in: types.ts:9
-
 Reference to another field in the same root value.
 
 #### Properties
 
-| Property | Type | Defined in |
-| ------ | ------ | ------ |
-| <a id="property-field"></a> `$field` | `string` | types.ts:10 |
+| Property | Type |
+| ------ | ------ |
+| <a id="property-field"></a> `$field` | `string` |
 
 ***
 
 ### LogicalOperators
-
-Defined in: types.ts:140
 
 Logical operators for combining queries.
 
@@ -136,18 +122,16 @@ Logical operators for combining queries.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-and"></a> `$and?` | [`Query`](#query)\<`V`\>[] | Logical AND operator | types.ts:142 |
-| <a id="property-nor"></a> `$nor?` | [`Query`](#query)\<`V`\>[] | Logical NOR operator | types.ts:148 |
-| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`V`\> | Logical NOT operator | types.ts:146 |
-| <a id="property-or"></a> `$or?` | [`Query`](#query)\<`V`\>[] | Logical OR operator | types.ts:144 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-and"></a> `$and?` | [`Query`](#query)\<`V`\>[] | Logical AND operator |
+| <a id="property-nor"></a> `$nor?` | [`Query`](#query)\<`V`\>[] | Logical NOR operator |
+| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`V`\> | Logical NOT operator |
+| <a id="property-or"></a> `$or?` | [`Query`](#query)\<`V`\>[] | Logical OR operator |
 
 ***
 
 ### QueryContext
-
-Defined in: types.ts:201
 
 Context for a query execution.
 
@@ -163,43 +147,39 @@ Context for a query execution.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-useutc"></a> `useUTC` | `boolean` | Whether to use UTC for date-related comparisons | types.ts:203 |
-| <a id="property-warnings"></a> `warnings` | `Set`\<`string`\> | Set of warnings generated during query compilation | types.ts:205 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-useutc"></a> `useUTC` | `boolean` | Whether to use UTC for date-related comparisons |
+| <a id="property-warnings"></a> `warnings` | `Set`\<`string`\> | Set of warnings generated during query compilation |
 
 ***
 
 ### QueryOptions
 
-Defined in: types.ts:189
-
 Options for query execution.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-limit"></a> `$limit?` | `number` | Maximum number of matches to return | types.ts:195 |
-| <a id="property-skip"></a> `$skip?` | `number` | Number of matches to skip | types.ts:193 |
-| <a id="property-sort"></a> `$sort?` | `Record`\<`string`, [`SortOrder`](#sortorder)\> | Map of field paths to sort order | types.ts:191 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-limit"></a> `$limit?` | `number` | Maximum number of matches to return |
+| <a id="property-skip"></a> `$skip?` | `number` | Number of matches to skip |
+| <a id="property-sort"></a> `$sort?` | `Record`\<`string`, [`SortOrder`](#sortorder)\> | Map of field paths to sort order |
 
 ***
 
 ### StringOperators
 
-Defined in: types.ts:53
-
 String-specific query operators.
 
 #### Properties
 
-| Property | Type | Description | Defined in |
-| ------ | ------ | ------ | ------ |
-| <a id="property-endswith"></a> `$endsWith?` | `string` \| [`FieldReference`](#fieldreference) | Ends with string | types.ts:59 |
-| <a id="property-includes"></a> `$includes?` | `string` \| [`FieldReference`](#fieldreference) | Includes substring | types.ts:61 |
-| <a id="property-regex"></a> `$regex?` | `string` \| `RegExp` | Regular expression match | types.ts:55 |
-| <a id="property-startswith"></a> `$startsWith?` | `string` \| [`FieldReference`](#fieldreference) | Starts with string | types.ts:57 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-endswith"></a> `$endsWith?` | `string` \| [`FieldReference`](#fieldreference) | Ends with string |
+| <a id="property-includes"></a> `$includes?` | `string` \| [`FieldReference`](#fieldreference) | Includes substring |
+| <a id="property-regex"></a> `$regex?` | `string` \| `RegExp` | Regular expression match |
+| <a id="property-startswith"></a> `$startsWith?` | `string` \| [`FieldReference`](#fieldreference) | Starts with string |
 
 ## Type Aliases
 
@@ -208,8 +188,6 @@ String-specific query operators.
 ```ts
 type ArrayOperator = keyof ArrayOperators<any>;
 ```
-
-Defined in: types.ts:135
 
 Supported array operators.
 
@@ -221,8 +199,6 @@ Supported array operators.
 type ComparisonOperator = keyof ComparisonOperators<any>;
 ```
 
-Defined in: types.ts:48
-
 Supported comparison operators.
 
 ***
@@ -232,8 +208,6 @@ Supported comparison operators.
 ```ts
 type DateOperator = keyof DateOperators;
 ```
-
-Defined in: types.ts:116
 
 Supported date operators.
 
@@ -245,8 +219,6 @@ Supported date operators.
 type ElementOperator = keyof ElementOperators;
 ```
 
-Defined in: types.ts:87
-
 Supported element operators.
 
 ***
@@ -256,8 +228,6 @@ Supported element operators.
 ```ts
 type EqualityOperator = keyof EqualityOperators<any>;
 ```
-
-Defined in: types.ts:30
 
 Supported equality operators.
 
@@ -269,8 +239,6 @@ Supported equality operators.
 type LogicalOperator = keyof LogicalOperators<any>;
 ```
 
-Defined in: types.ts:154
-
 Supported operator strings for internal matching logic.
 
 ***
@@ -280,8 +248,6 @@ Supported operator strings for internal matching logic.
 ```ts
 type OperatorQuery<V> = EqualityOperators<V> & ElementOperators & V extends Sortable ? ComparisonOperators<V> : object & V extends string ? StringOperators : object & V extends Date ? DateOperators : object & V extends infer E[] ? ArrayOperators<E> : object;
 ```
-
-Defined in: types.ts:159
 
 Full operator query for a value.
 
@@ -298,8 +264,6 @@ Full operator query for a value.
 ```ts
 type Predicate<T> = (val, root?) => boolean;
 ```
-
-Defined in: types.ts:229
 
 A predicate function that takes a value and returns true if it matches.
 
@@ -332,8 +296,6 @@ type Query<T> = { [P in keyof T]?: QueryValue<T[P]> | (T[P] extends object ? Que
 };
 ```
 
-Defined in: types.ts:175
-
 Recursively define Query type.
 Supports top-level keys of T and arbitrary string paths (dotted notation).
 
@@ -357,8 +319,6 @@ type QueryOperator =
   | ElementOperator;
 ```
 
-Defined in: types.ts:211
-
 Supported query operators.
 
 ***
@@ -372,8 +332,6 @@ type QueryValue<V> =
   | FieldReference
   | V extends string ? RegExp : never;
 ```
-
-Defined in: types.ts:169
 
 A query value can be a literal, an operator object, or a RegExp (for strings).
 
@@ -391,8 +349,6 @@ A query value can be a literal, an operator object, or a RegExp (for strings).
 type Sortable = string | number | Date;
 ```
 
-Defined in: types.ts:4
-
 Sortable types for comparison operators ($gt, $lt, etc.)
 
 ***
@@ -403,8 +359,6 @@ Sortable types for comparison operators ($gt, $lt, etc.)
 type SortOrder = 1 | -1;
 ```
 
-Defined in: types.ts:184
-
 Sort order: 1 for ascending, -1 for descending.
 
 ***
@@ -414,8 +368,6 @@ Sort order: 1 for ascending, -1 for descending.
 ```ts
 type StringOperator = keyof StringOperators;
 ```
-
-Defined in: types.ts:67
 
 Supported string operators.
 
@@ -435,8 +387,6 @@ type TypeString =
   | "date";
 ```
 
-Defined in: types.ts:72
-
 Type strings supported by $type operator.
 
 ## Functions
@@ -450,8 +400,6 @@ function createArrayPredicate<T>(
    ctx
 ): Predicate<T>;
 ```
-
-Defined in: factories/array.ts:14
 
 Creates a predicate for array operators.
 
@@ -487,8 +435,6 @@ function createComparisonPredicate<T>(
 ): Predicate<T>;
 ```
 
-Defined in: factories/comparison.ts:14
-
 Creates a predicate for comparison operators.
 
 #### Type Parameters
@@ -522,8 +468,6 @@ function createDatePredicate<T>(
    ctxOrUTC?
 ): Predicate<T>;
 ```
-
-Defined in: factories/date.ts:14
 
 Creates a predicate for date operators.
 
@@ -559,8 +503,6 @@ function createEqualityPredicate<T>(
 ): Predicate<T>;
 ```
 
-Defined in: factories/equality.ts:14
-
 Creates a predicate for equality operators.
 
 #### Type Parameters
@@ -590,8 +532,6 @@ A predicate function for the equality operator
 ```ts
 function createMatcher<T>(query, contextOrUTC?): Predicate<T>;
 ```
-
-Defined in: matcher.ts:14
 
 Creates a matcher function for the given query.
 The returned function can be used to test values efficiently.
@@ -623,8 +563,6 @@ A matcher function
 function createPredicate<T>(filter, contextOrUTC?): Predicate<T>;
 ```
 
-Defined in: predicate.ts:39
-
 Create a predicate function from a query value.
 
 #### Type Parameters
@@ -654,8 +592,6 @@ A predicate function for the given filter
 function createQueryContext(useUTC?): QueryContext;
 ```
 
-Defined in: predicate.ts:23
-
 Creates a new query context.
 
 #### Parameters
@@ -679,8 +615,6 @@ function createStringPredicate<T>(
    _ctx
 ): Predicate<T>;
 ```
-
-Defined in: factories/string.ts:14
 
 Creates a predicate for string operators.
 
@@ -706,13 +640,11 @@ A predicate function for the string operator
 
 ***
 
-### isEqual()
+### isDeepEqual()
 
 ```ts
-function isEqual(a, b): boolean;
+function isDeepEqual(a, b): boolean;
 ```
-
-Defined in: util.ts:19
 
 Performs a deep equality check between two values.
 
@@ -736,8 +668,6 @@ Performs a deep equality check between two values.
 ```ts
 function isObject<T>(value): value is T;
 ```
-
-Defined in: util.ts:8
 
 Check if a value is an object.
 
@@ -767,8 +697,6 @@ Check if a value is an object.
 function isOperatorObject(val): val is Record<string, any>;
 ```
 
-Defined in: util.ts:55
-
 Checks if a value is an operator object (all keys start with $).
 
 #### Parameters
@@ -790,8 +718,6 @@ Checks if a value is an operator object (all keys start with $).
 ```ts
 function matches<T>(value, query): boolean;
 ```
-
-Defined in: matcher.ts:63
 
 Checks if the given query matches.
 
@@ -821,8 +747,6 @@ Checks if the given query matches.
 ```ts
 function resolveValue(value, root?): any;
 ```
-
-Defined in: util.ts:83
 
 Resolves a value, which could be a literal or a field reference.
 
