@@ -1,6 +1,6 @@
 {
   "name": "@fimbul-works/query",
-  "description": "",
+  "description": "An ultra-lightweight, modular, and type-safe MongoDB-style query matching engine and predicate compiler for JavaScript and TypeScript.",
   "version": "1.0.0",
   "type": "module",
   "private": false,
@@ -15,7 +15,17 @@
     "url": "https://github.com/fimbul-works/query/issues"
   },
   "keywords": [
-    "typescript"
+    "query",
+    "query-engine",
+    "predicate",
+    "filter",
+    "matcher",
+    "mongodb",
+    "json-query",
+    "compiler",
+    "operators",
+    "typescript",
+    "tree-shakable"
   ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

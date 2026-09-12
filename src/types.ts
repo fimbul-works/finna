@@ -120,11 +120,11 @@ export type DateOperator = keyof DateOperators;
  */
 export interface ArrayOperators<E> {
   /** Must contain all specified values or match sub-query */
-  $all?: E[] | Query<E>;
+  $all?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
   /** Must contain at least one of the specified values or match sub-query */
-  $some?: E[] | Query<E>;
+  $some?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
   /** Must not contain any of the specified values or match sub-query */
-  $none?: E[] | Query<E>;
+  $none?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
   /** Size of the array */
   $size?: number | OperatorQuery<number>;
 }
