@@ -1,4 +1,4 @@
-# @fimbul-works/query
+# @fimbul-works/finna
 
 ## Interfaces
 
@@ -10,16 +10,16 @@ Array-specific query operators.
 
 | Type Parameter |
 | ------ |
-| `E` |
+| `T` |
 
 #### Properties
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="property-all"></a> `$all?` | \| [`QueryValue`](#queryvalue)\<`E`\> \| `E`[] \| `E` *extends* `object` ? [`Query`](#query)\<`E`\> : `never` | Must contain all specified values or match sub-query |
-| <a id="property-none"></a> `$none?` | \| [`QueryValue`](#queryvalue)\<`E`\> \| `E`[] \| `E` *extends* `object` ? [`Query`](#query)\<`E`\> : `never` | Must not contain any of the specified values or match sub-query |
+| <a id="property-all"></a> `$all?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain all specified values or match sub-query |
+| <a id="property-none"></a> `$none?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must not contain any of the specified values or match sub-query |
 | <a id="property-size"></a> `$size?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Size of the array |
-| <a id="property-some"></a> `$some?` | \| [`QueryValue`](#queryvalue)\<`E`\> \| `E`[] \| `E` *extends* `object` ? [`Query`](#query)\<`E`\> : `never` | Must contain at least one of the specified values or match sub-query |
+| <a id="property-some"></a> `$some?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain at least one of the specified values or match sub-query |
 
 ***
 
@@ -31,16 +31,16 @@ Combined comparison operators for sortable types.
 
 | Type Parameter |
 | ------ |
-| `V` |
+| `T` |
 
 #### Properties
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="property-gt"></a> `$gt?` | [`FieldReference`](#fieldreference) \| `V` | - |
-| <a id="property-gte"></a> `$gte?` | [`FieldReference`](#fieldreference) \| `V` | Greater than or equal to operator |
-| <a id="property-lt"></a> `$lt?` | [`FieldReference`](#fieldreference) \| `V` | Less than operator |
-| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `V` | Less than or equal to operator |
+| <a id="property-gt"></a> `$gt?` | [`FieldReference`](#fieldreference) \| `T` | - |
+| <a id="property-gte"></a> `$gte?` | [`FieldReference`](#fieldreference) \| `T` | Greater than or equal to operator |
+| <a id="property-lt"></a> `$lt?` | [`FieldReference`](#fieldreference) \| `T` | Less than operator |
+| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `T` | Less than or equal to operator |
 
 ***
 
@@ -85,16 +85,16 @@ Equality operators.
 
 | Type Parameter |
 | ------ |
-| `V` |
+| `T` |
 
 #### Properties
 
 | Property | Type | Description |
 | ------ | ------ | ------ |
-| <a id="property-eq"></a> `$eq?` | [`FieldReference`](#fieldreference) \| `V` | Equality operator |
-| <a id="property-in"></a> `$in?` | `V`[] | In operator |
-| <a id="property-ne"></a> `$ne?` | [`FieldReference`](#fieldreference) \| `V` | Inequality operator |
-| <a id="property-nin"></a> `$nin?` | `V`[] | Not in operator |
+| <a id="property-eq"></a> `$eq?` | [`FieldReference`](#fieldreference) \| `T` | Equality operator |
+| <a id="property-in"></a> `$in?` | `T`[] | In operator |
+| <a id="property-ne"></a> `$ne?` | [`FieldReference`](#fieldreference) \| `T` | Inequality operator |
+| <a id="property-nin"></a> `$nin?` | `T`[] | Not in operator |
 
 ***
 
@@ -110,30 +110,9 @@ Reference to another field in the same root value.
 
 ***
 
-### LogicalOperators
+### FinnaContext
 
-Logical operators for combining queries.
-
-#### Type Parameters
-
-| Type Parameter |
-| ------ |
-| `V` |
-
-#### Properties
-
-| Property | Type | Description |
-| ------ | ------ | ------ |
-| <a id="property-and"></a> `$and?` | [`Query`](#query)\<`V`\>[] | Logical AND operator |
-| <a id="property-nor"></a> `$nor?` | [`Query`](#query)\<`V`\>[] | Logical NOR operator |
-| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`V`\> | Logical NOT operator |
-| <a id="property-or"></a> `$or?` | [`Query`](#query)\<`V`\>[] | Logical OR operator |
-
-***
-
-### QueryContext
-
-Context for a query execution.
+Context for a predicate execution.
 
 #### Extends
 
@@ -151,6 +130,27 @@ Context for a query execution.
 | ------ | ------ | ------ |
 | <a id="property-useutc"></a> `useUTC` | `boolean` | Whether to use UTC for date-related comparisons |
 | <a id="property-warnings"></a> `warnings` | `Set`\<`string`\> | Set of warnings generated during query compilation |
+
+***
+
+### LogicalOperators
+
+Logical operators for combining queries.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+#### Properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-and"></a> `$and?` | [`Query`](#query)\<`T`\>[] | Logical AND operator |
+| <a id="property-nor"></a> `$nor?` | [`Query`](#query)\<`T`\>[] | Logical NOR operator |
+| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`T`\> | Logical NOT operator |
+| <a id="property-or"></a> `$or?` | [`Query`](#query)\<`T`\>[] | Logical OR operator |
 
 ***
 
@@ -242,7 +242,7 @@ Tuple representation of an operator group: [matchesFn, registerFn].
 ### OperatorQuery
 
 ```ts
-type OperatorQuery<V> = EqualityOperators<V> & ElementOperators & V extends Sortable ? ComparisonOperators<V> : object & V extends string ? StringOperators : object & V extends Date ? DateOperators : object & V extends infer E[] ? ArrayOperators<E> : object;
+type OperatorQuery<T> = EqualityOperators<T> & ElementOperators & T extends Sortable ? ComparisonOperators<T> : object & T extends string ? StringOperators : object & T extends Date ? DateOperators : object & T extends infer I[] ? ArrayOperators<I> : object;
 ```
 
 Full operator query for a value.
@@ -251,7 +251,7 @@ Full operator query for a value.
 
 | Type Parameter |
 | ------ |
-| `V` |
+| `T` |
 
 ***
 
@@ -269,7 +269,7 @@ Function that creates a predicate for an operator.
 | ------ | ------ | ------ |
 | `operator` | `any` | The operator string |
 | `expected` | `any` | The expected value or nested filter |
-| `context` | [`QueryContext`](#querycontext) | Query context |
+| `context` | [`FinnaContext`](#finnacontext) | Query context |
 
 #### Returns
 
@@ -333,7 +333,7 @@ A predicate function that takes a value and returns true if it matches.
 ### Query
 
 ```ts
-type Query<T> = { [P in keyof T]?: QueryValue<T[P]> | (T[P] extends object ? Query<T[P]> : never) } & LogicalOperators<T> & {
+type Query<T> = { [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never) } & LogicalOperators<T> & {
 [path: string]: any;
 };
 ```
@@ -368,11 +368,11 @@ Supported query operators.
 ### QueryValue
 
 ```ts
-type QueryValue<V> = 
-  | V
-  | OperatorQuery<V>
+type QueryValue<T> = 
+  | T
+  | OperatorQuery<T>
   | FieldReference
-  | V extends string ? RegExp : never;
+  | T extends string ? RegExp : never;
 ```
 
 A query value can be a literal, an operator object, or a RegExp (for strings).
@@ -381,7 +381,7 @@ A query value can be a literal, an operator object, or a RegExp (for strings).
 
 | Type Parameter |
 | ------ |
-| `V` |
+| `T` |
 
 ***
 
@@ -437,33 +437,32 @@ Clears all registered operator groups.
 
 ***
 
-### compileQuery()
+### compile()
 
 ```ts
-function compileQuery<T>(query, ctx?): Predicate<T>;
+function compile<T>(pattern, ctx?): Predicate<T>;
 ```
 
-Compiles a predicate function from a query object.
-The returned function can be used to test values efficiently.
+Compiles a query/pattern specification into an optimized, reusable predicate function.
 
 #### Type Parameters
 
 | Type Parameter | Description |
 | ------ | ------ |
-| `T` *extends* `Record`\<`string`, `any`\> | Type to check |
+| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
 
 #### Parameters
 
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
-| `query` | [`Query`](#query)\<`T`\> | The query to compile into a matcher |
-| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern specification to compile |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
 [`Predicate`](#predicate)\<`T`\>
 
-A query predicate function
+A compiled predicate function `(value) => boolean`
 
 ***
 
@@ -486,13 +485,78 @@ Create a predicate function from a query value.
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
 | `filter` | `any` | The query filter to create a predicate for |
-| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
 [`Predicate`](#predicate)\<`T`\>
 
 A predicate function for the given filter
+
+***
+
+### finna()
+
+#### Call Signature
+
+```ts
+function finna<T>(pattern, ctx?): Predicate<T>;
+```
+
+Compiles a query/pattern specification into an optimized, reusable predicate function.
+Shorthand method for `compile()`.
+
+##### Type Parameters
+
+| Type Parameter | Description |
+| ------ | ------ |
+| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
+
+##### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern specification to compile |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
+
+##### Returns
+
+[`Predicate`](#predicate)\<`T`\>
+
+A compiled predicate function `(value) => boolean`
+
+#### Call Signature
+
+```ts
+function finna<T>(
+   value, 
+   pattern, 
+   ctx?
+): value is T;
+```
+
+Checks if a value satisfies a query/pattern specification.
+Shorthand method for `match()`.
+
+##### Type Parameters
+
+| Type Parameter | Description |
+| ------ | ------ |
+| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
+
+##### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `value` | `T` | The target value to test |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern to match against |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
+
+##### Returns
+
+`value is T`
+
+`true` if the value matches, `false` otherwise
 
 ***
 
@@ -518,31 +582,31 @@ Checks if a value is an operator object (all keys start with $).
 
 ***
 
-### query()
+### match()
 
 ```ts
-function query<T>(
+function match<T>(
    value, 
-   q, 
+   pattern, 
    ctx?
 ): value is T;
 ```
 
-Checks if the given query matches.
+Checks if a value satisfies a query/pattern specification.
 
 #### Type Parameters
 
 | Type Parameter | Description |
 | ------ | ------ |
-| `T` *extends* `Record`\<`string`, `any`\> | Type to check |
+| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
 
 #### Parameters
 
 | Parameter | Type | Description |
 | ------ | ------ | ------ |
-| `value` | `T` | The value to check |
-| `q` | [`Query`](#query)\<`T`\> | The query to match against |
-| `ctx?` | [`QueryContext`](#querycontext) | Optional query context |
+| `value` | `T` | The target value to test |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern to match against |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
@@ -703,3 +767,9 @@ Unregisters an operator group tuple from the registry.
 `boolean`
 
 True if group was found and removed
+
+## References
+
+### default
+
+Renames and re-exports [finna](#finna)

@@ -1,15 +1,15 @@
-import { describe, expect, it, beforeEach } from "vitest";
-import { registerArrayOperators } from "./operators/array.js";
-import { registerDateOperators } from "./operators/date.js";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   createPredicate,
-  query,
+  match,
   registerComparisonOperators,
   registerElementOperators,
   registerEqualityOperators,
   registerStringOperators,
 } from "./index.core.js";
 import { clearOperators } from "./operator-registry.js";
+import { registerArrayOperators } from "./operators/array.js";
+import { registerDateOperators } from "./operators/date.js";
 
 describe("core export", () => {
   const resetCore = () => {
@@ -25,30 +25,30 @@ describe("core export", () => {
   });
 
   it("should match equality operators in core", () => {
-    expect(query({ x: 10 }, { x: { $eq: 10 } })).toBe(true);
-    expect(query({ x: 10 }, { x: { $ne: 5 } })).toBe(true);
-    expect(query({ x: 10 }, { x: { $in: [5, 10, 15] } })).toBe(true);
-    expect(query({ x: 10 }, { x: { $nin: [1, 2, 3] } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $eq: 10 } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $ne: 5 } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $in: [5, 10, 15] } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $nin: [1, 2, 3] } })).toBe(true);
   });
 
   it("should match comparison operators in core", () => {
-    expect(query({ age: 25 }, { age: { $gt: 20 } })).toBe(true);
-    expect(query({ age: 25 }, { age: { $gte: 25 } })).toBe(true);
-    expect(query({ age: 25 }, { age: { $lt: 30 } })).toBe(true);
-    expect(query({ age: 25 }, { age: { $lte: 25 } })).toBe(true);
+    expect(match({ age: 25 }, { age: { $gt: 20 } })).toBe(true);
+    expect(match({ age: 25 }, { age: { $gte: 25 } })).toBe(true);
+    expect(match({ age: 25 }, { age: { $lt: 30 } })).toBe(true);
+    expect(match({ age: 25 }, { age: { $lte: 25 } })).toBe(true);
   });
 
   it("should match element operators in core", () => {
-    expect(query({ name: "Alice" }, { name: { $exists: true } })).toBe(true);
-    expect(query({ name: "Alice" }, { missing: { $exists: false } })).toBe(true);
-    expect(query({ age: 30 }, { age: { $type: "number" } })).toBe(true);
+    expect(match({ name: "Alice" }, { name: { $exists: true } })).toBe(true);
+    expect(match({ name: "Alice" }, { missing: { $exists: false } })).toBe(true);
+    expect(match({ age: 30 }, { age: { $type: "number" } })).toBe(true);
   });
 
   it("should match string operators in core", () => {
-    expect(query({ name: "Hello World" }, { name: { $startsWith: "Hello" } })).toBe(true);
-    expect(query({ name: "Hello World" }, { name: { $endsWith: "World" } })).toBe(true);
-    expect(query({ name: "Hello World" }, { name: { $includes: "lo Wo" } })).toBe(true);
-    expect(query({ name: "Hello World" }, { name: { $regex: "^Hello" } })).toBe(true);
+    expect(match({ name: "Hello World" }, { name: { $startsWith: "Hello" } })).toBe(true);
+    expect(match({ name: "Hello World" }, { name: { $endsWith: "World" } })).toBe(true);
+    expect(match({ name: "Hello World" }, { name: { $includes: "lo Wo" } })).toBe(true);
+    expect(match({ name: "Hello World" }, { name: { $regex: "^Hello" } })).toBe(true);
   });
 
   it("should not match date operators until registered", () => {

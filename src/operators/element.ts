@@ -1,16 +1,16 @@
 import { QUERY_EXISTS, QUERY_TYPE } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { ElementOperator, Predicate, QueryContext } from "../types.js";
+import type { ElementOperator, FinnaContext, Predicate } from "../types.js";
 
 /**
  * Creates a predicate for element operators.
  *
  * @param {ElementOperator} operator - The element operator (e.g. '$exists', '$type')
  * @param {any} expected - The expected value (boolean for $exists, string for $type)
- * @param {QueryContext} _ctx - Query context
+ * @param {FinnaContext} _ctx - Query context
  * @returns {Predicate} A predicate function for the element operator
  */
-export function createElementPredicate(operator: ElementOperator, expected: any, _ctx: QueryContext): Predicate {
+export function createElementPredicate(operator: ElementOperator, expected: any, _ctx: FinnaContext): Predicate {
   switch (operator) {
     case QUERY_EXISTS:
       return ((actual: any) => (expected ? actual !== undefined : actual === undefined)) as Predicate;

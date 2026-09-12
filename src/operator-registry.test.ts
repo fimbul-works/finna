@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { createFinnaContext } from "./context.js";
 import { createPredicate, registerAllOperators } from "./index.js";
 import { clearOperators, operatorGroups, registerOperators } from "./operator-registry.js";
 import { createOperatorPredicate } from "./predicate.js";
-import { createQueryContext } from "./query-context.js";
 
 describe("operator registry", () => {
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe("operator registry", () => {
   });
 
   it("should throw an error for unknown operators", () => {
-    const ctx = createQueryContext(false);
+    const ctx = createFinnaContext(false);
     expect(() => createOperatorPredicate("$unknownOperator" as any, 123, ctx)).toThrow();
   });
 

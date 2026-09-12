@@ -1,25 +1,28 @@
 {
-  "name": "@fimbul-works/query",
-  "description": "An ultra-lightweight, modular, and type-safe MongoDB-style query matching engine and predicate compiler for JavaScript and TypeScript.",
+  "name": "@fimbul-works/finna",
+  "description": "An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript.",
   "version": "1.0.0",
   "type": "module",
   "private": false,
   "license": "MIT",
   "author": "FimbulWorks <contact@fimbul.works>",
-  "homepage": "https://github.com/fimbul-works/query#readme",
+  "homepage": "https://github.com/fimbul-works/finna#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fimbul-works/query.git"
+    "url": "git+https://github.com/fimbul-works/finna.git"
   },
   "bugs": {
-    "url": "https://github.com/fimbul-works/query/issues"
+    "url": "https://github.com/fimbul-works/finna/issues"
   },
   "keywords": [
+    "finna",
+    "matcher",
+    "pattern-matching",
+    "predicate",
+    "ast-matcher",
     "query",
     "query-engine",
-    "predicate",
     "filter",
-    "matcher",
     "mongodb",
     "json-query",
     "compiler",

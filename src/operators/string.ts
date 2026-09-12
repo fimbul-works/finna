@@ -1,6 +1,6 @@
 import { QUERY_ENDS_WITH, QUERY_INCLUDES, QUERY_REGEX, QUERY_STARTS_WITH } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { Predicate, QueryContext, StringOperator } from "../types.js";
+import type { FinnaContext, Predicate, StringOperator } from "../types.js";
 import { resolveValue } from "./field.js";
 
 /**
@@ -8,10 +8,10 @@ import { resolveValue } from "./field.js";
  *
  * @param {StringOperator} operator - The string operator (e.g. '$regex', '$startsWith', '$endsWith', '$includes')
  * @param {any} expected - The expected value or regex
- * @param {QueryContext} _ctx - Query context
+ * @param {FinnaContext} _ctx - Query context
  * @returns {Predicate} A predicate function for the string operator
  */
-export function createStringPredicate(operator: StringOperator, expected: any, _ctx: QueryContext): Predicate {
+export function createStringPredicate(operator: StringOperator, expected: any, _ctx: FinnaContext): Predicate {
   switch (operator) {
     case QUERY_REGEX: {
       const re = expected instanceof RegExp ? expected : new RegExp(String(expected));

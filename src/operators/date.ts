@@ -11,17 +11,17 @@ import {
 } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
 import { createPredicate } from "../predicate.js";
-import type { DateOperator, Predicate, QueryContext } from "../types.js";
+import type { DateOperator, FinnaContext, Predicate } from "../types.js";
 
 /**
  * Creates a predicate for date operators.
  *
  * @param {DateOperator} operator - The date operator (e.g. '$year', '$month', '$utc')
  * @param {any} expected - The expected value or nested date filter
- * @param {QueryContext | boolean} [ctx=false] - Query context or useUTC flag
+ * @param {FinnaContext | boolean} [ctx=false] - Query context or useUTC flag
  * @returns {Predicate} A predicate function for the date operator
  */
-export function createDatePredicate(operator: DateOperator, expected: any, ctx: QueryContext): Predicate {
+export function createDatePredicate(operator: DateOperator, expected: any, ctx: FinnaContext): Predicate {
   const { useUTC } = ctx;
 
   // $utc is a context modifier

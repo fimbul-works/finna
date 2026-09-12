@@ -1,55 +1,55 @@
-# @fimbul-works/query
+# @fimbul-works/finna
 
-[![license](https://img.shields.io/npm/l/%40fimbul-works%2Fquery?color=brightgreen&style=flat-square)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/%40fimbul-works%2Fquery?color=blue&style=flat-square)](https://www.npmjs.com/package/@fimbul-works/query)
+[![license](https://img.shields.io/npm/l/%40fimbul-works%2Ffinna?color=brightgreen&style=flat-square)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/%40fimbul-works%2Ffinna?color=blue&style=flat-square)](https://www.npmjs.com/package/@fimbul-works/finna)
 [![code style](https://img.shields.io/badge/code_style-biome-dfdbd6?style=flat-square)](https://biomejs.dev)
 [![bundle size](https://img.shields.io/badge/bundle_size-ultra--light-blueviolet?style=flat-square)](#main-vs-core-export)
 
-An ultra-lightweight, modular, and type-safe MongoDB-style query matching engine and predicate compiler for JavaScript and TypeScript.
+An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript. Built for compiler AST transformations, document indexing, and reactive pipelines.
+
+> **Etymology:** Named after Old Norse *finna* for "to find, discover, encounter".
 
 ---
 
 ## Installation
 
 ```bash
-pnpm add @fimbul-works/query
+pnpm add @fimbul-works/finna
 # or
-npm install @fimbul-works/query
+npm install @fimbul-works/finna
 # or
-yarn add @fimbul-works/query
+yarn add @fimbul-works/finna
 ```
 
 ---
 
-## Features
+## Highlights
 
-* **MongoDB-Style Query Syntax**: Match objects using intuitive operators, nested object structures, and dot-notation paths (`"profile.score"`).
-* **Compiled Predicates**: Compile queries once with `compileQuery()` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `query()`.
-* **Main vs `/core` Exports**:
-  * `@fimbul-works/query`: Ready-to-use default export that automatically registers all built-in operator groups upon import.
-  * `@fimbul-works/query/core`: Lean, tree-shakeable export that does **not** register any operator groups by default, allowing you to selectively import only the operators your project needs.
+* **Universal Pattern Syntax**: Match objects and AST nodes using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
+* **Compiled Predicates**: Compile patterns once with `compile()` or `finna(pattern)` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
+* **AST & Compiler Friendly**: Clean, intuitive vocabulary designed for compiler AST selectors (GLSL, TypeScript, Babel) without database-specific baggage.
 * **Equality & Comparison**: Full support for `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, and `$nin` across numbers, strings, and `Date` instances.
-* **Logical Composition**: Combine complex query conditions with `$and`, `$or`, `$not`, and `$nor`.
+* **Logical Composition**: Combine complex conditions with `$and`, `$or`, `$not`, and `$nor`.
 * **String Operations**: Pattern and substring matching via `$regex`, `$startsWith`, `$endsWith`, and `$includes`.
 * **Array Operators**: Match arrays with `$all`, `$some`, `$none`, and `$size` (exact count or nested operator queries).
 * **Date Inspection & UTC**: Granular matching for date components (`$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`) with an optional `$utc` modifier.
 * **Element Checking**: Inspect property existence (`$exists`) and check data types (`$type`).
 * **Cross-Field References (`$field`)**: Compare a property dynamically against another property on the same root object (`{ updatedAt: { $gt: { $field: "createdAt" } } }`).
 * **Extensible Operator Registry**: Plug in custom operators or operator groups using `registerOperators()`, or clear/unregister them on demand.
-* **TypeScript-First**: Strict type definitions, generic query type inference (`Query<T>`), and autocomplete for operator keys.
+* **TypeScript-First**: Strict type definitions, generic pattern type inference (`Pattern<T>` / `Query<T>`), and autocomplete for operator keys.
 
 ---
 
 ## Main vs /core Export
 
-`@fimbul-works/query` provides two primary entry points depending on bundle size and customization requirements:
+`@fimbul-works/finna` provides two primary entry points depending on bundle size and customization requirements:
 
 | Entry Point | Pre-registered Operators | Ideal For |
 | :--- | :--- | :--- |
-| `@fimbul-works/query` | **All** built-in operators (`registerAllOperators()` is invoked automatically) | Standard applications wanting complete query capabilities out of the box with zero setup. |
-| `@fimbul-works/query/core` | **None** (operator registry starts completely empty) | Bundle-size-critical environments and tree-shaking; register only the operator groups you actually need. |
+| `@fimbul-works/finna` | **All** built-in operators (`registerAllOperators()` is invoked automatically) | Standard applications wanting complete pattern matching capabilities out of the box with zero setup. |
+| `@fimbul-works/finna/core` | **None** (operator registry starts completely empty) | Bundle-size-critical environments and tree-shaking; register only the operator groups you actually need. |
 
-When using `@fimbul-works/query/core`, you can selectively import and invoke individual operator group registers:
+When using `@fimbul-works/finna/core`, you can selectively import and invoke individual operator group registers:
 * `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
 * `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
 * `registerElementOperators()`: `$exists`, `$type`
@@ -61,9 +61,14 @@ When using `@fimbul-works/query/core`, you can selectively import and invoke ind
 
 ## Usage
 
-### 1. Basic Query Matching (`query`)
 ```typescript
-import { query } from "@fimbul-works/query";
+import finna, { compile, match } from "@fimbul-works/finna";
+```
+
+### 1. One-Shot Pattern Matching (`match` or `finna`)
+
+```typescript
+import { match } from "@fimbul-works/finna";
 
 const user = {
   name: "Alice",
@@ -73,8 +78,8 @@ const user = {
   createdAt: new Date("2024-01-15T08:00:00Z"),
 };
 
-// Evaluate a query with equality, comparison, nested paths, and arrays
-const isMatch = query(user, {
+// Evaluate a pattern with equality, comparison, nested paths, and arrays
+const isMatch = match(user, {
   name: "Alice",
   age: { $gte: 18, $lt: 65 },
   "profile.score": { $gt: 90 },
@@ -84,9 +89,12 @@ const isMatch = query(user, {
 console.log(isMatch); // true
 ```
 
-### 2. Compiled Predicates (`compileQuery`)
+### 2. Compiled Predicates (`compile`)
+
+Compile once into an optimized, reusable predicate function:
+
 ```typescript
-import { compileQuery } from "@fimbul-works/query";
+import { compile } from "@fimbul-works/finna";
 
 interface Product {
   id: string;
@@ -102,24 +110,56 @@ const inventory: Product[] = [
 ];
 
 // Compile once into a reusable predicate function
-const isAffordableAndInStock = compileQuery<Product>({
+const isAffordableAndInStock = compile<Product>({
   price: { $lte: 100 },
   inStock: true,
 });
 
-// Efficiently filter arrays
-const available = inventory.filter((item) => isAffordableAndInStock(item));
+// Efficiently filter collections
+const available = inventory.filter(isAffordableAndInStock);
 // [{ id: "3", title: "USB-C Hub", price: 35, inStock: true }]
 ```
 
-### 3. Tree-Shaking with the Core Export (`/core`)
+### 3. AST & Compiler Pattern Matching
+
+In compiler and AST transformer architectures (like Selector-Rule patterns for GLSL or JS/TS ASTs):
+
+```typescript
+import finna, { match } from "@fimbul-works/finna";
+
+interface ASTNode {
+  type: string;
+  name?: string;
+  qualifier?: string;
+}
+
+const node: ASTNode = {
+  type: "VariableDeclaration",
+  name: "u_time",
+  qualifier: "uniform",
+};
+
+// 1. One-shot test
+if (match(node, { qualifier: "uniform", name: /^u_/ })) {
+  // Matched shader uniform!
+}
+
+// 2. Or compile an AST rule selector with finna():
+const isUniform = finna<ASTNode>({ qualifier: "uniform" });
+if (isUniform(node)) {
+  // ...
+}
+```
+
+### 4. Tree-Shaking with the Core Export (`/core`)
+
 ```typescript
 import {
-  compileQuery,
-  query,
+  compile,
+  match,
   registerComparisonOperators,
   registerEqualityOperators,
-} from "@fimbul-works/query/core";
+} from "@fimbul-works/finna/core";
 
 // The /core export does NOT register any operators by default.
 // Register only the operator groups your bundle requires:
@@ -128,7 +168,7 @@ registerComparisonOperators();
 
 const record = { score: 85, rank: "gold" };
 
-const isEligible = query(record, {
+const isEligible = match(record, {
   score: { $gte: 80 },
   rank: { $eq: "gold" },
 });
@@ -136,9 +176,10 @@ const isEligible = query(record, {
 console.log(isEligible); // true
 ```
 
-### 4. Cross-Field References & Date Queries
+### 5. Cross-Field References & Date Queries
+
 ```typescript
-import { query } from "@fimbul-works/query";
+import { match } from "@fimbul-works/finna";
 
 const task = {
   title: "Deliver Project",
@@ -148,13 +189,13 @@ const task = {
 };
 
 // 1. Cross-field comparison using $field
-const isValidDeadline = query(task, {
+const isValidDeadline = match(task, {
   deadline: { $gt: { $field: "createdAt" } },
   "metrics.targetScore": { $gt: { $field: "metrics.initialScore" } },
 });
 
 // 2. Granular date component queries & UTC modifier
-const isMarch2024 = query(task, {
+const isMarch2024 = match(task, {
   createdAt: {
     $utc: {
       $year: 2024,
@@ -165,9 +206,10 @@ const isMarch2024 = query(task, {
 });
 ```
 
-### 5. Custom Operator Registration
+### 6. Custom Operator Registration
+
 ```typescript
-import { compileQuery, registerOperators } from "@fimbul-works/query";
+import { compile, registerOperators } from "@fimbul-works/finna";
 
 // Define and register a custom operator (e.g., $divisibleBy)
 const unregister = registerOperators([
@@ -175,7 +217,7 @@ const unregister = registerOperators([
   (op, expected) => (actual) => typeof actual === "number" && actual % expected === 0,
 ]);
 
-const isEven = compileQuery({ count: { $divisibleBy: 2 } as any });
+const isEven = compile({ count: { $divisibleBy: 2 }});
 console.log(isEven({ count: 42 })); // true
 
 // Unregister when no longer needed

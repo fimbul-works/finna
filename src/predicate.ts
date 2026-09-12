@@ -1,6 +1,6 @@
+import { createFinnaContext } from "./context.js";
 import { operatorGroups } from "./operator-registry.js";
-import { createQueryContext } from "./query-context.js";
-import type { Predicate, QueryContext, QueryOperator } from "./types.js";
+import type { FinnaContext, Predicate, QueryOperator } from "./types.js";
 import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
 
 /**
@@ -9,10 +9,10 @@ import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
  * @template T - Type of the value to test
  *
  * @param {any} filter - The query filter to create a predicate for
- * @param {QueryContext | boolean} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext | boolean} [ctx=createQueryContext()] - Optional query context
  * @returns {Predicate<T>} A predicate function for the given filter
  */
-export function createPredicate<T = any>(filter: any, ctx: QueryContext = createQueryContext()): Predicate<T> {
+export function createPredicate<T = any>(filter: any, ctx: FinnaContext = createFinnaContext()): Predicate<T> {
   if (filter instanceof RegExp) {
     return ((actual: any) => typeof actual === "string" && (filter as RegExp).test(actual)) as Predicate<T>;
   }
@@ -51,13 +51,13 @@ export function createPredicate<T = any>(filter: any, ctx: QueryContext = create
  * @template T
  * @param {QueryOperator} operator - The operator string (e.g. '$eq', '$gt')
  * @param {any} expected - The expected value or nested filter
- * @param {QueryContext} ctx - Query context
+ * @param {FinnaContext} ctx - Query context
  * @returns {Predicate<T>} A predicate function for the operator
  */
 export function createOperatorPredicate<T = any>(
   operator: QueryOperator,
   expected: any,
-  ctx: QueryContext,
+  ctx: FinnaContext,
 ): Predicate<T> {
   for (const group of operatorGroups) {
     const [matches, register] = group;

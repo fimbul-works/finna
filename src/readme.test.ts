@@ -1,13 +1,13 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { clearOperators, registerComparisonOperators, registerEqualityOperators } from "./index.core.js";
-import { compileQuery, query, registerAllOperators, registerOperators } from "./index.js";
+import finna, { compile, match, registerAllOperators, registerOperators } from "./index.js";
 
 describe("README usage examples", () => {
   afterAll(() => {
     registerAllOperators();
   });
 
-  it("1. Basic Query Matching (query)", () => {
+  it("1. Basic Pattern Matching (match & finna)", () => {
     const user = {
       name: "Alice",
       age: 28,
@@ -16,18 +16,20 @@ describe("README usage examples", () => {
       createdAt: new Date("2024-01-15T08:00:00Z"),
     };
 
-    // Evaluate a query with equality, comparison, nested paths, and arrays
-    const isMatch = query(user, {
+    // Evaluate with match()
+    const isMatch = match(user, {
       name: "Alice",
       age: { $gte: 18, $lt: 65 },
       "profile.score": { $gt: 90 },
       tags: { $some: "admin" },
     });
-
     expect(isMatch).toBe(true);
+
+    // Or evaluate directly with finna()
+    expect(finna(user, { name: "Alice", age: { $gte: 18 } })).toBe(true);
   });
 
-  it("2. Compiled Predicates (compileQuery)", () => {
+  it("2. Compiled Predicates (compile)", () => {
     interface Product {
       id: string;
       title: string;
@@ -42,7 +44,7 @@ describe("README usage examples", () => {
     ];
 
     // Compile once into a reusable predicate function
-    const isAffordableAndInStock = compileQuery<Product>({
+    const isAffordableAndInStock = compile<Product>({
       price: { $lte: 100 },
       inStock: true,
     });
@@ -53,12 +55,35 @@ describe("README usage examples", () => {
     expect(available).toEqual([{ id: "3", title: "USB-C Hub", price: 35, inStock: true }]);
   });
 
-  it("3. Tree-Shaking with the Core Export (/core)", () => {
+  it("3. AST Pattern Matching Example", () => {
+    interface ASTNode {
+      type: string;
+      name?: string;
+      qualifier?: string;
+      async?: boolean;
+    }
+
+    const glslUniform = {
+      type: "VariableDeclaration",
+      name: "u_time",
+      qualifier: "uniform",
+    };
+
+    // Match AST patterns
+    expect(match(glslUniform, { qualifier: "uniform", name: /^u_/ })).toBe(true);
+
+    // Or compile an AST matcher with finna()
+    const isUniform = finna<ASTNode>({ qualifier: "uniform" });
+    expect(isUniform(glslUniform)).toBe(true);
+    expect(isUniform({ type: "VariableDeclaration", qualifier: "attribute" })).toBe(false);
+  });
+
+  it("4. Tree-Shaking with the Core Export (/core)", () => {
     // The /core export does NOT register any operators by default.
     clearOperators();
 
     // Verify operator fails before registration
-    expect(() => query({ score: 85 }, { score: { $gte: 80 } })).toThrow();
+    expect(() => match({ score: 85 }, { score: { $gte: 80 } })).toThrow();
 
     // Register only the operator groups your bundle requires:
     registerEqualityOperators();
@@ -66,7 +91,7 @@ describe("README usage examples", () => {
 
     const record = { score: 85, rank: "gold" };
 
-    const isEligible = query(record, {
+    const isEligible = match(record, {
       score: { $gte: 80 },
       rank: { $eq: "gold" },
     });
@@ -77,7 +102,7 @@ describe("README usage examples", () => {
     registerAllOperators();
   });
 
-  it("4. Cross-Field References & Date Queries", () => {
+  it("5. Cross-Field References & Date Queries", () => {
     const task = {
       title: "Deliver Project",
       createdAt: new Date("2024-03-01T09:00:00Z"),
@@ -86,14 +111,14 @@ describe("README usage examples", () => {
     };
 
     // 1. Cross-field comparison using $field
-    const isValidDeadline = query(task, {
+    const isValidDeadline = match(task, {
       deadline: { $gt: { $field: "createdAt" } },
       "metrics.targetScore": { $gt: { $field: "metrics.initialScore" } },
     });
     expect(isValidDeadline).toBe(true);
 
     // 2. Granular date component queries & UTC modifier
-    const isMarch2024 = query(task, {
+    const isMarch2024 = match(task, {
       createdAt: {
         $utc: {
           $year: 2024,
@@ -105,19 +130,19 @@ describe("README usage examples", () => {
     expect(isMarch2024).toBe(true);
   });
 
-  it("5. Custom Operator Registration", () => {
+  it("6. Custom Operator Registration", () => {
     // Define and register a custom operator (e.g., $divisibleBy)
     const unregister = registerOperators([
       (op) => op === "$divisibleBy",
       (_op, expected) => (actual) => typeof actual === "number" && actual % expected === 0,
     ]);
 
-    const isEven = compileQuery({ count: { $divisibleBy: 2 } as any });
+    const isEven = compile({ count: { $divisibleBy: 2 } as any });
     expect(isEven({ count: 42 })).toBe(true);
     expect(isEven({ count: 43 })).toBe(false);
 
     // Unregister when no longer needed
     unregister();
-    expect(() => compileQuery({ count: { $divisibleBy: 2 } as any })({ count: 42 })).toThrow();
+    expect(() => compile({ count: { $divisibleBy: 2 } as any })({ count: 42 })).toThrow();
   });
 });

@@ -1,6 +1,6 @@
 import { QUERY_GT, QUERY_GTE, QUERY_LT, QUERY_LTE } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { ComparisonOperator, Predicate, QueryContext } from "../types.js";
+import type { ComparisonOperator, FinnaContext, Predicate } from "../types.js";
 import { resolveValue } from "./field.js";
 
 /**
@@ -8,10 +8,10 @@ import { resolveValue } from "./field.js";
  *
  * @param {ComparisonOperator} operator - The comparison operator (e.g. '$gt', '$gte', '$lt', '$lte')
  * @param {any} expected - The expected value
- * @param {QueryContext} _ctx - Query context
+ * @param {FinnaContext} _ctx - Query context
  * @returns {Predicate} A predicate function for the comparison operator
  */
-export function createComparisonPredicate(operator: ComparisonOperator, expected: any, _ctx: QueryContext): Predicate {
+export function createComparisonPredicate(operator: ComparisonOperator, expected: any, _ctx: FinnaContext): Predicate {
   switch (operator) {
     case QUERY_GT:
       return ((actual: any, root?: any) => actual > resolveValue(expected, root)) as Predicate;

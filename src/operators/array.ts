@@ -1,17 +1,17 @@
 import { QUERY_ALL, QUERY_NONE, QUERY_SIZE, QUERY_SOME } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
 import { createPredicate } from "../predicate.js";
-import type { ArrayOperator, Predicate, QueryContext } from "../types.js";
+import type { ArrayOperator, FinnaContext, Predicate } from "../types.js";
 
 /**
  * Creates a predicate for array operators.
  *
  * @param {ArrayOperator} operator - The array operator (e.g. '$all', '$some', '$none', '$size')
  * @param {any} expected - The expected values or nested filter for size
- * @param {QueryContext} ctx - Query context
+ * @param {FinnaContext} ctx - Query context
  * @returns {Predicate} A predicate function for the array operator
  */
-export function createArrayPredicate(operator: ArrayOperator, expected: any, ctx: QueryContext): Predicate {
+export function createArrayPredicate(operator: ArrayOperator, expected: any, ctx: FinnaContext): Predicate {
   const checkArray = (actual: any) => {
     if (!Array.isArray(actual)) {
       if (actual !== null && actual !== undefined) {

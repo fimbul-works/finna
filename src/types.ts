@@ -13,15 +13,15 @@ export interface FieldReference {
 /**
  * Equality operators.
  */
-export interface EqualityOperators<V> {
+export interface EqualityOperators<T> {
   /** Equality operator */
-  $eq?: V | FieldReference;
+  $eq?: T | FieldReference;
   /** Inequality operator */
-  $ne?: V | FieldReference;
+  $ne?: T | FieldReference;
   /** In operator */
-  $in?: V[];
+  $in?: T[];
   /** Not in operator */
-  $nin?: V[];
+  $nin?: T[];
 }
 
 /**
@@ -32,14 +32,14 @@ export type EqualityOperator = keyof EqualityOperators<any>;
 /**
  * Combined comparison operators for sortable types.
  */
-export interface ComparisonOperators<V> {
-  $gt?: V | FieldReference;
+export interface ComparisonOperators<T> {
+  $gt?: T | FieldReference;
   /** Greater than or equal to operator */
-  $gte?: V | FieldReference;
+  $gte?: T | FieldReference;
   /** Less than operator */
-  $lt?: V | FieldReference;
+  $lt?: T | FieldReference;
   /** Less than or equal to operator */
-  $lte?: V | FieldReference;
+  $lte?: T | FieldReference;
 }
 
 /**
@@ -118,13 +118,13 @@ export type DateOperator = keyof DateOperators;
 /**
  * Array-specific query operators.
  */
-export interface ArrayOperators<E> {
+export interface ArrayOperators<T> {
   /** Must contain all specified values or match sub-query */
-  $all?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
+  $all?: T[] | QueryValue<T> | (T extends object ? Query<T> : never);
   /** Must contain at least one of the specified values or match sub-query */
-  $some?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
+  $some?: T[] | QueryValue<T> | (T extends object ? Query<T> : never);
   /** Must not contain any of the specified values or match sub-query */
-  $none?: E[] | QueryValue<E> | (E extends object ? Query<E> : never);
+  $none?: T[] | QueryValue<T> | (T extends object ? Query<T> : never);
   /** Size of the array */
   $size?: number | OperatorQuery<number>;
 }
@@ -137,15 +137,15 @@ export type ArrayOperator = keyof ArrayOperators<any>;
 /**
  * Logical operators for combining queries.
  */
-export interface LogicalOperators<V> {
+export interface LogicalOperators<T> {
   /** Logical AND operator */
-  $and?: Query<V>[];
+  $and?: Query<T>[];
   /** Logical OR operator */
-  $or?: Query<V>[];
+  $or?: Query<T>[];
   /** Logical NOT operator */
-  $not?: Query<V>;
+  $not?: Query<T>;
   /** Logical NOR operator */
-  $nor?: Query<V>[];
+  $nor?: Query<T>[];
 }
 
 /**
@@ -156,32 +156,32 @@ export type LogicalOperator = keyof LogicalOperators<any>;
 /**
  * Full operator query for a value.
  */
-export type OperatorQuery<V> = EqualityOperators<V> &
+export type OperatorQuery<T> = EqualityOperators<T> &
   ElementOperators &
-  (V extends Sortable ? ComparisonOperators<V> : object) &
-  (V extends string ? StringOperators : object) &
-  (V extends Date ? DateOperators : object) &
-  (V extends Array<infer E> ? ArrayOperators<E> : object);
+  (T extends Sortable ? ComparisonOperators<T> : object) &
+  (T extends string ? StringOperators : object) &
+  (T extends Date ? DateOperators : object) &
+  (T extends Array<infer I> ? ArrayOperators<I> : object);
 
 /**
  * A query value can be a literal, an operator object, or a RegExp (for strings).
  */
-export type QueryValue<V> = V | OperatorQuery<V> | FieldReference | (V extends string ? RegExp : never);
+export type QueryValue<T> = T | OperatorQuery<T> | FieldReference | (T extends string ? RegExp : never);
 
 /**
  * Recursively define Query type.
  * Supports top-level keys of T and arbitrary string paths (dotted notation).
  */
 export type Query<T> = {
-  [P in keyof T]?: QueryValue<T[P]> | (T[P] extends object ? Query<T[P]> : never);
+  [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never);
 } & LogicalOperators<T> & {
     [path: string]: any;
   };
 
 /**
- * Context for a query execution.
+ * Context for a predicate execution.
  */
-export interface QueryContext extends Record<string, any> {
+export interface FinnaContext extends Record<string, any> {
   /** Whether to use UTC for date-related comparisons */
   useUTC: boolean;
   /** Set of warnings generated during query compilation */
@@ -212,10 +212,10 @@ export type OperatorStringMatchesFn = (operator: string) => boolean;
  *
  * @param {any} operator - The operator string
  * @param {any} expected - The expected value or nested filter
- * @param {QueryContext} context - Query context
+ * @param {FinnaContext} context - Query context
  * @returns {Predicate} Predicate function
  */
-export type OperatorRegisterFn = (operator: any, expected: any, context: QueryContext) => Predicate;
+export type OperatorRegisterFn = (operator: any, expected: any, context: FinnaContext) => Predicate;
 
 /**
  * Tuple representation of an operator group: [matchesFn, registerFn].

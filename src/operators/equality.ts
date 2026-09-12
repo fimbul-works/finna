@@ -1,6 +1,6 @@
 import { QUERY_EQ, QUERY_IN, QUERY_NOT_EQ, QUERY_NOT_IN } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { EqualityOperator, Predicate, QueryContext } from "../types.js";
+import type { EqualityOperator, FinnaContext, Predicate } from "../types.js";
 import { isDeepEqual } from "../util.js";
 import { resolveValue } from "./field.js";
 
@@ -9,10 +9,10 @@ import { resolveValue } from "./field.js";
  *
  * @param {EqualityOperator} operator - The equality operator (e.g. '$eq', '$ne', '$in', '$nin')
  * @param {any} expected - The expected value or array of values
- * @param {QueryContext} ctx - Query context
+ * @param {FinnaContext} ctx - Query context
  * @returns {Predicate} A predicate function for the equality operator
  */
-export function createEqualityPredicate(operator: EqualityOperator, expected: any, ctx: QueryContext): Predicate {
+export function createEqualityPredicate(operator: EqualityOperator, expected: any, ctx: FinnaContext): Predicate {
   if ((operator === QUERY_IN || operator === QUERY_NOT_IN) && !Array.isArray(expected)) {
     ctx.warnings.add(`Operator ${operator} expects an array, but got ${typeof expected}`);
   }
