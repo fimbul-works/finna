@@ -36,7 +36,7 @@ yarn add @fimbul-works/finna
 * **Element Checking**: Inspect property existence (`$exists`) and check data types (`$type`).
 * **Cross-Field References (`$field`)**: Compare a property dynamically against another property on the same root object (`{ updatedAt: { $gt: { $field: "createdAt" } } }`).
 * **Extensible Operator Registry**: Plug in custom operators or operator groups using `registerOperators()`, or clear/unregister them on demand.
-* **TypeScript-First**: Strict type definitions, generic pattern type inference (`Pattern<T>` / `Query<T>`), and autocomplete for operator keys.
+* **TypeScript-First**: Strict type definitions, generic pattern type inference (`Query<T>`), and autocomplete for operator keys.
 
 ---
 
@@ -61,11 +61,7 @@ When using `@fimbul-works/finna/core`, you can selectively import and invoke ind
 
 ## Usage
 
-```typescript
-import finna, { compile, match } from "@fimbul-works/finna";
-```
-
-### 1. One-Shot Pattern Matching (`match` or `finna`)
+### 1. One-Shot Pattern Matching (`match`)
 
 ```typescript
 import { match } from "@fimbul-works/finna";
@@ -120,38 +116,7 @@ const available = inventory.filter(isAffordableAndInStock);
 // [{ id: "3", title: "USB-C Hub", price: 35, inStock: true }]
 ```
 
-### 3. AST & Compiler Pattern Matching
-
-In compiler and AST transformer architectures (like Selector-Rule patterns for GLSL or JS/TS ASTs):
-
-```typescript
-import finna, { match } from "@fimbul-works/finna";
-
-interface ASTNode {
-  type: string;
-  name?: string;
-  qualifier?: string;
-}
-
-const node: ASTNode = {
-  type: "VariableDeclaration",
-  name: "u_time",
-  qualifier: "uniform",
-};
-
-// 1. One-shot test
-if (match(node, { qualifier: "uniform", name: /^u_/ })) {
-  // Matched shader uniform!
-}
-
-// 2. Or compile an AST rule selector with finna():
-const isUniform = finna<ASTNode>({ qualifier: "uniform" });
-if (isUniform(node)) {
-  // ...
-}
-```
-
-### 4. Tree-Shaking with the Core Export (`/core`)
+### 3. Tree-Shaking with the Core Export (`/core`)
 
 ```typescript
 import {
@@ -176,7 +141,7 @@ const isEligible = match(record, {
 console.log(isEligible); // true
 ```
 
-### 5. Cross-Field References & Date Queries
+### 4. Cross-Field References & Date Queries
 
 ```typescript
 import { match } from "@fimbul-works/finna";
@@ -206,7 +171,7 @@ const isMarch2024 = match(task, {
 });
 ```
 
-### 6. Custom Operator Registration
+### 5. Custom Operator Registration
 
 ```typescript
 import { compile, registerOperators } from "@fimbul-works/finna";
