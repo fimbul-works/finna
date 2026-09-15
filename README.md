@@ -25,9 +25,8 @@ yarn add @fimbul-works/finna
 
 ## Highlights
 
-* **Universal Pattern Syntax**: Match objects and AST nodes using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
+* **Universal Pattern Syntax**: Match objects using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
 * **Compiled Predicates**: Compile patterns once with `compile()` or `finna(pattern)` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
-* **AST & Compiler Friendly**: Clean, intuitive vocabulary designed for compiler AST selectors (GLSL, TypeScript, Babel) without database-specific baggage.
 * **Equality & Comparison**: Full support for `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, and `$nin` across numbers, strings, and `Date` instances.
 * **Logical Composition**: Combine complex conditions with `$and`, `$or`, `$not`, and `$nor`.
 * **String Operations**: Pattern and substring matching via `$regex`, `$startsWith`, `$endsWith`, and `$includes`.
