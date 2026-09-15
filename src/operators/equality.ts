@@ -1,6 +1,5 @@
-import { QUERY_EQ, QUERY_IN, QUERY_NOT_EQ, QUERY_NOT_IN } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { EqualityOperator, FinnaContext, Predicate } from "../types.js";
+import type { EqualityOperator, FilterPredicate, FinnaContext } from "../types.js";
 import { isDeepEqual } from "../util.js";
 import { resolveValue } from "./field.js";
 
@@ -10,24 +9,24 @@ import { resolveValue } from "./field.js";
  * @param {EqualityOperator} operator - The equality operator (e.g. '$eq', '$ne', '$in', '$nin')
  * @param {any} expected - The expected value or array of values
  * @param {FinnaContext} ctx - Query context
- * @returns {Predicate} A predicate function for the equality operator
+ * @returns {FilterPredicate} A predicate function for the equality operator
  */
-export function createEqualityPredicate(operator: EqualityOperator, expected: any, ctx: FinnaContext): Predicate {
-  if ((operator === QUERY_IN || operator === QUERY_NOT_IN) && !Array.isArray(expected)) {
+export function createEqualityPredicate(operator: EqualityOperator, expected: any, ctx: FinnaContext): FilterPredicate {
+  if ((operator === "$in" || operator === "$nin") && !Array.isArray(expected)) {
     ctx.warnings.add(`Operator ${operator} expects an array, but got ${typeof expected}`);
   }
 
   switch (operator) {
-    case QUERY_EQ:
-      return ((actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root))) as Predicate;
-    case QUERY_NOT_EQ:
-      return ((actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root))) as Predicate;
-    case QUERY_IN:
+    case "$eq":
+      return ((actual: any, root?: any) => isDeepEqual(actual, resolveValue(expected, root))) as FilterPredicate;
+    case "$ne":
+      return ((actual: any, root?: any) => !isDeepEqual(actual, resolveValue(expected, root))) as FilterPredicate;
+    case "$in":
       return ((actual: any) =>
-        Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item))) as Predicate;
-    case QUERY_NOT_IN:
+        Array.isArray(expected) && expected.some((item) => isDeepEqual(actual, item))) as FilterPredicate;
+    case "$nin":
       return ((actual: any) =>
-        Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item))) as Predicate;
+        Array.isArray(expected) && !expected.some((item) => isDeepEqual(actual, item))) as FilterPredicate;
   }
 
   throw new Error(`Invalid equality query operator: ${operator}`);
@@ -40,7 +39,7 @@ export function createEqualityPredicate(operator: EqualityOperator, expected: an
  * @returns {boolean} `true` if it's an equality operator
  */
 const isEqualityOperator = (op: string): op is EqualityOperator =>
-  op === QUERY_EQ || op === QUERY_NOT_EQ || op === QUERY_IN || op === QUERY_NOT_IN;
+  op === "$eq" || op === "$ne" || op === "$in" || op === "$nin";
 
 /**
  * Registers equality operators into the query engine.

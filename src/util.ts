@@ -1,13 +1,10 @@
-import { QUERY_PREFIX } from "./constants.js";
-
 /**
  * Check if a value is an object.
  * @param {any} value - The value to check
  * @returns {boolean} `true` if the value is an object, `false` otherwise
  */
-export function isObject<T extends object = object>(value: any): value is T {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+export const isObject = <T extends object = object>(value: any): value is T =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
 
 /**
  * Performs a deep equality check between two values.
@@ -62,9 +59,9 @@ export function isOperatorObject(val: any): val is Record<string, any> {
     return false;
   }
 
-  const hasOperators = keys.some((k) => k.startsWith(QUERY_PREFIX));
+  const hasOperators = keys.some((k) => k.startsWith("$"));
   if (hasOperators) {
-    if (!keys.every((k) => k.startsWith(QUERY_PREFIX))) {
+    if (!keys.every((k) => k.startsWith("$"))) {
       throw new Error("Mixing operator keys with regular keys is not allowed.");
     }
     return true;

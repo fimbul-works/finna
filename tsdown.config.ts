@@ -3,7 +3,6 @@ import { defineConfig, type UserConfig } from "tsdown";
 const entryPoints: Record<string, string> = {
   finna: "src/index.ts",
   "finna.core": "src/index.core.ts",
-  constants: "src/constants.ts",
 };
 
 const commonConfig: UserConfig = {

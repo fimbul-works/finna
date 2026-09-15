@@ -1,5 +1,4 @@
 import { getAtPath } from "@fimbul-works/nested-path";
-import { QUERY_FIELD } from "../constants.js";
 import type { FieldReference } from "../types.js";
 import { isObject } from "../util.js";
 
@@ -13,11 +12,11 @@ import { isObject } from "../util.js";
 export function resolveValue(value: any, root?: any): any {
   if (
     isObject<FieldReference>(value) &&
-    QUERY_FIELD in value &&
-    typeof value[QUERY_FIELD as keyof FieldReference] === "string"
+    "$field" in value &&
+    typeof value["$field" as keyof FieldReference] === "string"
   ) {
     if (!root) return undefined;
-    return getAtPath(root, value[QUERY_FIELD as keyof FieldReference]);
+    return getAtPath(root, value["$field" as keyof FieldReference]);
   }
   return value;
 }

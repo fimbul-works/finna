@@ -1,6 +1,5 @@
-import { QUERY_ENDS_WITH, QUERY_INCLUDES, QUERY_REGEX, QUERY_STARTS_WITH } from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
-import type { FinnaContext, Predicate, StringOperator } from "../types.js";
+import type { FilterPredicate, FinnaContext, StringOperator } from "../types.js";
 import { resolveValue } from "./field.js";
 
 /**
@@ -9,23 +8,25 @@ import { resolveValue } from "./field.js";
  * @param {StringOperator} operator - The string operator (e.g. '$regex', '$startsWith', '$endsWith', '$includes')
  * @param {any} expected - The expected value or regex
  * @param {FinnaContext} _ctx - Query context
- * @returns {Predicate} A predicate function for the string operator
+ * @returns {FilterPredicate} A predicate function for the string operator
  */
-export function createStringPredicate(operator: StringOperator, expected: any, _ctx: FinnaContext): Predicate {
+export function createStringPredicate(operator: StringOperator, expected: any, _ctx: FinnaContext): FilterPredicate {
+  const isStr = (actual: any) => typeof actual === "string";
+
   switch (operator) {
-    case QUERY_REGEX: {
+    case "$regex": {
       const re = expected instanceof RegExp ? expected : new RegExp(String(expected));
-      return ((actual: any) => typeof actual === "string" && re.test(actual)) as Predicate;
+      return ((actual: any) => isStr(actual) && re.test(actual)) as FilterPredicate;
     }
-    case QUERY_STARTS_WITH:
+    case "$startsWith":
       return ((actual: any, root?: any) =>
-        typeof actual === "string" && actual.startsWith(String(resolveValue(expected, root)))) as Predicate;
-    case QUERY_ENDS_WITH:
+        isStr(actual) && actual.startsWith(String(resolveValue(expected, root)))) as FilterPredicate;
+    case "$endsWith":
       return ((actual: any, root?: any) =>
-        typeof actual === "string" && actual.endsWith(String(resolveValue(expected, root)))) as Predicate;
-    case QUERY_INCLUDES:
+        isStr(actual) && actual.endsWith(String(resolveValue(expected, root)))) as FilterPredicate;
+    case "$includes":
       return ((actual: any, root?: any) =>
-        typeof actual === "string" && actual.includes(String(resolveValue(expected, root)))) as Predicate;
+        isStr(actual) && actual.includes(String(resolveValue(expected, root)))) as FilterPredicate;
   }
 
   throw new Error(`Invalid string query operator: ${operator}`);
@@ -38,7 +39,7 @@ export function createStringPredicate(operator: StringOperator, expected: any, _
  * @returns {boolean} `true` if it's a string operator
  */
 const isStringOperator = (op: string): op is StringOperator =>
-  op === QUERY_REGEX || op === QUERY_STARTS_WITH || op === QUERY_ENDS_WITH || op === QUERY_INCLUDES;
+  op === "$regex" || op === "$startsWith" || op === "$endsWith" || op === "$includes";
 
 /**
  * Registers string operators into the query engine.

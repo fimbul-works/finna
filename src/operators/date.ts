@@ -1,17 +1,6 @@
-import {
-  QUERY_DATE,
-  QUERY_HOUR,
-  QUERY_MINUTE,
-  QUERY_MONTH,
-  QUERY_MS,
-  QUERY_SECOND,
-  QUERY_UTC,
-  QUERY_WEEKDAY,
-  QUERY_YEAR,
-} from "../constants.js";
 import { registerOperators } from "../operator-registry.js";
 import { createPredicate } from "../predicate.js";
-import type { DateOperator, FinnaContext, Predicate } from "../types.js";
+import type { DateOperator, FilterPredicate, FinnaContext } from "../types.js";
 
 /**
  * Creates a predicate for date operators.
@@ -19,18 +8,18 @@ import type { DateOperator, FinnaContext, Predicate } from "../types.js";
  * @param {DateOperator} operator - The date operator (e.g. '$year', '$month', '$utc')
  * @param {any} expected - The expected value or nested date filter
  * @param {FinnaContext | boolean} [ctx=false] - Query context or useUTC flag
- * @returns {Predicate} A predicate function for the date operator
+ * @returns {FilterPredicate} A predicate function for the date operator
  */
-export function createDatePredicate(operator: DateOperator, expected: any, ctx: FinnaContext): Predicate {
+export function createDatePredicate(operator: DateOperator, expected: any, ctx: FinnaContext): FilterPredicate {
   const { useUTC } = ctx;
 
   // $utc is a context modifier
-  if (operator === QUERY_UTC) {
+  if (operator === "$utc") {
     const predicate = createPredicate(expected, { ...ctx, useUTC: true });
-    return ((actual: any, root?: any) => predicate(actual, root)) as Predicate;
+    return ((actual: any, root?: any) => predicate(actual, root)) as FilterPredicate;
   }
 
-  const predicate: Predicate =
+  const predicate: FilterPredicate =
     typeof expected === "number" ? (((v: number) => v === expected) as any) : createPredicate(expected, ctx);
 
   return ((actual: any, root?: any) => {
@@ -52,28 +41,28 @@ export function createDatePredicate(operator: DateOperator, expected: any, ctx: 
 
     let value: number;
     switch (operator) {
-      case QUERY_YEAR:
+      case "$year":
         value = useUTC ? date.getUTCFullYear() : date.getFullYear();
         break;
-      case QUERY_MONTH:
+      case "$month":
         value = useUTC ? date.getUTCMonth() : date.getMonth();
         break;
-      case QUERY_DATE:
+      case "$date":
         value = useUTC ? date.getUTCDate() : date.getDate();
         break;
-      case QUERY_WEEKDAY:
+      case "$weekday":
         value = useUTC ? date.getUTCDay() : date.getDay();
         break;
-      case QUERY_HOUR:
+      case "$hour":
         value = useUTC ? date.getUTCHours() : date.getHours();
         break;
-      case QUERY_MINUTE:
+      case "$minute":
         value = useUTC ? date.getUTCMinutes() : date.getMinutes();
         break;
-      case QUERY_SECOND:
+      case "$second":
         value = useUTC ? date.getUTCSeconds() : date.getSeconds();
         break;
-      case QUERY_MS:
+      case "$ms":
         value = useUTC ? date.getUTCMilliseconds() : date.getMilliseconds();
         break;
       default:
@@ -81,7 +70,7 @@ export function createDatePredicate(operator: DateOperator, expected: any, ctx: 
     }
 
     return predicate(value, root);
-  }) as Predicate;
+  }) as FilterPredicate;
 }
 
 /**
@@ -91,15 +80,15 @@ export function createDatePredicate(operator: DateOperator, expected: any, ctx: 
  * @returns {boolean} `true` if it's a date operator
  */
 const isDateOperator = (op: string): op is DateOperator =>
-  op === QUERY_YEAR ||
-  op === QUERY_MONTH ||
-  op === QUERY_DATE ||
-  op === QUERY_WEEKDAY ||
-  op === QUERY_HOUR ||
-  op === QUERY_MINUTE ||
-  op === QUERY_SECOND ||
-  op === QUERY_MS ||
-  op === QUERY_UTC;
+  op === "$year" ||
+  op === "$month" ||
+  op === "$date" ||
+  op === "$weekday" ||
+  op === "$hour" ||
+  op === "$minute" ||
+  op === "$second" ||
+  op === "$ms" ||
+  op === "$utc";
 
 /**
  * Registers date operators into the query engine.

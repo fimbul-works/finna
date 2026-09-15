@@ -43,11 +43,6 @@
       "types": "./dist/esm/index.core.d.ts",
       "import": "./dist/esm/index.core.js",
       "require": "./dist/cjs/index.core.js"
-    },
-    "./constants": {
-      "types": "./dist/esm/constants.d.ts",
-      "import": "./dist/esm/constants.js",
-      "require": "./dist/cjs/constants.js"
     }
   },
   "files": [

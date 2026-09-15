@@ -4,6 +4,16 @@
 export type Sortable = string | number | Date;
 
 /**
+ * A filter predicate function that receives the value and the root value.
+ *
+ * @template T - Type of the value to test
+ * @param {any} val - The value to test
+ * @param {any} root - The root value for field comparisons
+ * @returns {boolean} True if matched, false otherwise
+ */
+export type FilterPredicate<T = any> = (val: any, root?: any) => val is T;
+
+/**
  * Reference to another field in the same root value.
  */
 export interface FieldReference {
@@ -126,7 +136,7 @@ export interface ArrayOperators<T> {
   /** Must not contain any of the specified values or match sub-query */
   $none?: T[] | QueryValue<T> | (T extends object ? Query<T> : never);
   /** Size of the array */
-  $size?: number | OperatorQuery<number>;
+  $size?: number | OperatorQuery<number> | FilterPredicate<number>;
 }
 
 /**
@@ -164,19 +174,30 @@ export type OperatorQuery<T> = EqualityOperators<T> &
   (T extends Array<infer I> ? ArrayOperators<I> : object);
 
 /**
- * A query value can be a literal, an operator object, or a RegExp (for strings).
+ * A query value can be a literal, an operator object, a RegExp (for strings), or a filter predicate function.
  */
-export type QueryValue<T> = T | OperatorQuery<T> | FieldReference | (T extends string ? RegExp : never);
+export type QueryValue<T> =
+  | T
+  | OperatorQuery<T>
+  | FieldReference
+  | (T extends string ? RegExp : never)
+  | FilterPredicate<T>;
 
 /**
- * Recursively define Query type.
- * Supports top-level keys of T and arbitrary string paths (dotted notation).
+ * Object-based query specification for a type T.
  */
-export type Query<T> = {
+export type QueryObject<T> = {
   [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never);
 } & LogicalOperators<T> & {
     [path: string]: any;
   };
+
+/**
+ * Recursively define Query type.
+ * A query can be an object query specification or a filter predicate function.
+ * Supports top-level keys of T, arbitrary string paths (dotted notation), and root-level predicate functions.
+ */
+export type Query<T> = QueryObject<T> | FilterPredicate<T>;
 
 /**
  * Context for a predicate execution.
@@ -213,23 +234,11 @@ export type OperatorStringMatchesFn = (operator: string) => boolean;
  * @param {any} operator - The operator string
  * @param {any} expected - The expected value or nested filter
  * @param {FinnaContext} context - Query context
- * @returns {Predicate} Predicate function
+ * @returns {FilterPredicate} FilterPredicate function
  */
-export type OperatorRegisterFn = (operator: any, expected: any, context: FinnaContext) => Predicate;
+export type OperatorRegisterFn = (operator: any, expected: any, context: FinnaContext) => FilterPredicate;
 
 /**
  * Tuple representation of an operator group: [matchesFn, registerFn].
  */
 export type OperatorGroupTuple = [OperatorStringMatchesFn, OperatorRegisterFn];
-
-/**
- * A predicate function that takes a value and returns true if it matches.
- *
- * @template T - Type of the value to test
- *
- * @callback Predicate
- * @param {T} val - The value to test
- * @param {any} root - The root value for field comparisons
- * @returns {boolean} `true` if matched, `false` otherwise
- */
-export type Predicate<T = any> = (val: T, root?: any) => boolean;

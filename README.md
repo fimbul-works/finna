@@ -35,6 +35,7 @@ yarn add @fimbul-works/finna
 * **Date Inspection & UTC**: Granular matching for date components (`$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`) with an optional `$utc` modifier.
 * **Element Checking**: Inspect property existence (`$exists`) and check data types (`$type`).
 * **Cross-Field References (`$field`)**: Compare a property dynamically against another property on the same root object (`{ updatedAt: { $gt: { $field: "createdAt" } } }`).
+* **Predicate Functions as Filters**: Use custom predicate functions `(value, root) => boolean` directly as filters on fields or top-level patterns, receiving both the target value and the root document.
 * **Extensible Operator Registry**: Plug in custom operators or operator groups using `registerOperators()`, or clear/unregister them on demand.
 * **TypeScript-First**: Strict type definitions, generic pattern type inference (`Query<T>`), and autocomplete for operator keys.
 
@@ -171,7 +172,40 @@ const isMarch2024 = match(task, {
 });
 ```
 
-### 5. Custom Operator Registration
+### 5. Predicate Functions as Filters
+
+A filter can also be a predicate function itself, receiving the target value as the 1st parameter and the root value as the 2nd parameter:
+
+```typescript
+import { compile, match } from "@fimbul-works/finna";
+
+const order = {
+  items: 3,
+  unitPrice: 25,
+  budget: 100,
+  tags: ["priority", "express"],
+};
+
+// 1. Field-level predicate receiving (value, root)
+const withinBudget = match(order, {
+  items: (qty, root) => qty * root.unitPrice <= root.budget,
+});
+console.log(withinBudget); // true
+
+// 2. Predicates inside array operators
+const hasShortTag = match(order, {
+  tags: { $some: (tag) => tag.length < 8 },
+});
+console.log(hasShortTag); // true
+
+// 3. Root-level predicate function
+const isQualifying = compile<typeof order>(
+  (val, root) => val.items * root.unitPrice > 50,
+);
+console.log(isQualifying(order)); // true
+```
+
+### 6. Custom Operator Registration
 
 ```typescript
 import { compile, registerOperators } from "@fimbul-works/finna";

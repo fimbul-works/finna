@@ -1,8 +1,7 @@
 import { getAtPath } from "@fimbul-works/nested-path";
-import { QUERY_AND, QUERY_NOR, QUERY_NOT, QUERY_OR } from "./constants.js";
 import { createFinnaContext } from "./context.js";
 import { createPredicate } from "./predicate.js";
-import type { FinnaContext, Predicate, Query } from "./types.js";
+import type { FilterPredicate, FinnaContext, Query } from "./types.js";
 import { isObject } from "./util.js";
 
 /**
@@ -20,29 +19,33 @@ const isQueryContext = (val: unknown): val is FinnaContext =>
  * @template {Record<string, any>} T - Type of value to match
  * @param {Query<T>} pattern - The query/pattern specification to compile
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
- * @returns {Predicate<T>} A compiled predicate function `(value) => boolean`
+ * @returns {FilterPredicate<T>} A compiled predicate function `(value) => boolean`
  */
 export function compile<T extends Record<string, any>>(
   pattern: Query<T>,
   ctx: FinnaContext = createFinnaContext(),
-): Predicate<T> {
+): FilterPredicate<T> {
+  if (typeof pattern === "function") {
+    return ((value: T, root?: any) => !!pattern(value, root ?? value)) as FilterPredicate<T>;
+  }
+
   const predicates = Object.entries(pattern).map(([key, filter]) => {
     // Logical operators
-    if (key === QUERY_AND) {
+    if (key === "$and") {
       const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: T) => predicates.every((m) => m(value, root));
+      return (value: T, root?: any) => predicates.every((m) => m(value, root ?? value));
     }
-    if (key === QUERY_OR) {
+    if (key === "$or") {
       const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: T) => predicates.some((m) => m(value, root));
+      return (value: T, root?: any) => predicates.some((m) => m(value, root ?? value));
     }
-    if (key === QUERY_NOT) {
+    if (key === "$not") {
       const predicate = compile<T>(filter as Query<T>, ctx);
-      return (value: T, root?: T) => !predicate(value, root);
+      return (value: T, root?: any) => !predicate(value, root ?? value);
     }
-    if (key === QUERY_NOR) {
+    if (key === "$nor") {
       const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: T) => !predicates.some((m) => m(value, root));
+      return (value: T, root?: any) => !predicates.some((m) => m(value, root ?? value));
     }
 
     // Field matching
@@ -50,7 +53,7 @@ export function compile<T extends Record<string, any>>(
     return (value: T, root?: any) => predicate(getAtPath(value, key), root ?? value);
   });
 
-  return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as Predicate<T>;
+  return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as FilterPredicate<T>;
 }
 
 /**
@@ -77,9 +80,9 @@ export function match<T extends Record<string, any>>(
  * @template {Record<string, any>} T - Type of value to match
  * @param {Query<T>} pattern - The query/pattern specification to compile
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
- * @returns {Predicate<T>} A compiled predicate function `(value) => boolean`
+ * @returns {FilterPredicate<T>} A compiled predicate function `(value) => boolean`
  */
-export function finna<T extends Record<string, any>>(pattern: Query<T>, ctx?: FinnaContext): Predicate<T>;
+export function finna<T extends Record<string, any>>(pattern: Query<T>, ctx?: FinnaContext): FilterPredicate<T>;
 
 /**
  * Checks if a value satisfies a query/pattern specification.

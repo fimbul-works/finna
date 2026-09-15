@@ -53,4 +53,34 @@ describe("createPredicate (Integration)", () => {
       expect(p({ tags: [1] })).toBe(false);
     });
   });
+
+  describe("predicate functions as filters", () => {
+    it("should handle direct predicate functions", () => {
+      const p = createPredicate((val: number) => val > 10);
+      expect(p(15)).toBe(true);
+      expect(p(5)).toBe(false);
+    });
+
+    it("should pass root value to direct predicate function", () => {
+      const p = createPredicate((val: number, root: any) => val > root.threshold);
+      expect(p(15, { threshold: 10 })).toBe(true);
+      expect(p(5, { threshold: 10 })).toBe(false);
+    });
+
+    it("should convert truthy and falsy return values to boolean", () => {
+      const pTruthy = createPredicate((val: string) => val.length);
+      expect(pTruthy("hello")).toBe(true);
+      expect(pTruthy("")).toBe(false);
+    });
+
+    it("should support predicate functions in nested object filters", () => {
+      const p = createPredicate({
+        user: {
+          age: (age: number, root: any) => age >= root.minAge,
+        },
+      });
+      expect(p({ user: { age: 25 }, minAge: 18 })).toBe(true);
+      expect(p({ user: { age: 16 }, minAge: 18 })).toBe(false);
+    });
+  });
 });

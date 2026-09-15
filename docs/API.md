@@ -18,7 +18,7 @@ Array-specific query operators.
 | ------ | ------ | ------ |
 | <a id="property-all"></a> `$all?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain all specified values or match sub-query |
 | <a id="property-none"></a> `$none?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must not contain any of the specified values or match sub-query |
-| <a id="property-size"></a> `$size?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Size of the array |
+| <a id="property-size"></a> `$size?` | \| `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> \| [`FilterPredicate`](#filterpredicate)\<`number`\> | Size of the array |
 | <a id="property-some"></a> `$some?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain at least one of the specified values or match sub-query |
 
 ***
@@ -219,6 +219,35 @@ Supported equality operators.
 
 ***
 
+### FilterPredicate
+
+```ts
+type FilterPredicate<T> = (val, root?) => val is T;
+```
+
+A filter predicate function that receives the value and the root value.
+
+#### Type Parameters
+
+| Type Parameter | Default type | Description |
+| ------ | ------ | ------ |
+| `T` | `any` | Type of the value to test |
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `val` | `any` | The value to test |
+| `root?` | `any` | The root value for field comparisons |
+
+#### Returns
+
+`val is T`
+
+True if matched, false otherwise
+
+***
+
 ### LogicalOperator
 
 ```ts
@@ -258,7 +287,7 @@ Full operator query for a value.
 ### OperatorRegisterFn
 
 ```ts
-type OperatorRegisterFn = (operator, expected, context) => Predicate;
+type OperatorRegisterFn = (operator, expected, context) => FilterPredicate;
 ```
 
 Function that creates a predicate for an operator.
@@ -273,9 +302,9 @@ Function that creates a predicate for an operator.
 
 #### Returns
 
-[`Predicate`](#predicate)
+[`FilterPredicate`](#filterpredicate)
 
-Predicate function
+FilterPredicate function
 
 ***
 
@@ -301,45 +330,35 @@ True if operator belongs to the group
 
 ***
 
-### Predicate
-
-```ts
-type Predicate<T> = (val, root?) => boolean;
-```
-
-A predicate function that takes a value and returns true if it matches.
-
-#### Type Parameters
-
-| Type Parameter | Default type | Description |
-| ------ | ------ | ------ |
-| `T` | `any` | Type of the value to test |
-
-#### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `val` | `T` | The value to test |
-| `root?` | `any` | The root value for field comparisons |
-
-#### Returns
-
-`boolean`
-
-`true` if matched, `false` otherwise
-
-***
-
 ### Query
 
 ```ts
-type Query<T> = { [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never) } & LogicalOperators<T> & {
+type Query<T> = 
+  | QueryObject<T>
+| FilterPredicate<T>;
+```
+
+Recursively define Query type.
+A query can be an object query specification or a filter predicate function.
+Supports top-level keys of T, arbitrary string paths (dotted notation), and root-level predicate functions.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
+
+***
+
+### QueryObject
+
+```ts
+type QueryObject<T> = { [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never) } & LogicalOperators<T> & {
 [path: string]: any;
 };
 ```
 
-Recursively define Query type.
-Supports top-level keys of T and arbitrary string paths (dotted notation).
+Object-based query specification for a type T.
 
 #### Type Parameters
 
@@ -372,10 +391,11 @@ type QueryValue<T> =
   | T
   | OperatorQuery<T>
   | FieldReference
-  | T extends string ? RegExp : never;
+  | T extends string ? RegExp : never
+| FilterPredicate<T>;
 ```
 
-A query value can be a literal, an operator object, or a RegExp (for strings).
+A query value can be a literal, an operator object, a RegExp (for strings), or a filter predicate function.
 
 #### Type Parameters
 
@@ -440,7 +460,7 @@ Clears all registered operator groups.
 ### compile()
 
 ```ts
-function compile<T>(pattern, ctx?): Predicate<T>;
+function compile<T>(pattern, ctx?): FilterPredicate<T>;
 ```
 
 Compiles a query/pattern specification into an optimized, reusable predicate function.
@@ -460,7 +480,7 @@ Compiles a query/pattern specification into an optimized, reusable predicate fun
 
 #### Returns
 
-[`Predicate`](#predicate)\<`T`\>
+[`FilterPredicate`](#filterpredicate)\<`T`\>
 
 A compiled predicate function `(value) => boolean`
 
@@ -469,7 +489,7 @@ A compiled predicate function `(value) => boolean`
 ### createPredicate()
 
 ```ts
-function createPredicate<T>(filter, ctx?): Predicate<T>;
+function createPredicate<T>(filter, ctx?): FilterPredicate<T>;
 ```
 
 Create a predicate function from a query value.
@@ -489,7 +509,7 @@ Create a predicate function from a query value.
 
 #### Returns
 
-[`Predicate`](#predicate)\<`T`\>
+[`FilterPredicate`](#filterpredicate)\<`T`\>
 
 A predicate function for the given filter
 
@@ -500,7 +520,7 @@ A predicate function for the given filter
 #### Call Signature
 
 ```ts
-function finna<T>(pattern, ctx?): Predicate<T>;
+function finna<T>(pattern, ctx?): FilterPredicate<T>;
 ```
 
 Compiles a query/pattern specification into an optimized, reusable predicate function.
@@ -521,7 +541,7 @@ Shorthand method for `compile()`.
 
 ##### Returns
 
-[`Predicate`](#predicate)\<`T`\>
+[`FilterPredicate`](#filterpredicate)\<`T`\>
 
 A compiled predicate function `(value) => boolean`
 

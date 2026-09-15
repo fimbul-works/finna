@@ -1,5 +1,10 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { clearOperators, registerComparisonOperators, registerEqualityOperators } from "./index.core.js";
+import {
+  clearOperators,
+  type FilterPredicate,
+  registerComparisonOperators,
+  registerEqualityOperators,
+} from "./index.core.js";
 import finna, { compile, match, registerAllOperators, registerOperators } from "./index.js";
 
 describe("README usage examples", () => {
@@ -130,11 +135,37 @@ describe("README usage examples", () => {
     expect(isMarch2024).toBe(true);
   });
 
-  it("6. Custom Operator Registration", () => {
+  it("6. Predicate Functions as Filters", () => {
+    const order = {
+      items: 3,
+      unitPrice: 25,
+      budget: 100,
+      tags: ["priority", "express"],
+    };
+
+    // 1. Field-level predicate receiving (value, root)
+    const withinBudget = match(order, {
+      items: (qty, root) => qty * root.unitPrice <= root.budget,
+    });
+    expect(withinBudget).toBe(true);
+
+    // 2. Predicates inside array operators
+    const hasShortTag = match(order, {
+      tags: { $some: (tag) => tag.length < 8 },
+    });
+    expect(hasShortTag).toBe(true);
+
+    // 3. Root-level predicate function
+    const isQualifying = compile<typeof order>((val, root) => val.items * root.unitPrice > 50);
+    expect(isQualifying(order)).toBe(true);
+  });
+
+  it("7. Custom Operator Registration", () => {
     // Define and register a custom operator (e.g., $divisibleBy)
     const unregister = registerOperators([
       (op) => op === "$divisibleBy",
-      (_op, expected) => (actual) => typeof actual === "number" && actual % expected === 0,
+      (_op, expected) =>
+        ((actual: any) => typeof actual === "number" && actual % expected === 0) as FilterPredicate<number>,
     ]);
 
     const isEven = compile({ count: { $divisibleBy: 2 } as any });

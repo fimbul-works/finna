@@ -1,6 +1,6 @@
 import { createFinnaContext } from "./context.js";
 import { operatorGroups } from "./operator-registry.js";
-import type { FinnaContext, Predicate, QueryOperator } from "./types.js";
+import type { FilterPredicate, FinnaContext, QueryOperator } from "./types.js";
 import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
 
 /**
@@ -10,24 +10,28 @@ import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
  *
  * @param {any} filter - The query filter to create a predicate for
  * @param {FinnaContext | boolean} [ctx=createFinnaContext()] - Optional query context
- * @returns {Predicate<T>} A predicate function for the given filter
+ * @returns {FilterPredicate<T>} A predicate function for the given filter
  */
-export function createPredicate<T = any>(filter: any, ctx: FinnaContext = createFinnaContext()): Predicate<T> {
+export function createPredicate<T = any>(filter: any, ctx: FinnaContext = createFinnaContext()): FilterPredicate<T> {
+  if (typeof filter === "function") {
+    return ((actual: any, root?: any) => Boolean(filter(actual, root))) as FilterPredicate<T>;
+  }
+
   if (filter instanceof RegExp) {
-    return ((actual: any) => typeof actual === "string" && (filter as RegExp).test(actual)) as Predicate<T>;
+    return ((actual: any) => typeof actual === "string" && (filter as RegExp).test(actual)) as FilterPredicate<T>;
   }
 
   if (filter instanceof Date) {
     const t = (filter as Date).getTime();
     return ((actual: any) =>
-      actual instanceof Date ? (actual as Date).getTime() === t : actual === t) as Predicate<T>;
+      actual instanceof Date ? (actual as Date).getTime() === t : actual === t) as FilterPredicate<T>;
   }
 
   if (isOperatorObject(filter)) {
     const predicates = Object.entries(filter).map(([op, expected]) =>
       createOperatorPredicate(op as QueryOperator, expected, ctx),
     );
-    return ((actual: any, root?: any) => predicates.every((p) => p(actual, root))) as Predicate<T>;
+    return ((actual: any, root?: any) => predicates.every((p) => p(actual, root))) as FilterPredicate<T>;
   }
 
   if (isObject(filter) && !(filter instanceof Date) && !(filter instanceof RegExp)) {
@@ -37,12 +41,12 @@ export function createPredicate<T = any>(filter: any, ctx: FinnaContext = create
       }
       return Object.entries(filter).every(([key, subFilter]) => {
         const subPredicate = createPredicate(subFilter, ctx);
-        return subPredicate((actual as any)[key], root);
+        return subPredicate((actual as any)[key], root ?? actual);
       });
-    }) as Predicate<T>;
+    }) as FilterPredicate<T>;
   }
 
-  return ((actual: any) => isDeepEqual(actual, filter)) as Predicate<T>;
+  return ((actual: any) => isDeepEqual(actual, filter)) as FilterPredicate<T>;
 }
 
 /**
@@ -52,13 +56,13 @@ export function createPredicate<T = any>(filter: any, ctx: FinnaContext = create
  * @param {QueryOperator} operator - The operator string (e.g. '$eq', '$gt')
  * @param {any} expected - The expected value or nested filter
  * @param {FinnaContext} ctx - Query context
- * @returns {Predicate<T>} A predicate function for the operator
+ * @returns {FilterPredicate<T>} A predicate function for the operator
  */
 export function createOperatorPredicate<T = any>(
   operator: QueryOperator,
   expected: any,
   ctx: FinnaContext,
-): Predicate<T> {
+): FilterPredicate<T> {
   for (const group of operatorGroups) {
     const [matches, register] = group;
     if (matches(operator)) {
