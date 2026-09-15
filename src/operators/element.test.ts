@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createQueryContext } from "../query-context.js";
+import { createFinnaContext } from "../context.js";
 import { createElementPredicate } from "./element.js";
 
 describe("createElementPredicate", () => {
-  const ctx = createQueryContext();
+  const ctx = createFinnaContext();
 
   describe("$exists", () => {
     it("should match when field exists", () => {

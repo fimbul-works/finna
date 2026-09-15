@@ -9,7 +9,7 @@ import { isDeepEqual, isObject, isOperatorObject } from "./util.js";
  * @template T - Type of the value to test
  *
  * @param {any} filter - The query filter to create a predicate for
- * @param {FinnaContext | boolean} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext | boolean} [ctx=createFinnaContext()] - Optional query context
  * @returns {Predicate<T>} A predicate function for the given filter
  */
 export function createPredicate<T = any>(filter: any, ctx: FinnaContext = createFinnaContext()): Predicate<T> {

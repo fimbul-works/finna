@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  clearOperators,
   createPredicate,
   match,
+  registerArrayOperators,
   registerComparisonOperators,
+  registerDateOperators,
   registerElementOperators,
   registerEqualityOperators,
   registerStringOperators,
 } from "./index.core.js";
-import { clearOperators } from "./operator-registry.js";
-import { registerArrayOperators } from "./operators/array.js";
-import { registerDateOperators } from "./operators/date.js";
 
 describe("core export", () => {
   const resetCore = () => {

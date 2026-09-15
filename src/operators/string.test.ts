@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { createQueryContext } from "../query-context.js";
+import { createFinnaContext } from "../context.js";
 import { createStringPredicate } from "./string.js";
 
 describe("createStringPredicate", () => {
-  const ctx = createQueryContext();
+  const ctx = createFinnaContext();
 
   it("should handle $regex", () => {
     const p = createStringPredicate("$regex", /^foo/, ctx);

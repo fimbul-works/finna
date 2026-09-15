@@ -3,22 +3,23 @@ import { QUERY_AND, QUERY_NOR, QUERY_NOT, QUERY_OR } from "./constants.js";
 import { createFinnaContext } from "./context.js";
 import { createPredicate } from "./predicate.js";
 import type { FinnaContext, Predicate, Query } from "./types.js";
+import { isObject } from "./util.js";
 
-function isQueryContext(val: unknown): val is FinnaContext {
-  return (
-    val !== null &&
-    typeof val === "object" &&
-    typeof (val as FinnaContext).useUTC === "boolean" &&
-    (val as FinnaContext).warnings instanceof Set
-  );
-}
+/**
+ * Checks if the provided value is a valid FinnaContext.
+ *
+ * @param {unknown} val The value to check
+ * @returns {val is FinnaContext} `true` if the value is a valid FinnaContext, `false` otherwise
+ */
+const isQueryContext = (val: unknown): val is FinnaContext =>
+  isObject<FinnaContext>(val) && typeof val.useUTC === "boolean" && val.warnings instanceof Set;
 
 /**
  * Compiles a query/pattern specification into an optimized, reusable predicate function.
  *
  * @template {Record<string, any>} T - Type of value to match
  * @param {Query<T>} pattern - The query/pattern specification to compile
- * @param {FinnaContext} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {Predicate<T>} A compiled predicate function `(value) => boolean`
  */
 export function compile<T extends Record<string, any>>(
@@ -58,7 +59,7 @@ export function compile<T extends Record<string, any>>(
  * @template {Record<string, any>} T - Type of value to match
  * @param {T} value - The target value to test
  * @param {Query<T>} pattern - The query/pattern to match against
- * @param {FinnaContext} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {value is T} `true` if the value matches, `false` otherwise
  */
 export function match<T extends Record<string, any>>(
@@ -75,7 +76,7 @@ export function match<T extends Record<string, any>>(
  *
  * @template {Record<string, any>} T - Type of value to match
  * @param {Query<T>} pattern - The query/pattern specification to compile
- * @param {FinnaContext} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {Predicate<T>} A compiled predicate function `(value) => boolean`
  */
 export function finna<T extends Record<string, any>>(pattern: Query<T>, ctx?: FinnaContext): Predicate<T>;
@@ -87,7 +88,7 @@ export function finna<T extends Record<string, any>>(pattern: Query<T>, ctx?: Fi
  * @template {Record<string, any>} T - Type of value to match
  * @param {T} value - The target value to test
  * @param {Query<T>} pattern - The query/pattern to match against
- * @param {FinnaContext} [ctx=createQueryContext()] - Optional query context
+ * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {value is T} `true` if the value matches, `false` otherwise
  */
 export function finna<T extends Record<string, any>>(value: T, pattern: Query<T>, ctx?: FinnaContext): value is T;

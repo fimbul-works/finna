@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import "../index.js";
-import { createQueryContext } from "../query-context.js";
+import { createFinnaContext } from "../context.js";
 import { createDatePredicate } from "./date.js";
 
 describe("createDatePredicate", () => {
@@ -8,39 +8,39 @@ describe("createDatePredicate", () => {
 
   describe("UTC context", () => {
     it("should handle UTC $year", () => {
-      expect(createDatePredicate("$year", 2023, createQueryContext(true))(date)).toBe(true);
+      expect(createDatePredicate("$year", 2023, createFinnaContext(true))(date)).toBe(true);
     });
 
     it("should handle UTC $month", () => {
-      expect(createDatePredicate("$month", 9, createQueryContext(true))(date)).toBe(true);
+      expect(createDatePredicate("$month", 9, createFinnaContext(true))(date)).toBe(true);
     });
 
     it("should handle UTC $date", () => {
-      expect(createDatePredicate("$date", 23, createQueryContext(true))(date)).toBe(true);
+      expect(createDatePredicate("$date", 23, createFinnaContext(true))(date)).toBe(true);
     });
 
     it("should handle UTC $weekday", () => {
-      expect(createDatePredicate("$weekday", 1, createQueryContext(true))(date)).toBe(true);
+      expect(createDatePredicate("$weekday", 1, createFinnaContext(true))(date)).toBe(true);
     });
 
     it("should handle UTC $hour", () => {
-      expect(createDatePredicate("$hour", 12, createQueryContext(true))(date)).toBe(true);
+      expect(createDatePredicate("$hour", 12, createFinnaContext(true))(date)).toBe(true);
     });
   });
 
   describe("Local context", () => {
     it("should use local methods when useUtc is false", () => {
       const localYear = date.getFullYear();
-      expect(createDatePredicate("$year", localYear, createQueryContext(false))(date)).toBe(true);
+      expect(createDatePredicate("$year", localYear, createFinnaContext(false))(date)).toBe(true);
 
       const localHour = date.getHours();
-      expect(createDatePredicate("$hour", localHour, createQueryContext(false))(date)).toBe(true);
+      expect(createDatePredicate("$hour", localHour, createFinnaContext(false))(date)).toBe(true);
     });
   });
 
   it("should handle $utc context switch", () => {
     // $utc operator expects an object with nested operators
-    const p = createDatePredicate("$utc", { $hour: 12 }, createQueryContext(false));
+    const p = createDatePredicate("$utc", { $hour: 12 }, createFinnaContext(false));
     expect(p(date)).toBe(true);
   });
 });
