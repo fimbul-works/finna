@@ -1,4 +1,4 @@
-# @fimbul-works/finna
+# <img src="../ inna-logo.svg" alt="Finna" style="height:200px;"/>
 
 ## Interfaces
 

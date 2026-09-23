@@ -64,9 +64,6 @@
     "format": "npx biome format --write",
     "test": "vitest",
     "sizes": "npx bundle-size",
-    "benchmark": "pnpm benchmark:quality && pnpm benchmark:speed",
-    "benchmark:quality": "tsx benchmark/quality.ts",
-    "benchmark:speed": "tsx benchmark/speed.ts",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {

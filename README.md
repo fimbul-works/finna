@@ -1,11 +1,11 @@
-# @fimbul-works/finna
+<img src="finna-logo.svg" alt="Finna" style="height:200px;margin-bottom:1em;"/>
 
 [![license](https://img.shields.io/npm/l/%40fimbul-works%2Ffinna?color=brightgreen&style=flat-square)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/%40fimbul-works%2Ffinna?color=blue&style=flat-square)](https://www.npmjs.com/package/@fimbul-works/finna)
 [![code style](https://img.shields.io/badge/code_style-biome-dfdbd6?style=flat-square)](https://biomejs.dev)
 [![bundle size](https://img.shields.io/badge/bundle_size-ultra--light-blueviolet?style=flat-square)](#main-vs-core-export)
 
-An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript. Built for compiler AST transformations, document indexing, and reactive pipelines.
+An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript. Built for document indexing, compiler AST traversal, and reactive pipelines.
 
 > **Etymology:** Named after Old Norse *finna* for "to find, discover, encounter".
 
@@ -26,7 +26,7 @@ yarn add @fimbul-works/finna
 ## Highlights
 
 * **Universal Pattern Syntax**: Match objects using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
-* **Compiled Predicates**: Compile patterns once with `compile()` or `finna(pattern)` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
+* **Compiled Predicates**: Compile patterns once with `compile()` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
 * **Equality & Comparison**: Full support for `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, and `$nin` across numbers, strings, and `Date` instances.
 * **Logical Composition**: Combine complex conditions with `$and`, `$or`, `$not`, and `$nor`.
 * **String Operations**: Pattern and substring matching via `$regex`, `$startsWith`, `$endsWith`, and `$includes`.

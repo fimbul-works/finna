@@ -33,5 +33,6 @@
   "interfacePropertiesFormat": "table",
   "classPropertiesFormat": "table",
   "typeDeclarationFormat": "table",
-  "disableSources": true
+  "disableSources": true,
+  "name": "<img src=\"../\finna-logo.svg\" alt=\"Finna\" style=\"height:200px;\"/>"
 }
