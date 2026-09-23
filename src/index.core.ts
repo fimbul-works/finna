@@ -1,6 +1,4 @@
-import { finna } from "./finna.js";
-
-export { compile, finna, match } from "./finna.js";
+export { compile, match } from "./compile.js";
 export {
   clearOperators,
   registerAllOperators,
@@ -18,5 +16,3 @@ export {
 export { createPredicate } from "./predicate.js";
 export * from "./types.js";
 export { isOperatorObject } from "./util.js";
-
-export default finna;

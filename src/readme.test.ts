@@ -5,7 +5,7 @@ import {
   registerComparisonOperators,
   registerEqualityOperators,
 } from "./index.core.js";
-import finna, { compile, match, registerAllOperators, registerOperators } from "./index.js";
+import { compile, match, registerAllOperators, registerOperators } from "./index.js";
 
 describe("README usage examples", () => {
   afterAll(() => {
@@ -29,9 +29,6 @@ describe("README usage examples", () => {
       tags: { $some: "admin" },
     });
     expect(isMatch).toBe(true);
-
-    // Or evaluate directly with finna()
-    expect(finna(user, { name: "Alice", age: { $gte: 18 } })).toBe(true);
   });
 
   it("2. Compiled Predicates (compile)", () => {
@@ -68,7 +65,7 @@ describe("README usage examples", () => {
       async?: boolean;
     }
 
-    const glslUniform = {
+    const glslUniform: ASTNode = {
       type: "VariableDeclaration",
       name: "u_time",
       qualifier: "uniform",
@@ -76,11 +73,6 @@ describe("README usage examples", () => {
 
     // Match AST patterns
     expect(match(glslUniform, { qualifier: "uniform", name: /^u_/ })).toBe(true);
-
-    // Or compile an AST matcher with finna()
-    const isUniform = finna<ASTNode>({ qualifier: "uniform" });
-    expect(isUniform(glslUniform)).toBe(true);
-    expect(isUniform({ type: "VariableDeclaration", qualifier: "attribute" })).toBe(false);
   });
 
   it("4. Tree-Shaking with the Core Export (/core)", () => {

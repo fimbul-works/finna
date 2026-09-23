@@ -2,16 +2,6 @@ import { getAtPath } from "@fimbul-works/nested-path";
 import { createFinnaContext } from "./context.js";
 import { createPredicate } from "./predicate.js";
 import type { FilterPredicate, FinnaContext, Query } from "./types.js";
-import { isObject } from "./util.js";
-
-/**
- * Checks if the provided value is a valid FinnaContext.
- *
- * @param {unknown} val The value to check
- * @returns {val is FinnaContext} `true` if the value is a valid FinnaContext, `false` otherwise
- */
-const isQueryContext = (val: unknown): val is FinnaContext =>
-  isObject<FinnaContext>(val) && typeof val.useUTC === "boolean" && val.warnings instanceof Set;
 
 /**
  * Compiles a query/pattern specification into an optimized, reusable predicate function.
@@ -71,35 +61,4 @@ export function match<T extends Record<string, any>>(
   ctx: FinnaContext = createFinnaContext(),
 ): value is T {
   return compile(pattern, ctx)(value, value);
-}
-
-/**
- * Compiles a query/pattern specification into an optimized, reusable predicate function.
- * Shorthand method for `compile()`.
- *
- * @template {Record<string, any>} T - Type of value to match
- * @param {Query<T>} pattern - The query/pattern specification to compile
- * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
- * @returns {FilterPredicate<T>} A compiled predicate function `(value) => boolean`
- */
-export function finna<T extends Record<string, any>>(pattern: Query<T>, ctx?: FinnaContext): FilterPredicate<T>;
-
-/**
- * Checks if a value satisfies a query/pattern specification.
- * Shorthand method for `match()`.
- *
- * @template {Record<string, any>} T - Type of value to match
- * @param {T} value - The target value to test
- * @param {Query<T>} pattern - The query/pattern to match against
- * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
- * @returns {value is T} `true` if the value matches, `false` otherwise
- */
-export function finna<T extends Record<string, any>>(value: T, pattern: Query<T>, ctx?: FinnaContext): value is T;
-
-export function finna(...args: any[]) {
-  const [arg1, arg2, arg3] = args;
-  if (args.length === 1 || (args.length === 2 && isQueryContext(arg2))) {
-    return compile(arg1, arg2);
-  }
-  return match(arg1, arg2, arg3);
 }

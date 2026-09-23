@@ -1,4 +1,4 @@
-# <img src="../ inna-logo.svg" alt="Finna" style="height:200px;"/>
+# <img src="../finna-logo.svg" alt="Finna" style="height:200px;"/>
 
 ## Interfaces
 
@@ -515,71 +515,6 @@ A predicate function for the given filter
 
 ***
 
-### finna()
-
-#### Call Signature
-
-```ts
-function finna<T>(pattern, ctx?): FilterPredicate<T>;
-```
-
-Compiles a query/pattern specification into an optimized, reusable predicate function.
-Shorthand method for `compile()`.
-
-##### Type Parameters
-
-| Type Parameter | Description |
-| ------ | ------ |
-| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
-
-##### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern specification to compile |
-| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
-
-##### Returns
-
-[`FilterPredicate`](#filterpredicate)\<`T`\>
-
-A compiled predicate function `(value) => boolean`
-
-#### Call Signature
-
-```ts
-function finna<T>(
-   value, 
-   pattern, 
-   ctx?
-): value is T;
-```
-
-Checks if a value satisfies a query/pattern specification.
-Shorthand method for `match()`.
-
-##### Type Parameters
-
-| Type Parameter | Description |
-| ------ | ------ |
-| `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
-
-##### Parameters
-
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| `value` | `T` | The target value to test |
-| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern to match against |
-| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
-
-##### Returns
-
-`value is T`
-
-`true` if the value matches, `false` otherwise
-
-***
-
 ### isOperatorObject()
 
 ```ts
@@ -787,9 +722,3 @@ Unregisters an operator group tuple from the registry.
 `boolean`
 
 True if group was found and removed
-
-## References
-
-### default
-
-Renames and re-exports [finna](#finna)
