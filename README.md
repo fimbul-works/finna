@@ -1,4 +1,4 @@
-<img src="finna-logo.svg" alt="Finna" style="height:200px;margin-bottom:1em;"/>
+<img src="./finna-logo.svg" alt="Finna" style="height:200px;margin-bottom:1em;"/>
 
 [![license](https://img.shields.io/npm/l/%40fimbul-works%2Ffinna?color=brightgreen&style=flat-square)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/%40fimbul-works%2Ffinna?color=blue&style=flat-square)](https://www.npmjs.com/package/@fimbul-works/finna)
