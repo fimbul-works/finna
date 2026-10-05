@@ -1,4 +1,4 @@
-# <img src="../finna-logo.svg" alt="@fimbul-works/finna" style="height:200px;"/>
+# ![@fimbul-works/finna](../finna-logo.svg)
 
 ## Interfaces
 
