@@ -49,7 +49,8 @@
     "dist",
     "docs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "finna-logo.svg"
   ],
   "sideEffects": true,
   "scripts": {
@@ -70,17 +71,13 @@
     "@fimbul-works/nested-path": "^1.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.11",
-    "@fimbul-works/bundle-size": "^1.0.0",
-    "@types/node": "^26.4.1",
-    "mitata": "^1.0.34",
-    "picocolors": "^1.1.1",
-    "randomness": "^1.7.0",
-    "tsdown": "^0.22.14",
-    "tsx": "^4.23.13",
+    "@biomejs/biome": "^2.5.15",
+    "@fimbul-works/bundle-size": "^2.0.0",
+    "@types/node": "^26.6.4",
+    "tsdown": "^0.23.0",
     "typedoc": "^0.28.20",
-    "typedoc-plugin-markdown": "^4.13.0",
+    "typedoc-plugin-markdown": "^4.13.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   }
 }

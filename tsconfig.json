@@ -14,6 +14,6 @@
     "outDir": "./dist/esm",
     "rootDir": "./src"
   },
-  "include": ["src", "benchmarks"],
+  "include": ["src"],
   "exclude": ["src/**/*.test.ts", "node_modules"]
 }
