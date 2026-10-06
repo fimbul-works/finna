@@ -34,5 +34,5 @@
   "classPropertiesFormat": "table",
   "typeDeclarationFormat": "table",
   "disableSources": true,
-  "name": "![@fimbul-works/finna](../finna-logo.png)"
+  "name": "![@fimbul-works/finna](../finna-logo.svg)"
 }

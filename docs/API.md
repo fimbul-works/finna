@@ -1,4 +1,4 @@
-# ![@fimbul-works/finna](../finna-logo.png)
+# ![@fimbul-works/finna](../finna-logo.svg)
 
 ## Interfaces
 

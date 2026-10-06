@@ -1,7 +1,7 @@
 {
   "name": "@fimbul-works/finna",
   "description": "An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "module",
   "private": false,
   "license": "MIT",
