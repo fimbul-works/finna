@@ -79,7 +79,16 @@ export type StringOperator = keyof StringOperators;
 /**
  * Type strings supported by $type operator.
  */
-export type TypeString = "string" | "number" | "boolean" | "array" | "object" | "null" | "undefined" | "date";
+export type TypeString =
+  | "string"
+  | "number"
+  | "boolean"
+  | "array"
+  | "object"
+  | "null"
+  | "undefined"
+  | "date"
+  | "bigint";
 
 /**
  * Element-specific query operators.
@@ -89,6 +98,12 @@ export interface ElementOperators {
   $exists?: boolean;
   /** Check property type */
   $type?: TypeString;
+  /** Check property truthiness */
+  $truthy?: TypeString;
+  /** Check property falsiness */
+  $falsy?: TypeString;
+  /** Check property nullishness (null, undefined) */
+  $nullish?: TypeString;
 }
 
 /**
@@ -164,6 +179,19 @@ export interface LogicalOperators<T> {
 export type LogicalOperator = keyof LogicalOperators<any>;
 
 /**
+ * Reference operators for creating field references.
+ */
+export interface ReferenceOperators {
+  /** Reference to another field in the same root value */
+  $field?: string;
+}
+
+/**
+ * Supported reference operators.
+ */
+export type ReferenceOperator = keyof ReferenceOperators;
+
+/**
  * Full operator query for a value.
  */
 export type OperatorQuery<T> = EqualityOperators<T> &
@@ -205,8 +233,10 @@ export type Query<T> = QueryObject<T> | FilterPredicate<T>;
 export interface FinnaContext extends Record<string, any> {
   /** Whether to use UTC for date-related comparisons */
   useUTC: boolean;
-  /** Set of warnings generated during query compilation */
-  warnings: Set<string>;
+  /** Errors collected during compilation; matching never appends to this array. */
+  errors: Error[];
+  /** Location within the query, used in compilation diagnostics. */
+  path?: readonly (string | number)[];
 }
 
 /**
@@ -221,24 +251,17 @@ export type QueryOperator =
   | ElementOperator;
 
 /**
- * Function that determines whether an operator string matches an operator group.
+ * Compiles an operator argument into a reusable predicate.
  *
- * @param {string} operator - Operator string to test
- * @returns {boolean} True if operator belongs to the group
+ * @param expected - The operator argument, which may contain a nested filter.
+ * @param context - Compilation context providing date settings and shared diagnostics.
+ * @returns The predicate used to test an actual value and optional root value.
+ * @throws {Error} If the operator argument cannot be compiled.
  */
-export type OperatorStringMatchesFn = (operator: string) => boolean;
+export type OperatorFactory = (expected: any, context: FinnaContext) => FilterPredicate;
 
-/**
- * Function that creates a predicate for an operator.
- *
- * @param {any} operator - The operator string
- * @param {any} expected - The expected value or nested filter
- * @param {FinnaContext} context - Query context
- * @returns {FilterPredicate} FilterPredicate function
- */
-export type OperatorRegisterFn = (operator: any, expected: any, context: FinnaContext) => FilterPredicate;
+/** Operator names must start with a dollar sign, including custom operators. */
+export type OperatorName = `$${string}`;
 
-/**
- * Tuple representation of an operator group: [matchesFn, registerFn].
- */
-export type OperatorGroupTuple = [OperatorStringMatchesFn, OperatorRegisterFn];
+/** Registry of explicitly installed filter operators. */
+export type OperatorMap<Name extends OperatorName = OperatorName> = Map<Name, OperatorFactory>;

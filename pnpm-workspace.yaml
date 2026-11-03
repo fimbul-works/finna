@@ -1,4 +1,6 @@
 allowBuilds:
   esbuild: false
 minimumReleaseAgeExclude:
-  - '@fimbul-works/bundle-size@2.0.0'
+  - "@fimbul-works/bundle-size@2.0.0"
+  - "@fimbul-works/nested-path@2.0.0"
+  - "@fimbul-works/hvat@1.4.0"

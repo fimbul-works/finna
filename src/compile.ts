@@ -1,5 +1,6 @@
+import { isArr, isClass, isFn, isObj } from "@fimbul-works/hvat";
 import { getAtPath } from "@fimbul-works/nested-path";
-import { createFinnaContext } from "./context.js";
+import { childContext, createFinnaContext, withCompilation } from "./context.js";
 import { createPredicate } from "./predicate.js";
 import type { FilterPredicate, FinnaContext, Query } from "./types.js";
 
@@ -10,40 +11,74 @@ import type { FilterPredicate, FinnaContext, Query } from "./types.js";
  * @param {Query<T>} pattern - The query/pattern specification to compile
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {FilterPredicate<T>} A compiled predicate function `(value) => boolean`
+ * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
  */
 export function compile<T extends Record<string, any>>(
   pattern: Query<T>,
   ctx: FinnaContext = createFinnaContext(),
 ): FilterPredicate<T> {
-  if (typeof pattern === "function") {
-    return ((value: T, root?: any) => !!pattern(value, root ?? value)) as FilterPredicate<T>;
-  }
+  return withCompilation(
+    ctx,
+    () => {
+      if (isFn(pattern)) {
+        return ((value: T, root?: any) => !!pattern(value, root ?? value)) as FilterPredicate<T>;
+      }
 
-  const predicates = Object.entries(pattern).map(([key, filter]) => {
-    // Logical operators
-    if (key === "$and") {
-      const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: any) => predicates.every((m) => m(value, root ?? value));
-    }
-    if (key === "$or") {
-      const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: any) => predicates.some((m) => m(value, root ?? value));
-    }
-    if (key === "$not") {
-      const predicate = compile<T>(filter as Query<T>, ctx);
-      return (value: T, root?: any) => !predicate(value, root ?? value);
-    }
-    if (key === "$nor") {
-      const predicates = (filter as Query<T>[]).map((q) => compile<T>(q, ctx));
-      return (value: T, root?: any) => !predicates.some((m) => m(value, root ?? value));
-    }
+      if (
+        !pattern ||
+        !isObj(pattern) ||
+        !isClass(pattern, Object) ||
+        isClass(pattern, Array) ||
+        isClass(pattern, Date) ||
+        isClass(pattern, RegExp)
+      ) {
+        throw new TypeError("A query must be an object or predicate function");
+      }
 
-    // Field matching
-    const predicate = createPredicate(filter, ctx);
-    return (value: T, root?: any) => predicate(getAtPath(value, key), root ?? value);
-  });
+      const predicates = Object.entries(pattern).map(([key, filter]) => {
+        const nested = childContext(ctx, key);
+        // Logical operators
+        if (key === "$and") {
+          const predicates = compileLogicalArray<T>(filter, nested);
+          return (value: T, root?: any) => predicates.every((m) => m(value, root ?? value));
+        }
+        if (key === "$or") {
+          const predicates = compileLogicalArray<T>(filter, nested);
+          return (value: T, root?: any) => predicates.some((m) => m(value, root ?? value));
+        }
+        if (key === "$not") {
+          const predicate = compile<T>(filter as Query<T>, nested);
+          return (value: T, root?: any) => !predicate(value, root ?? value);
+        }
+        if (key === "$nor") {
+          const predicates = compileLogicalArray<T>(filter, nested);
+          return (value: T, root?: any) => !predicates.some((m) => m(value, root ?? value));
+        }
 
-  return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as FilterPredicate<T>;
+        // Field matching
+        const predicate = createPredicate(filter, nested);
+        return (value: T, root?: any) => predicate(getAtPath(value, key), root ?? value);
+      });
+
+      return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as FilterPredicate<T>;
+    },
+    (() => false) as unknown as FilterPredicate<T>,
+  );
+}
+
+/**
+ * Compiles each branch of a logical array while collecting sibling errors.
+ *
+ * @param filter - The array of query branches to compile.
+ * @param ctx - Compilation context at the logical operator location.
+ * @returns Compiled branch predicates, or an empty array after a nested validation failure.
+ * @throws {AggregateError} If called as an outermost compilation with invalid branches.
+ */
+function compileLogicalArray<T extends Record<string, any>>(filter: any, ctx: FinnaContext): FilterPredicate<T>[] {
+  return withCompilation(ctx, () => {
+    if (!isArr<T>(filter)) throw new TypeError("Logical operator expects an array of queries");
+    return filter.map((query, index) => compile<T>(query, childContext(ctx, index)));
+  }, []);
 }
 
 /**
@@ -54,6 +89,7 @@ export function compile<T extends Record<string, any>>(
  * @param {Query<T>} pattern - The query/pattern to match against
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {value is T} `true` if the value matches, `false` otherwise
+ * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
  */
 export function match<T extends Record<string, any>>(
   value: T,

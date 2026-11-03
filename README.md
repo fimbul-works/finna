@@ -1,4 +1,4 @@
-![@fimbul-works/finna](./finna-logo.svg)
+# ![@fimbul-works/finna](./finna-logo.svg)
 
 [![license](https://img.shields.io/npm/l/%40fimbul-works%2Ffinna?color=brightgreen&style=flat-square)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/%40fimbul-works%2Ffinna?color=blue&style=flat-square)](https://www.npmjs.com/package/@fimbul-works/finna)
@@ -7,7 +7,7 @@
 
 An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript. Built for document indexing, compiler AST traversal, and reactive pipelines.
 
-> **Etymology:** Named after Old Norse *finna* for "to find, discover, encounter".
+> **Etymology:** Named after Old Norse _finna_ for "to find, discover, encounter".
 
 ---
 
@@ -25,37 +25,73 @@ yarn add @fimbul-works/finna
 
 ## Highlights
 
-* **Universal Pattern Syntax**: Match objects using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
-* **Compiled Predicates**: Compile patterns once with `compile()` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
-* **Equality & Comparison**: Full support for `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, and `$nin` across numbers, strings, and `Date` instances.
-* **Logical Composition**: Combine complex conditions with `$and`, `$or`, `$not`, and `$nor`.
-* **String Operations**: Pattern and substring matching via `$regex`, `$startsWith`, `$endsWith`, and `$includes`.
-* **Array Operators**: Match arrays with `$all`, `$some`, `$none`, and `$size` (exact count or nested operator queries).
-* **Date Inspection & UTC**: Granular matching for date components (`$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`) with an optional `$utc` modifier.
-* **Element Checking**: Inspect property existence (`$exists`) and check data types (`$type`).
-* **Cross-Field References (`$field`)**: Compare a property dynamically against another property on the same root object (`{ updatedAt: { $gt: { $field: "createdAt" } } }`).
-* **Predicate Functions as Filters**: Use custom predicate functions `(value, root) => boolean` directly as filters on fields or top-level patterns, receiving both the target value and the root document.
-* **Extensible Operator Registry**: Plug in custom operators or operator groups using `registerOperators()`, or clear/unregister them on demand.
-* **TypeScript-First**: Strict type definitions, generic pattern type inference (`Query<T>`), and autocomplete for operator keys.
+- **Universal Pattern Syntax**: Match objects using intuitive declarative operators, deep structures, and dot-notation paths (`"stats.score"`).
+- **Compiled Predicates**: Compile patterns once with `compile()` into high-performance reusable predicate functions `(value) => boolean`, or evaluate ad-hoc with `match(value, pattern)`.
+- **Equality & Comparison**: Full support for `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, and `$nin` across numbers, strings, and `Date` instances.
+- **Logical Composition**: Combine complex conditions with `$and`, `$or`, `$not`, and `$nor`.
+- **String Operations**: Pattern and substring matching via `$regex`, `$startsWith`, `$endsWith`, and `$includes`.
+- **Array Operators**: Match arrays with `$all`, `$some`, `$none`, and `$size` (exact count or nested operator queries).
+- **Date Inspection & UTC**: Granular matching for date components (`$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`) with an optional `$utc` modifier.
+- **Element Checking**: Inspect property existence (`$exists`) and check data types (`$type`).
+- **Cross-Field References (`$field`)**: Compare a property dynamically against another property on the same root object (`{ updatedAt: { $gt: { $field: "createdAt" } } }`).
+- **Predicate Functions as Filters**: Use custom predicate functions `(value, root) => boolean` directly as filters on fields or top-level patterns, receiving both the target value and the root document.
+- **Extensible Operator Registry**: Plug in custom operators or operator groups using `registerOperators()`, or clear/unregister them on demand.
+- **TypeScript-First**: Strict type definitions, generic pattern type inference (`Query<T>`), and autocomplete for operator keys.
 
 ---
 
 ## Main vs /core Export
 
-`@fimbul-works/finna` provides two primary entry points depending on bundle size and customization requirements:
+Both `@fimbul-works/finna` and `@fimbul-works/finna/core` expose the same API and start with an empty operator registry. Imports have no registration side effects. Register operators once in your application setup:
 
-| Entry Point | Pre-registered Operators | Ideal For |
-| :--- | :--- | :--- |
+```typescript
+import { registerAllOperators } from "@fimbul-works/finna";
+registerAllOperators();
+```
+
+For finer control, register individual factories or category presets:
+
+```typescript
+import {
+  registerOperator,
+  createGtPredicate,
+  registerEqualityOperators,
+  hasOperator,
+  getOperator,
+  listOperators,
+} from "@fimbul-works/finna";
+
+registerOperator("$gt", createGtPredicate);
+registerEqualityOperators();
+hasOperator("$gt"); // true
+getOperator("$gt"); // createGtPredicate
+for (const [name, factory] of listOperators()) {
+  console.log(name, factory);
+}
+```
+
+Each built-in filter operator has its own implementation module and exported factory, organized by category under `src/array/`, `src/comparison/`, `src/date/`, `src/element/`, `src/equality/`, and `src/string/`. Each category has an `index.ts` for its registration helper. Factory names follow `createGtPredicate`, `createStartsWithPredicate`, etc.; `$date` uses `createDateOfMonthPredicate`. Category helpers remain available:
+
+- `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
+- `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
+- `registerElementOperators()`: `$exists`, `$type`
+- `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`
+- `registerDateOperators()`: `$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`, `$utc`
+- `registerArrayOperators()`: `$all`, `$some`, `$none`, `$size`
+
+The registry lists configurable **filter operators**. Logical query composition (`$and`, `$or`, `$not`, `$nor`), literal matching, predicate functions, and `$field` value references remain core syntax and do not require registration.
+
+--- | :--- | :--- |
 | `@fimbul-works/finna` | **All** built-in operators (`registerAllOperators()` is invoked automatically) | Standard applications wanting complete pattern matching capabilities out of the box with zero setup. |
 | `@fimbul-works/finna/core` | **None** (operator registry starts completely empty) | Bundle-size-critical environments and tree-shaking; register only the operator groups you actually need. |
 
 When using `@fimbul-works/finna/core`, you can selectively import and invoke individual operator group registers:
-* `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
-* `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
-* `registerElementOperators()`: `$exists`, `$type`
-* `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`
-* `registerDateOperators()`: `$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`, `$utc`
-* `registerArrayOperators()`: `$all`, `$some`, `$none`, `$size`
+- `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
+- `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
+- `registerElementOperators()`: `$exists`, `$type`
+- `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`
+- `registerDateOperators()`: `$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`, `$utc`
+- `registerArrayOperators()`: `$all`, `$some`, `$none`, `$size`
 
 ---
 
@@ -64,7 +100,9 @@ When using `@fimbul-works/finna/core`, you can selectively import and invoke ind
 ### 1. One-Shot Pattern Matching (`match`)
 
 ```typescript
-import { match } from "@fimbul-works/finna";
+import { match, registerAllOperators } from "@fimbul-works/finna";
+
+registerAllOperators();
 
 const user = {
   name: "Alice",
@@ -90,7 +128,9 @@ console.log(isMatch); // true
 Compile once into an optimized, reusable predicate function:
 
 ```typescript
-import { compile } from "@fimbul-works/finna";
+import { compile, registerComparisonOperators } from "@fimbul-works/finna";
+
+registerComparisonOperators();
 
 interface Product {
   id: string;
@@ -119,12 +159,7 @@ const available = inventory.filter(isAffordableAndInStock);
 ### 3. Tree-Shaking with the Core Export (`/core`)
 
 ```typescript
-import {
-  compile,
-  match,
-  registerComparisonOperators,
-  registerEqualityOperators,
-} from "@fimbul-works/finna/core";
+import { compile, match, registerComparisonOperators, registerEqualityOperators } from "@fimbul-works/finna/core";
 
 // The /core export does NOT register any operators by default.
 // Register only the operator groups your bundle requires:
@@ -144,7 +179,9 @@ console.log(isEligible); // true
 ### 4. Cross-Field References & Date Queries
 
 ```typescript
-import { match } from "@fimbul-works/finna";
+import { match, registerAllOperators } from "@fimbul-works/finna";
+
+registerAllOperators();
 
 const task = {
   title: "Deliver Project",
@@ -176,7 +213,9 @@ const isMarch2024 = match(task, {
 A filter can also be a predicate function itself, receiving the target value as the 1st parameter and the root value as the 2nd parameter:
 
 ```typescript
-import { compile, match } from "@fimbul-works/finna";
+import { compile, match, registerArrayOperators } from "@fimbul-works/finna";
+
+registerArrayOperators();
 
 const order = {
   items: 3,
@@ -198,24 +237,22 @@ const hasShortTag = match(order, {
 console.log(hasShortTag); // true
 
 // 3. Root-level predicate function
-const isQualifying = compile<typeof order>(
-  (val, root) => val.items * root.unitPrice > 50,
-);
+const isQualifying = compile<typeof order>((val, root) => val.items * root.unitPrice > 50);
 console.log(isQualifying(order)); // true
 ```
 
 ### 6. Custom Operator Registration
 
 ```typescript
-import { compile, registerOperators } from "@fimbul-works/finna";
+import { compile, registerOperator, type FilterPredicate } from "@fimbul-works/finna";
 
 // Define and register a custom operator (e.g., $divisibleBy)
-const unregister = registerOperators([
-  (op) => op === "$divisibleBy",
-  (op, expected) => (actual) => typeof actual === "number" && actual % expected === 0,
-]);
+const unregister = registerOperator(
+  "$divisibleBy",
+  (expected: number) => ((actual: any) => typeof actual === "number" && actual % expected === 0) as FilterPredicate,
+);
 
-const isEven = compile({ count: { $divisibleBy: 2 }});
+const isEven = compile({ count: { $divisibleBy: 2 } });
 console.log(isEven({ count: 42 })); // true
 
 // Unregister when no longer needed
@@ -223,6 +260,37 @@ unregister();
 ```
 
 ---
+
+## Registration and compilation errors
+
+`operatorMap` is a read-only view of installed names and factories; `listOperators()` returns an independent Map snapshot. Use `registerOperator(name, factory)` or `registerOperators(iterableOfEntries)` to install factories. Operator maps use `Map<OperatorName, OperatorFactory>`, where `OperatorName` is the template literal type `` `$${string}` ``. Registration and lookup APIs require dollar-prefixed names at compile time; registration also validates names at runtime. Registration batches are atomic. Re-registering the same factory is a no-op; a different factory requires `{ replace: true }`. Registration returns an idempotent cleanup function that only removes entries installed by that call, and never removes a later replacement. Replacement cleanup removes the replacement without restoring its predecessor. Use `unregisterOperator(name)` or `clearOperators()` for explicit removal. Already compiled predicates retain their factories' compiled behavior.
+
+`compile()`, `createPredicate()`, and `match()` throw an `AggregateError` for invalid queries, including unregistered operators and invalid `$in`/`$nin` arguments. Nested filters compile eagerly, so errors are reported before data is tested, including inside array and logical branches.
+
+```typescript
+import { compile, createFinnaContext, registerEqualityOperators } from "@fimbul-works/finna";
+
+registerEqualityOperators();
+const ctx = createFinnaContext(true); // UTC date operations
+try {
+  compile({ age: { $in: 42 }, role: { $nin: "admin" } }, ctx);
+} catch (error) {
+  if (!(error instanceof AggregateError)) throw error;
+  for (const diagnostic of error.errors) {
+    console.error(diagnostic.path, diagnostic.message, diagnostic.cause);
+  }
+}
+```
+
+`FinnaContext.errors` stores Error objects. Each compilation reports only errors added during that call, so a context can be reused after a failed compilation. Runtime type mismatches return `false` without recording diagnostics. Exceptions from user predicate functions propagate during evaluation.
+
+### Migrating from v1
+
+- Call a registration helper in application setup; importing the main entry point no longer installs operators.
+- Replace matcher/factory tuples with named factories: `registerOperator("$custom", (expected, ctx) => predicate)`.
+- Replace `operatorGroups` with registry inspection APIs and `unregisterOperators(tuple)` with `unregisterOperator(name)`.
+- Replace `ctx.warnings` with `ctx.errors`, and catch `AggregateError` at compilation boundaries. Nested query errors now surface during compilation.
+- Both main and `/core` imports support tree-shaking and explicit registration.
 
 ## Documentation
 

@@ -1,3 +1,8 @@
+import { beforeEach as setupBeforeEach } from "vitest";
+import { registerAllOperators as installOperators } from "./index.js";
+setupBeforeEach(() => {
+  installOperators();
+});
 import { describe, expect, it } from "vitest";
 import { createPredicate } from "./index.js";
 

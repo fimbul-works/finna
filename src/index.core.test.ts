@@ -9,7 +9,7 @@ import {
   registerElementOperators,
   registerEqualityOperators,
   registerStringOperators,
-} from "./index.core.js";
+} from "./index.js";
 
 describe("core export", () => {
   const resetCore = () => {
@@ -67,8 +67,7 @@ describe("core export", () => {
     const data = { tags: [1, 2, 3] };
 
     // Before registering array operators, $size returns false
-    const pArray = createPredicate({ tags: { $size: 3 } });
-    expect(() => pArray(data)).toThrow();
+    expect(() => createPredicate({ tags: { $size: 3 } })).toThrow(AggregateError);
 
     // Register array operators
     registerArrayOperators();

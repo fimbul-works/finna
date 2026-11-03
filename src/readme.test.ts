@@ -1,11 +1,21 @@
+import { beforeEach as setupBeforeEach } from "vitest";
+import { registerAllOperators as installOperators } from "./index.js";
+
+setupBeforeEach(() => {
+  installOperators();
+});
+
 import { afterAll, describe, expect, it } from "vitest";
 import {
   clearOperators,
+  compile,
   type FilterPredicate,
+  match,
+  registerAllOperators,
   registerComparisonOperators,
   registerEqualityOperators,
-} from "./index.core.js";
-import { compile, match, registerAllOperators, registerOperators } from "./index.js";
+  registerOperator,
+} from "./index.js";
 
 describe("README usage examples", () => {
   afterAll(() => {
@@ -154,11 +164,10 @@ describe("README usage examples", () => {
 
   it("7. Custom Operator Registration", () => {
     // Define and register a custom operator (e.g., $divisibleBy)
-    const unregister = registerOperators([
-      (op) => op === "$divisibleBy",
-      (_op, expected) =>
-        ((actual: any) => typeof actual === "number" && actual % expected === 0) as FilterPredicate<number>,
-    ]);
+    const unregister = registerOperator(
+      "$divisibleBy",
+      (expected) => ((actual: any) => typeof actual === "number" && actual % expected === 0) as FilterPredicate<number>,
+    );
 
     const isEven = compile({ count: { $divisibleBy: 2 } as any });
     expect(isEven({ count: 42 })).toBe(true);

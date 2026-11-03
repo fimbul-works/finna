@@ -10,6 +10,7 @@ import type { FinnaContext, Query } from "./types.js";
  * @param {Query<T>} pattern - The query/pattern to match against
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {value is T} `true` if the value matches, `false` otherwise
+ * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
  */
 export function match<T extends Record<string, any>>(
   value: T,

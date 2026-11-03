@@ -51,7 +51,7 @@
     "README.md",
     "LICENSE"
   ],
-  "sideEffects": true,
+  "sideEffects": false,
   "scripts": {
     "clean": "rm -rf dist",
     "clean:bundles": "rm -rf bundles",
@@ -67,7 +67,8 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@fimbul-works/nested-path": "^1.0.0"
+    "@fimbul-works/nested-path": "^2.0.0",
+    "@fimbul-works/hvat": "^1.4.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
