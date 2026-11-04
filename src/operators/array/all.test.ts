@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createAllPredicate as fieldSubjectFactory } from "./all.js";
-import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createAllPredicate } from "./all.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createAllPredicate, createAllPredicate as fieldSubjectFactory } from "./all.js";
 
 describe("createAllPredicate", () => {
   it("matches literal array membership", () => {

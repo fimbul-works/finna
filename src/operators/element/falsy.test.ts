@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createFalsyPredicate as fieldSubjectFactory } from "./falsy.js";
-import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createFalsyPredicate } from "./falsy.js";
+import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createFalsyPredicate, createFalsyPredicate as fieldSubjectFactory } from "./falsy.js";
 
 describe("createFalsyPredicate", () => {
   it("checks falsy values", () => {

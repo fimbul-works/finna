@@ -5,4 +5,6 @@ export * from "./element/index.js";
 export * from "./equality/index.js";
 export * from "./field-reference.js";
 export * from "./register-all.js";
+export * from "./register-core.js";
+export * from "./register-extended.js";
 export * from "./string/index.js";

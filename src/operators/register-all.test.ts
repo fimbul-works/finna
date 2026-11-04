@@ -1,3 +1,11 @@
+import { arrayOperators } from "./array/index.js";
+import { comparisonOperators } from "./comparison/index.js";
+import { dateOperators } from "./date/index.js";
+import { elementOperators } from "./element/index.js";
+import { equalityOperators } from "./equality/index.js";
+import { stringOperators } from "./string/index.js";
+import { coreOperators } from "./register-core.js";
+import { extendedOperators } from "./register-extended.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../compile.js";
 import type { FilterPredicate } from "../types.js";
@@ -45,5 +53,31 @@ describe("registerAllOperators", () => {
     expect(listOperators().size).toBe(0);
     expect(predicate({ scores: [10, 20], limits: { minimum: 10 } })).toBe(true);
     expect(predicate({ scores: [10, 20], limits: { minimum: 11 } })).toBe(false);
+  });
+  it("partitions every built-in into exactly one registration group", () => {
+    const expected = new Map([
+      ...arrayOperators,
+      ...comparisonOperators,
+      ...dateOperators,
+      ...elementOperators,
+      ...equalityOperators,
+      ...stringOperators,
+    ]);
+    const grouped = [...coreOperators, ...dateOperators, ...extendedOperators];
+    expect(grouped.length).toBe(expected.size);
+    expect(new Map(grouped)).toEqual(expected);
+    registerAllOperators();
+    expect(listOperators()).toEqual(expected);
+  });
+
+  it("preserves earlier individual registrations when cleaning up all groups", () => {
+    const eq = coreOperators.get("$eq")!;
+    const undoEq = registerOperator("$eq", eq);
+    const undoAll = registerAllOperators();
+    undoAll();
+    undoAll();
+    expect([...listOperators()]).toEqual([["$eq", eq]]);
+    undoEq();
+    expect(listOperators().size).toBe(0);
   });
 });

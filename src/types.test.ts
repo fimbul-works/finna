@@ -1,8 +1,7 @@
-import { compile, createGtPredicate } from "./index.js";
-import type { FieldReference, Query } from "./types.js";
 import { expect, expectTypeOf, it } from "vitest";
+import { compile, createGtPredicate } from "./index.js";
 import { registerOperator, registerOperators } from "./operators/operator-registry.js";
-import type { OperatorFactory, OperatorMap, OperatorName } from "./types.js";
+import type { FieldReference, OperatorFactory, OperatorMap, OperatorName, Query } from "./types.js";
 
 it("constrains map keys and registration names to dollar-prefixed strings", () => {
   expectTypeOf<OperatorName>().toEqualTypeOf<`$${string}`>();

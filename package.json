@@ -1,7 +1,7 @@
 {
   "name": "@fimbul-works/finna",
   "description": "An ultra-lightweight, modular, and type-safe pattern matching engine and predicate compiler for JavaScript and TypeScript.",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -39,10 +39,90 @@
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
     },
-    "./core": {
-      "types": "./dist/esm/index.core.d.ts",
-      "import": "./dist/esm/index.core.js",
-      "require": "./dist/cjs/index.core.js"
+    "./array": {
+      "types": "./dist/esm/operators/array/index.d.ts",
+      "import": "./dist/esm/operators/array/index.js",
+      "require": "./dist/cjs/operators/array/index.js"
+    },
+    "./array/*": {
+      "types": "./dist/esm/operators/array/*.d.ts",
+      "import": "./dist/esm/operators/array/*.js",
+      "require": "./dist/cjs/operators/array/*.js"
+    },
+    "./comparison": {
+      "types": "./dist/esm/operators/comparison/index.d.ts",
+      "import": "./dist/esm/operators/comparison/index.js",
+      "require": "./dist/cjs/operators/comparison/index.js"
+    },
+    "./comparison/*": {
+      "types": "./dist/esm/operators/comparison/*.d.ts",
+      "import": "./dist/esm/operators/comparison/*.js",
+      "require": "./dist/cjs/operators/comparison/*.js"
+    },
+    "./date": {
+      "types": "./dist/esm/operators/date/index.d.ts",
+      "import": "./dist/esm/operators/date/index.js",
+      "require": "./dist/cjs/operators/date/index.js"
+    },
+    "./date/*": {
+      "types": "./dist/esm/operators/date/*.d.ts",
+      "import": "./dist/esm/operators/date/*.js",
+      "require": "./dist/cjs/operators/date/*.js"
+    },
+    "./element": {
+      "types": "./dist/esm/operators/element/index.d.ts",
+      "import": "./dist/esm/operators/element/index.js",
+      "require": "./dist/cjs/operators/element/index.js"
+    },
+    "./element/*": {
+      "types": "./dist/esm/operators/element/*.d.ts",
+      "import": "./dist/esm/operators/element/*.js",
+      "require": "./dist/cjs/operators/element/*.js"
+    },
+    "./equality": {
+      "types": "./dist/esm/operators/equality/index.d.ts",
+      "import": "./dist/esm/operators/equality/index.js",
+      "require": "./dist/cjs/operators/equality/index.js"
+    },
+    "./equality/*": {
+      "types": "./dist/esm/operators/equality/*.d.ts",
+      "import": "./dist/esm/operators/equality/*.js",
+      "require": "./dist/cjs/operators/equality/*.js"
+    },
+    "./string": {
+      "types": "./dist/esm/operators/string/index.d.ts",
+      "import": "./dist/esm/operators/string/index.js",
+      "require": "./dist/cjs/operators/string/index.js"
+    },
+    "./string/*": {
+      "types": "./dist/esm/operators/string/*.d.ts",
+      "import": "./dist/esm/operators/string/*.js",
+      "require": "./dist/cjs/operators/string/*.js"
+    },
+    "./register-core": {
+      "types": "./dist/esm/operators/register-core.d.ts",
+      "import": "./dist/esm/operators/register-core.js",
+      "require": "./dist/cjs/operators/register-core.js"
+    },
+    "./register-extended": {
+      "types": "./dist/esm/operators/register-extended.d.ts",
+      "import": "./dist/esm/operators/register-extended.js",
+      "require": "./dist/cjs/operators/register-extended.js"
+    },
+    "./register-all": {
+      "types": "./dist/esm/operators/register-all.d.ts",
+      "import": "./dist/esm/operators/register-all.js",
+      "require": "./dist/cjs/operators/register-all.js"
+    },
+    "./field-reference": {
+      "types": "./dist/esm/operators/field-reference.d.ts",
+      "import": "./dist/esm/operators/field-reference.js",
+      "require": "./dist/cjs/operators/field-reference.js"
+    },
+    "./operator-registry": {
+      "types": "./dist/esm/operators/operator-registry.d.ts",
+      "import": "./dist/esm/operators/operator-registry.js",
+      "require": "./dist/cjs/operators/operator-registry.js"
     }
   },
   "files": [

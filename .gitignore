@@ -1,6 +1,6 @@
 node_modules/
 dist/
-bundles/
+/bundles/
 
 # Benchmark results
 benchmark-*.json

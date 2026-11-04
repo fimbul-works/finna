@@ -4,51 +4,53 @@
 
 ### QueryCompilationError
 
-A query compilation error with its location and original cause.
+Compilation error with a query location and original cause.
 
 #### Extends
 
-- `Error`
+- [`QueryDiagnostic`](#querydiagnostic)
 
 #### Constructors
 
 ##### Constructor
 
 ```ts
-new QueryCompilationError(cause, path?): QueryCompilationError;
+new QueryCompilationError(
+   cause, 
+   path?, 
+   captureStacks?
+): QueryCompilationError;
 ```
-
-Creates a diagnostic preserving the original error and query location.
 
 ###### Parameters
 
-| Parameter | Type                              | Default value | Description                                             |
-| --------- | --------------------------------- | ------------- | ------------------------------------------------------- |
-| `cause`   | `unknown`                         | `undefined`   | The original error or thrown value.                     |
-| `path`    | readonly (`string` \| `number`)[] | `[]`          | Query path segments; an empty path identifies the root. |
+| Parameter | Type | Default value |
+| ------ | ------ | ------ |
+| `cause` | `unknown` | `undefined` |
+| `path?` | readonly (`string` \| `number`)[] | `[]` |
+| `captureStacks?` | `boolean` | `false` |
 
 ###### Returns
 
 [`QueryCompilationError`](#querycompilationerror)
 
-A diagnostic Error containing the path and original cause.
-
 ###### Overrides
 
-```ts
-Error.constructor;
-```
+[`QueryDiagnostic`](#querydiagnostic).[`constructor`](#constructor-1)
 
 #### Properties
 
-| Property                                                | Modifier   | Type                              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                       | Inherited from          |
-| ------------------------------------------------------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| <a id="property-cause"></a> `cause?`                    | `public`   | `unknown`                         | -                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `Error.cause`           |
-| <a id="property-message"></a> `message`                 | `public`   | `string`                          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `Error.message`         |
-| <a id="property-name"></a> `name`                       | `public`   | `string`                          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `Error.name`            |
-| <a id="property-path"></a> `path`                       | `readonly` | readonly (`string` \| `number`)[] | -                                                                                                                                                                                                                                                                                                                                                                                                                                                 | -                       |
-| <a id="property-stack"></a> `stack?`                    | `public`   | `string`                          | -                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `Error.stack`           |
-| <a id="property-stacktracelimit"></a> `stackTraceLimit` | `static`   | `number`                          | The `Error.stackTraceLimit` property specifies the number of stack frames collected by a stack trace (whether generated by `new Error().stack` or `Error.captureStackTrace(obj)`). The default value is `10` but may be set to any valid JavaScript number. Changes will affect any stack trace captured _after_ the value has been changed. If set to a non-number value, or set to a negative number, stack traces will not capture any frames. | `Error.stackTraceLimit` |
+| Property | Modifier | Type | Description | Inherited from |
+| ------ | ------ | ------ | ------ | ------ |
+| <a id="property-cause"></a> `cause?` | `public` | `unknown` | - | [`QueryDiagnostic`](#querydiagnostic).[`cause`](#property-cause-1) |
+| <a id="property-message"></a> `message` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`message`](#property-message-1) |
+| <a id="property-name"></a> `name` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`name`](#property-name-1) |
+| <a id="property-operator"></a> `operator?` | `readonly` | `` `$${string}` `` | - | [`QueryDiagnostic`](#querydiagnostic).[`operator`](#property-operator-1) |
+| <a id="property-path"></a> `path` | `readonly` | readonly (`string` \| `number`)[] | - | [`QueryDiagnostic`](#querydiagnostic).[`path`](#property-path-1) |
+| <a id="property-phase"></a> `phase` | `readonly` | [`DiagnosticPhase`](#diagnosticphase) | - | [`QueryDiagnostic`](#querydiagnostic).[`phase`](#property-phase-1) |
+| <a id="property-severity"></a> `severity` | `readonly` | [`DiagnosticSeverity`](#diagnosticseverity) | - | [`QueryDiagnostic`](#querydiagnostic).[`severity`](#property-severity-1) |
+| <a id="property-stack"></a> `stack?` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`stack`](#property-stack-1) |
+| <a id="property-stacktracelimit"></a> `stackTraceLimit` | `static` | `number` | The `Error.stackTraceLimit` property specifies the number of stack frames collected by a stack trace (whether generated by `new Error().stack` or `Error.captureStackTrace(obj)`). The default value is `10` but may be set to any valid JavaScript number. Changes will affect any stack trace captured _after_ the value has been changed. If set to a non-number value, or set to a negative number, stack traces will not capture any frames. | [`QueryDiagnostic`](#querydiagnostic).[`stackTraceLimit`](#property-stacktracelimit-1) |
 
 #### Methods
 
@@ -65,7 +67,7 @@ a string representing the location in the code at which
 ```js
 const myObject = {};
 Error.captureStackTrace(myObject);
-myObject.stack; // Similar to `new Error().stack`
+myObject.stack;  // Similar to `new Error().stack`
 ```
 
 The first line of the trace will be prefixed with
@@ -104,9 +106,9 @@ a();
 
 ###### Parameters
 
-| Parameter         | Type       |
-| ----------------- | ---------- |
-| `targetObject`    | `object`   |
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
 | `constructorOpt?` | `Function` |
 
 ###### Returns
@@ -115,9 +117,7 @@ a();
 
 ###### Inherited from
 
-```ts
-Error.captureStackTrace;
-```
+[`QueryDiagnostic`](#querydiagnostic).[`captureStackTrace`](#capturestacktrace-1)
 
 ##### isError()
 
@@ -129,9 +129,9 @@ Indicates whether the argument provided is a built-in Error instance or not.
 
 ###### Parameters
 
-| Parameter | Type      |
-| --------- | --------- |
-| `error`   | `unknown` |
+| Parameter | Type |
+| ------ | ------ |
+| `error` | `unknown` |
 
 ###### Returns
 
@@ -139,9 +139,7 @@ Indicates whether the argument provided is a built-in Error instance or not.
 
 ###### Inherited from
 
-```ts
-Error.isError;
-```
+[`QueryDiagnostic`](#querydiagnostic).[`isError`](#iserror-1)
 
 ##### prepareStackTrace()
 
@@ -151,9 +149,9 @@ static prepareStackTrace(err, stackTraces): any;
 
 ###### Parameters
 
-| Parameter     | Type         |
-| ------------- | ------------ |
-| `err`         | `Error`      |
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
 | `stackTraces` | `CallSite`[] |
 
 ###### Returns
@@ -166,9 +164,341 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 ###### Inherited from
 
+[`QueryDiagnostic`](#querydiagnostic).[`prepareStackTrace`](#preparestacktrace-1)
+
+***
+
+### QueryDiagnostic
+
+Located diagnostic retaining its original exception as cause.
+
+#### Extends
+
+- `Error`
+
+#### Extended by
+
+- [`QueryCompilationError`](#querycompilationerror)
+- [`QueryEvaluationError`](#queryevaluationerror)
+
+#### Constructors
+
+##### Constructor
+
 ```ts
-Error.prepareStackTrace;
+new QueryDiagnostic(
+   cause, 
+   ctx, 
+   phase, 
+   severity
+): QueryDiagnostic;
 ```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `cause` | `unknown` |
+| `ctx` | `Pick`\<[`FinnaContext`](#finnacontext), `"path"` \| `"captureStacks"`\> |
+| `phase` | [`DiagnosticPhase`](#diagnosticphase) |
+| `severity` | [`DiagnosticSeverity`](#diagnosticseverity) |
+
+###### Returns
+
+[`QueryDiagnostic`](#querydiagnostic)
+
+###### Overrides
+
+`Error.constructor`
+
+#### Properties
+
+| Property | Modifier | Type | Description | Inherited from |
+| ------ | ------ | ------ | ------ | ------ |
+| <a id="property-cause-1"></a> `cause?` | `public` | `unknown` | - | `Error.cause` |
+| <a id="property-message-1"></a> `message` | `public` | `string` | - | `Error.message` |
+| <a id="property-name-1"></a> `name` | `public` | `string` | - | `Error.name` |
+| <a id="property-operator-1"></a> `operator?` | `readonly` | `` `$${string}` `` | - | - |
+| <a id="property-path-1"></a> `path` | `readonly` | readonly (`string` \| `number`)[] | - | - |
+| <a id="property-phase-1"></a> `phase` | `readonly` | [`DiagnosticPhase`](#diagnosticphase) | - | - |
+| <a id="property-severity-1"></a> `severity` | `readonly` | [`DiagnosticSeverity`](#diagnosticseverity) | - | - |
+| <a id="property-stack-1"></a> `stack?` | `public` | `string` | - | `Error.stack` |
+| <a id="property-stacktracelimit-1"></a> `stackTraceLimit` | `static` | `number` | The `Error.stackTraceLimit` property specifies the number of stack frames collected by a stack trace (whether generated by `new Error().stack` or `Error.captureStackTrace(obj)`). The default value is `10` but may be set to any valid JavaScript number. Changes will affect any stack trace captured _after_ the value has been changed. If set to a non-number value, or set to a negative number, stack traces will not capture any frames. | `Error.stackTraceLimit` |
+
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Error.captureStackTrace`
+
+##### isError()
+
+```ts
+static isError(error): error is Error;
+```
+
+Indicates whether the argument provided is a built-in Error instance or not.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `error` | `unknown` |
+
+###### Returns
+
+`error is Error`
+
+###### Inherited from
+
+`Error.isError`
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+`Error.prepareStackTrace`
+
+***
+
+### QueryEvaluationError
+
+Runtime error with a query location and original cause.
+
+#### Extends
+
+- [`QueryDiagnostic`](#querydiagnostic)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new QueryEvaluationError(cause, ctx): QueryEvaluationError;
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `cause` | `unknown` |
+| `ctx` | [`FinnaContext`](#finnacontext) |
+
+###### Returns
+
+[`QueryEvaluationError`](#queryevaluationerror)
+
+###### Overrides
+
+[`QueryDiagnostic`](#querydiagnostic).[`constructor`](#constructor-1)
+
+#### Properties
+
+| Property | Modifier | Type | Description | Inherited from |
+| ------ | ------ | ------ | ------ | ------ |
+| <a id="property-cause-2"></a> `cause?` | `public` | `unknown` | - | [`QueryDiagnostic`](#querydiagnostic).[`cause`](#property-cause-1) |
+| <a id="property-message-2"></a> `message` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`message`](#property-message-1) |
+| <a id="property-name-2"></a> `name` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`name`](#property-name-1) |
+| <a id="property-operator-2"></a> `operator?` | `readonly` | `` `$${string}` `` | - | [`QueryDiagnostic`](#querydiagnostic).[`operator`](#property-operator-1) |
+| <a id="property-path-2"></a> `path` | `readonly` | readonly (`string` \| `number`)[] | - | [`QueryDiagnostic`](#querydiagnostic).[`path`](#property-path-1) |
+| <a id="property-phase-2"></a> `phase` | `readonly` | [`DiagnosticPhase`](#diagnosticphase) | - | [`QueryDiagnostic`](#querydiagnostic).[`phase`](#property-phase-1) |
+| <a id="property-severity-2"></a> `severity` | `readonly` | [`DiagnosticSeverity`](#diagnosticseverity) | - | [`QueryDiagnostic`](#querydiagnostic).[`severity`](#property-severity-1) |
+| <a id="property-stack-2"></a> `stack?` | `public` | `string` | - | [`QueryDiagnostic`](#querydiagnostic).[`stack`](#property-stack-1) |
+| <a id="property-stacktracelimit-2"></a> `stackTraceLimit` | `static` | `number` | The `Error.stackTraceLimit` property specifies the number of stack frames collected by a stack trace (whether generated by `new Error().stack` or `Error.captureStackTrace(obj)`). The default value is `10` but may be set to any valid JavaScript number. Changes will affect any stack trace captured _after_ the value has been changed. If set to a non-number value, or set to a negative number, stack traces will not capture any frames. | [`QueryDiagnostic`](#querydiagnostic).[`stackTraceLimit`](#property-stacktracelimit-1) |
+
+#### Methods
+
+##### captureStackTrace()
+
+```ts
+static captureStackTrace(targetObject, constructorOpt?): void;
+```
+
+Creates a `.stack` property on `targetObject`, which when accessed returns
+a string representing the location in the code at which
+`Error.captureStackTrace()` was called.
+
+```js
+const myObject = {};
+Error.captureStackTrace(myObject);
+myObject.stack;  // Similar to `new Error().stack`
+```
+
+The first line of the trace will be prefixed with
+`${myObject.name}: ${myObject.message}`.
+
+The optional `constructorOpt` argument accepts a function. If given, all frames
+above `constructorOpt`, including `constructorOpt`, will be omitted from the
+generated stack trace.
+
+The `constructorOpt` argument is useful for hiding implementation
+details of error generation from the user. For instance:
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  // Create an error without stack trace to avoid calculating the stack trace twice.
+  const { stackTraceLimit } = Error;
+  Error.stackTraceLimit = 0;
+  const error = new Error();
+  Error.stackTraceLimit = stackTraceLimit;
+
+  // Capture the stack trace above function b
+  Error.captureStackTrace(error, b); // Neither function c, nor b is included in the stack trace
+  throw error;
+}
+
+a();
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `targetObject` | `object` |
+| `constructorOpt?` | `Function` |
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+[`QueryDiagnostic`](#querydiagnostic).[`captureStackTrace`](#capturestacktrace-1)
+
+##### isError()
+
+```ts
+static isError(error): error is Error;
+```
+
+Indicates whether the argument provided is a built-in Error instance or not.
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `error` | `unknown` |
+
+###### Returns
+
+`error is Error`
+
+###### Inherited from
+
+[`QueryDiagnostic`](#querydiagnostic).[`isError`](#iserror-1)
+
+##### prepareStackTrace()
+
+```ts
+static prepareStackTrace(err, stackTraces): any;
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `err` | `Error` |
+| `stackTraces` | `CallSite`[] |
+
+###### Returns
+
+`any`
+
+###### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
+###### Inherited from
+
+[`QueryDiagnostic`](#querydiagnostic).[`prepareStackTrace`](#preparestacktrace-1)
 
 ## Interfaces
 
@@ -179,19 +509,19 @@ Array-specific query operators.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t"></a> `T` |
 
 #### Properties
 
-| Property                            | Type                                                                                                              | Description                                                          |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| <a id="property-all"></a> `$all?`   | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` _extends_ `object` ? [`Query`](#query)\<`T`\> : `never`     | Must contain all specified values or match sub-query                 |
-| <a id="property-none"></a> `$none?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` _extends_ `object` ? [`Query`](#query)\<`T`\> : `never`     | Must not contain any of the specified values or match sub-query      |
-| <a id="property-size"></a> `$size?` | \| `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> \| [`FilterPredicate`](#filterpredicate)\<`number`\> | Size of the array                                                    |
-| <a id="property-some"></a> `$some?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` _extends_ `object` ? [`Query`](#query)\<`T`\> : `never`     | Must contain at least one of the specified values or match sub-query |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-all"></a> `$all?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain all specified values or match sub-query |
+| <a id="property-none"></a> `$none?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must not contain any of the specified values or match sub-query |
+| <a id="property-size"></a> `$size?` | \| `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> \| [`FilterPredicate`](#filterpredicate)\<`number`\> | Size of the array |
+| <a id="property-some"></a> `$some?` | \| [`QueryValue`](#queryvalue)\<`T`\> \| `T`[] \| `T` *extends* `object` ? [`Query`](#query)\<`T`\> : `never` | Must contain at least one of the specified values or match sub-query |
 
----
+***
 
 ### ComparisonOperators
 
@@ -200,19 +530,38 @@ Combined comparison operators for sortable types.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-1"></a> `T` |
 
 #### Properties
 
-| Property                          | Type                                       | Description                       |
-| --------------------------------- | ------------------------------------------ | --------------------------------- |
-| <a id="property-gt"></a> `$gt?`   | [`FieldReference`](#fieldreference) \| `T` | -                                 |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-gt"></a> `$gt?` | [`FieldReference`](#fieldreference) \| `T` | - |
 | <a id="property-gte"></a> `$gte?` | [`FieldReference`](#fieldreference) \| `T` | Greater than or equal to operator |
-| <a id="property-lt"></a> `$lt?`   | [`FieldReference`](#fieldreference) \| `T` | Less than operator                |
-| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `T` | Less than or equal to operator    |
+| <a id="property-lt"></a> `$lt?` | [`FieldReference`](#fieldreference) \| `T` | Less than operator |
+| <a id="property-lte"></a> `$lte?` | [`FieldReference`](#fieldreference) \| `T` | Less than or equal to operator |
 
----
+***
+
+### CompilationResult
+
+Failed compilation never returns a partial predicate.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| ------ | ------ |
+| <a id="type-parameter-t-2"></a> `T` | `any` |
+
+#### Properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="property-context"></a> `context` | [`FinnaContext`](#finnacontext) |
+| <a id="property-predicate"></a> `predicate` | [`FilterPredicate`](#filterpredicate)\<`T`\> \| `null` |
+
+***
 
 ### DateOperators
 
@@ -220,19 +569,19 @@ Date-specific query operators.
 
 #### Properties
 
-| Property                                  | Type                                                      | Description                                     |
-| ----------------------------------------- | --------------------------------------------------------- | ----------------------------------------------- |
-| <a id="property-date"></a> `$date?`       | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of month operator (1-31)                    |
-| <a id="property-hour"></a> `$hour?`       | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Hour operator (0-23)                            |
-| <a id="property-minute"></a> `$minute?`   | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Minute operator (0-59)                          |
-| <a id="property-month"></a> `$month?`     | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Month operator (0-11)                           |
-| <a id="property-ms"></a> `$ms?`           | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Millisecond operator (0-999)                    |
-| <a id="property-second"></a> `$second?`   | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Second operator (0-59)                          |
-| <a id="property-utc"></a> `$utc?`         | [`DateOperators`](#dateoperators)                         | Switch to UTC context for nested date operators |
-| <a id="property-weekday"></a> `$weekday?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of week operator (0-6, 0 is Sunday)         |
-| <a id="property-year"></a> `$year?`       | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Year operator                                   |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-date"></a> `$date?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of month operator (1-31) |
+| <a id="property-hour"></a> `$hour?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Hour operator (0-23) |
+| <a id="property-minute"></a> `$minute?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Minute operator (0-59) |
+| <a id="property-month"></a> `$month?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Month operator (0-11) |
+| <a id="property-ms"></a> `$ms?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Millisecond operator (0-999) |
+| <a id="property-second"></a> `$second?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Second operator (0-59) |
+| <a id="property-utc"></a> `$utc?` | [`DateOperators`](#dateoperators) | Switch to UTC context for nested date operators |
+| <a id="property-weekday"></a> `$weekday?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Day of week operator (0-6, 0 is Sunday) |
+| <a id="property-year"></a> `$year?` | `number` \| [`OperatorQuery`](#operatorquery)\<`number`\> | Year operator |
 
----
+***
 
 ### ElementOperators
 
@@ -240,12 +589,23 @@ Element-specific query operators.
 
 #### Properties
 
-| Property                                | Type                        | Description                            |
-| --------------------------------------- | --------------------------- | -------------------------------------- |
-| <a id="property-exists"></a> `$exists?` | `boolean`                   | Check if property exists in root value |
-| <a id="property-type"></a> `$type?`     | [`TypeString`](#typestring) | Check property type                    |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-exists"></a> `$exists?` | `boolean` | Check if property exists in root value |
+| <a id="property-falsy"></a> `$falsy?` | `boolean` | Check property falsiness |
+| <a id="property-isarray"></a> `$isArray?` | `boolean` | - |
+| <a id="property-isclass"></a> `$isClass?` | new (...`args`) => `any` | Check instanceof the supplied constructor, including subclasses. |
+| <a id="property-isdate"></a> `$isDate?` | `boolean` | Check a Date instance, including invalid dates. |
+| <a id="property-isinteger"></a> `$isInteger?` | `boolean` | - |
+| <a id="property-isnumber"></a> `$isNumber?` | `boolean` | Check a Hvat number (including NaN and Infinity). |
+| <a id="property-isobject"></a> `$isObject?` | `boolean` | Check a Hvat object: non-null, non-array; includes class instances. |
+| <a id="property-isstring"></a> `$isString?` | `boolean` | - |
+| <a id="property-issymbol"></a> `$isSymbol?` | `boolean` | - |
+| <a id="property-nullish"></a> `$nullish?` | `boolean` | Check property nullishness (null, undefined) |
+| <a id="property-truthy"></a> `$truthy?` | `boolean` | Check property truthiness |
+| <a id="property-type"></a> `$type?` | [`TypeString`](#typestring) | Check property type |
 
----
+***
 
 ### EqualityOperators
 
@@ -254,19 +614,32 @@ Equality operators.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-3"></a> `T` |
 
 #### Properties
 
-| Property                          | Type                                       | Description         |
-| --------------------------------- | ------------------------------------------ | ------------------- |
-| <a id="property-eq"></a> `$eq?`   | [`FieldReference`](#fieldreference) \| `T` | Equality operator   |
-| <a id="property-in"></a> `$in?`   | `T`[]                                      | In operator         |
-| <a id="property-ne"></a> `$ne?`   | [`FieldReference`](#fieldreference) \| `T` | Inequality operator |
-| <a id="property-nin"></a> `$nin?` | `T`[]                                      | Not in operator     |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-eq"></a> `$eq?` | [`FieldReference`](#fieldreference) \| `T` | Equality operator |
+| <a id="property-in"></a> `$in?` | `T`[] | In operator |
+| <a id="property-ne"></a> `$ne?` | [`FieldReference`](#fieldreference) \| `T` | Inequality operator |
+| <a id="property-nin"></a> `$nin?` | `T`[] | Not in operator |
 
----
+***
+
+### EvaluationResult
+
+Null distinguishes failed execution from a legitimate non-match.
+
+#### Properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="property-context-1"></a> `context` | [`FinnaContext`](#finnacontext) |
+| <a id="property-matched"></a> `matched` | `boolean` \| `null` |
+
+***
 
 ### FieldReference
 
@@ -274,15 +647,15 @@ Reference to another field in the same root value.
 
 #### Properties
 
-| Property                             | Type     |
-| ------------------------------------ | -------- |
+| Property | Type |
+| ------ | ------ |
 | <a id="property-field"></a> `$field` | `string` |
 
----
+***
 
 ### FinnaContext
 
-Context for a predicate execution.
+Context shared by nested queries; UTC modifiers preserve diagnostic policy.
 
 #### Extends
 
@@ -296,13 +669,92 @@ Context for a predicate execution.
 
 #### Properties
 
-| Property                              | Type                              | Description                                                                |
-| ------------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
-| <a id="property-errors"></a> `errors` | `Error`[]                         | Errors collected during compilation; matching never appends to this array. |
-| <a id="property-path-1"></a> `path?`  | readonly (`string` \| `number`)[] | Location within the query, used in compilation diagnostics.                |
-| <a id="property-useutc"></a> `useUTC` | `boolean`                         | Whether to use UTC for date-related comparisons                            |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-capturestacks"></a> `captureStacks` | `boolean` | - |
+| <a id="property-errors"></a> `errors` | `Error`[] | Diagnostic history, including compilation and completed evaluations. |
+| <a id="property-logger"></a> `logger?` | [`FinnaLogger`](#finnalogger) | - |
+| <a id="property-path-3"></a> `path?` | readonly (`string` \| `number`)[] | - |
+| <a id="property-throwerrors"></a> `throwErrors` | `boolean` | - |
+| <a id="property-useutc"></a> `useUTC` | `boolean` | - |
+| <a id="property-warnings"></a> `warnings` | `Error`[] | - |
+| <a id="property-warningsaserrors"></a> `warningsAsErrors` | `boolean` | - |
 
----
+***
+
+### FinnaContextOptions
+
+Explicit diagnostic policy; no settings are inferred from NODE_ENV.
+
+#### Properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-capturestacks-1"></a> `captureStacks?` | `boolean` | - |
+| <a id="property-logger-1"></a> `logger?` | [`FinnaLogger`](#finnalogger) | - |
+| <a id="property-throwerrors-1"></a> `throwErrors?` | `boolean` | Result APIs throw by default. Strict boolean/predicate APIs always throw on failure. |
+| <a id="property-useutc-1"></a> `useUTC?` | `boolean` | - |
+| <a id="property-warningsaserrors-1"></a> `warningsAsErrors?` | `boolean` | - |
+
+***
+
+### FinnaLogDetails
+
+Structured logging fields; document values are never included automatically.
+
+#### Properties
+
+| Property | Type |
+| ------ | ------ |
+| <a id="property-err"></a> `err` | `Error` |
+| <a id="property-operator-3"></a> `operator?` | `` `$${string}` `` |
+| <a id="property-path-4"></a> `path` | readonly (`string` \| `number`)[] |
+| <a id="property-phase-3"></a> `phase` | [`DiagnosticPhase`](#diagnosticphase) |
+| <a id="property-severity-3"></a> `severity` | [`DiagnosticSeverity`](#diagnosticseverity) |
+
+***
+
+### FinnaLogger
+
+Structural logger interface compatible with Pino; no logger dependency is required.
+
+#### Methods
+
+##### error()
+
+```ts
+error(details, message): void;
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `details` | [`FinnaLogDetails`](#finnalogdetails) |
+| `message` | `string` |
+
+###### Returns
+
+`void`
+
+##### warn()
+
+```ts
+warn(details, message): void;
+```
+
+###### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `details` | [`FinnaLogDetails`](#finnalogdetails) |
+| `message` | `string` |
+
+###### Returns
+
+`void`
+
+***
 
 ### LogicalOperators
 
@@ -311,19 +763,19 @@ Logical operators for combining queries.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-4"></a> `T` |
 
 #### Properties
 
-| Property                          | Type                       | Description          |
-| --------------------------------- | -------------------------- | -------------------- |
+| Property | Type | Description |
+| ------ | ------ | ------ |
 | <a id="property-and"></a> `$and?` | [`Query`](#query)\<`T`\>[] | Logical AND operator |
 | <a id="property-nor"></a> `$nor?` | [`Query`](#query)\<`T`\>[] | Logical NOR operator |
-| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`T`\>   | Logical NOT operator |
-| <a id="property-or"></a> `$or?`   | [`Query`](#query)\<`T`\>[] | Logical OR operator  |
+| <a id="property-not"></a> `$not?` | [`Query`](#query)\<`T`\> | Logical NOT operator |
+| <a id="property-or"></a> `$or?` | [`Query`](#query)\<`T`\>[] | Logical OR operator |
 
----
+***
 
 ### StringOperators
 
@@ -331,12 +783,30 @@ String-specific query operators.
 
 #### Properties
 
-| Property                                        | Type                                            | Description              |
-| ----------------------------------------------- | ----------------------------------------------- | ------------------------ |
-| <a id="property-endswith"></a> `$endsWith?`     | `string` \| [`FieldReference`](#fieldreference) | Ends with string         |
-| <a id="property-includes"></a> `$includes?`     | `string` \| [`FieldReference`](#fieldreference) | Includes substring       |
-| <a id="property-regex"></a> `$regex?`           | `string` \| `RegExp`                            | Regular expression match |
-| <a id="property-startswith"></a> `$startsWith?` | `string` \| [`FieldReference`](#fieldreference) | Starts with string       |
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-endswith"></a> `$endsWith?` | `string` \| [`FieldReference`](#fieldreference) | Ends with string |
+| <a id="property-includes"></a> `$includes?` | `string` \| [`FieldReference`](#fieldreference) | Includes substring |
+| <a id="property-lowercase"></a> `$lowercase?` | [`QueryValue`](#queryvalue)\<`string`\> | Test the lowercased string without mutating the document. |
+| <a id="property-regex"></a> `$regex?` | `string` \| `RegExp` | Regular expression match |
+| <a id="property-replace"></a> `$replace?` | [`StringReplacement`](#stringreplacement) | Replace using JavaScript replace semantics, then test the result. |
+| <a id="property-replaceall"></a> `$replaceAll?` | [`StringReplacement`](#stringreplacement) | Replace every occurrence; RegExp searches must have the global flag. |
+| <a id="property-startswith"></a> `$startsWith?` | `string` \| [`FieldReference`](#fieldreference) | Starts with string |
+| <a id="property-uppercase"></a> `$uppercase?` | [`QueryValue`](#queryvalue)\<`string`\> | Test the uppercased string without mutating the document. |
+
+***
+
+### StringReplacement
+
+Arguments for a string replacement followed by a nested predicate.
+
+#### Properties
+
+| Property | Type | Description |
+| ------ | ------ | ------ |
+| <a id="property-replace-1"></a> `replace` | `string` \| [`FieldReference`](#fieldreference) | Replacement text with JavaScript substitution syntax, or a root reference. |
+| <a id="property-search"></a> `search` | `string` \| `RegExp` \| [`FieldReference`](#fieldreference) | Literal text, a RegExp, or a reference resolved against the original root. |
+| <a id="property-then"></a> `then` | [`QueryValue`](#queryvalue)\<`string`\> | Query applied to the replaced string, retaining the original root. |
 
 ## Type Aliases
 
@@ -348,7 +818,7 @@ type ArrayOperator = keyof ArrayOperators<any>;
 
 Supported array operators.
 
----
+***
 
 ### ComparisonOperator
 
@@ -358,7 +828,7 @@ type ComparisonOperator = keyof ComparisonOperators<any>;
 
 Supported comparison operators.
 
----
+***
 
 ### DateOperator
 
@@ -368,7 +838,27 @@ type DateOperator = keyof DateOperators;
 
 Supported date operators.
 
----
+***
+
+### DiagnosticPhase
+
+```ts
+type DiagnosticPhase = "compile" | "evaluate";
+```
+
+Where a diagnostic originated.
+
+***
+
+### DiagnosticSeverity
+
+```ts
+type DiagnosticSeverity = "error" | "warning";
+```
+
+Severity remains warning even when warningsAsErrors escalates it.
+
+***
 
 ### ElementOperator
 
@@ -378,7 +868,7 @@ type ElementOperator = keyof ElementOperators;
 
 Supported element operators.
 
----
+***
 
 ### EqualityOperator
 
@@ -388,7 +878,7 @@ type EqualityOperator = keyof EqualityOperators<any>;
 
 Supported equality operators.
 
----
+***
 
 ### FilterPredicate
 
@@ -400,16 +890,16 @@ A filter predicate function that receives the value and the root value.
 
 #### Type Parameters
 
-| Type Parameter | Default type | Description               |
-| -------------- | ------------ | ------------------------- |
-| `T`            | `any`        | Type of the value to test |
+| Type Parameter | Default type | Description |
+| ------ | ------ | ------ |
+| <a id="type-parameter-t-5"></a> `T` | `any` | Type of the value to test |
 
 #### Parameters
 
-| Parameter | Type  | Description                          |
-| --------- | ----- | ------------------------------------ |
-| `val`     | `any` | The value to test                    |
-| `root?`   | `any` | The root value for field comparisons |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `val` | `any` | The value to test |
+| `root?` | `any` | The root value for field comparisons |
 
 #### Returns
 
@@ -417,7 +907,7 @@ A filter predicate function that receives the value and the root value.
 
 True if matched, false otherwise
 
----
+***
 
 ### LogicalOperator
 
@@ -427,7 +917,7 @@ type LogicalOperator = keyof LogicalOperators<any>;
 
 Supported operator strings for internal matching logic.
 
----
+***
 
 ### OperatorFactory
 
@@ -439,10 +929,10 @@ Compiles an operator argument into a reusable predicate.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                         |
-| ---------- | ------------------------------- | ------------------------------------------------------------------- |
-| `expected` | `any`                           | The operator argument, which may contain a nested filter.           |
-| `context`  | [`FinnaContext`](#finnacontext) | Compilation context providing date settings and shared diagnostics. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | The operator argument, which may contain a nested filter. |
+| `context` | [`FinnaContext`](#finnacontext) | Compilation context providing date settings and shared diagnostics. |
 
 #### Returns
 
@@ -454,7 +944,7 @@ The predicate used to test an actual value and optional root value.
 
 If the operator argument cannot be compiled.
 
----
+***
 
 ### OperatorMap
 
@@ -466,11 +956,11 @@ Registry of explicitly installed filter operators.
 
 #### Type Parameters
 
-| Type Parameter                                   | Default type                    |
-| ------------------------------------------------ | ------------------------------- |
-| `Name` _extends_ [`OperatorName`](#operatorname) | [`OperatorName`](#operatorname) |
+| Type Parameter | Default type |
+| ------ | ------ |
+| <a id="type-parameter-name"></a> `Name` *extends* [`OperatorName`](#operatorname) | [`OperatorName`](#operatorname) |
 
----
+***
 
 ### OperatorName
 
@@ -480,12 +970,12 @@ type OperatorName = `$${string}`;
 
 Operator names must start with a dollar sign, including custom operators.
 
----
+***
 
 ### OperatorQuery
 
 ```ts
-type OperatorQuery<T> = EqualityOperators<T> & ElementOperators & T extends Sortable ? ComparisonOperators<T> : object & T extends string ? StringOperators : object & T extends Date ? DateOperators : object & T extends infer I[] ? ArrayOperators<I> : object;
+type OperatorQuery<T> = EqualityOperators<T> & ElementOperators & (T extends Sortable ? ComparisonOperators<T> : object) & (T extends string ? StringOperators : object) & (T extends Date ? DateOperators : object) & (T extends infer I[] ? ArrayOperators<I> : object);
 ```
 
 Full operator query for a value.
@@ -493,15 +983,17 @@ Full operator query for a value.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-6"></a> `T` |
 
----
+***
 
 ### Query
 
 ```ts
-type Query<T> = QueryObject<T> | FilterPredicate<T>;
+type Query<T> = 
+  | QueryObject<T>
+| FilterPredicate<T>;
 ```
 
 Recursively define Query type.
@@ -511,19 +1003,17 @@ Supports top-level keys of T, arbitrary string paths (dotted notation), and root
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-7"></a> `T` |
 
----
+***
 
 ### QueryObject
 
 ```ts
-type QueryObject<T> = {
-  [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never);
-} & LogicalOperators<T> & {
-    [path: string]: any;
-  };
+type QueryObject<T> = { [K in keyof T]?: QueryValue<T[K]> | (T[K] extends object ? Query<T[K]> : never) } & LogicalOperators<T> & {
+[path: string]: any;
+};
 ```
 
 Object-based query specification for a type T.
@@ -531,15 +1021,15 @@ Object-based query specification for a type T.
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-8"></a> `T` |
 
----
+***
 
 ### QueryOperator
 
 ```ts
-type QueryOperator =
+type QueryOperator = 
   | EqualityOperator
   | ComparisonOperator
   | StringOperator
@@ -550,12 +1040,17 @@ type QueryOperator =
 
 Supported query operators.
 
----
+***
 
 ### QueryValue
 
 ```ts
-type QueryValue<T> = T | OperatorQuery<T> | FieldReference | T extends string ? RegExp : never | FilterPredicate<T>;
+type QueryValue<T> = 
+  | T
+  | OperatorQuery<T>
+  | FieldReference
+  | T extends string ? RegExp : never
+| FilterPredicate<T>;
 ```
 
 A query value can be a literal, an operator object, a RegExp (for strings), or a filter predicate function.
@@ -563,10 +1058,10 @@ A query value can be a literal, an operator object, a RegExp (for strings), or a
 #### Type Parameters
 
 | Type Parameter |
-| -------------- |
-| `T`            |
+| ------ |
+| <a id="type-parameter-t-9"></a> `T` |
 
----
+***
 
 ### Sortable
 
@@ -576,7 +1071,7 @@ type Sortable = string | number | Date;
 
 Sortable types for comparison operators ($gt, $lt, etc.)
 
----
+***
 
 ### StringOperator
 
@@ -586,17 +1081,169 @@ type StringOperator = keyof StringOperators;
 
 Supported string operators.
 
----
+***
 
 ### TypeString
 
 ```ts
-type TypeString = "string" | "number" | "boolean" | "array" | "object" | "null" | "undefined" | "date";
+type TypeString = 
+  | "string"
+  | "number"
+  | "boolean"
+  | "array"
+  | "object"
+  | "null"
+  | "undefined"
+  | "date"
+  | "bigint"
+  | "int"
+  | "symbol"
+  | "function";
 ```
 
 Type strings supported by $type operator.
 
 ## Variables
+
+### arrayOperators
+
+```ts
+const arrayOperators: ReadonlyMap<ArrayOperator, OperatorFactory>;
+```
+
+***
+
+### comparisonOperators
+
+```ts
+const comparisonOperators: ReadonlyMap<ComparisonOperator, OperatorFactory>;
+```
+
+***
+
+### coreOperators
+
+```ts
+const coreOperators: ReadonlyMap<OperatorName, OperatorFactory>;
+```
+
+Equality, comparison, array, existence, type, and regular expression operators.
+
+***
+
+### createIsArrayPredicate
+
+```ts
+const createIsArrayPredicate: OperatorFactory;
+```
+
+Creates a array check; false requests the inverse.
+
+***
+
+### createIsClassPredicate
+
+```ts
+const createIsClassPredicate: OperatorFactory;
+```
+
+Creates an instanceof check using a Hvat-validated constructor.
+
+***
+
+### createIsDatePredicate
+
+```ts
+const createIsDatePredicate: OperatorFactory;
+```
+
+Creates a date check; false requests the inverse.
+
+***
+
+### createIsIntegerPredicate
+
+```ts
+const createIsIntegerPredicate: OperatorFactory;
+```
+
+Creates a integer check; false requests the inverse.
+
+***
+
+### createIsNumberPredicate
+
+```ts
+const createIsNumberPredicate: OperatorFactory;
+```
+
+Creates a number check; false requests the inverse.
+
+***
+
+### createIsObjectPredicate
+
+```ts
+const createIsObjectPredicate: OperatorFactory;
+```
+
+Creates a object check; false requests the inverse.
+
+***
+
+### createIsStringPredicate
+
+```ts
+const createIsStringPredicate: OperatorFactory;
+```
+
+Creates a string check; false requests the inverse.
+
+***
+
+### createIsSymbolPredicate
+
+```ts
+const createIsSymbolPredicate: OperatorFactory;
+```
+
+Creates a symbol check; false requests the inverse.
+
+***
+
+### dateOperators
+
+```ts
+const dateOperators: ReadonlyMap<DateOperator, OperatorFactory>;
+```
+
+***
+
+### elementOperators
+
+```ts
+const elementOperators: ReadonlyMap<ElementOperator, OperatorFactory>;
+```
+
+***
+
+### equalityOperators
+
+```ts
+const equalityOperators: ReadonlyMap<EqualityOperator, OperatorFactory>;
+```
+
+***
+
+### extendedOperators
+
+```ts
+const extendedOperators: ReadonlyMap<OperatorName, OperatorFactory>;
+```
+
+Additional element checks and string matching and transformation operators.
+
+***
 
 ### operatorMap
 
@@ -605,6 +1252,14 @@ const operatorMap: ReadonlyMap<OperatorName, OperatorFactory> = operators;
 ```
 
 Read-only view of installed filter operators and their factories.
+
+***
+
+### stringOperators
+
+```ts
+const stringOperators: ReadonlyMap<StringOperator, OperatorFactory>;
+```
 
 ## Functions
 
@@ -622,7 +1277,7 @@ Removes every installed filter operator and its registration ownership.
 
 Nothing. Previously compiled predicates remain usable.
 
----
+***
 
 ### compile()
 
@@ -634,16 +1289,16 @@ Compiles a query/pattern specification into an optimized, reusable predicate fun
 
 #### Type Parameters
 
-| Type Parameter                            | Description            |
-| ----------------------------------------- | ---------------------- |
-| `T` _extends_ `Record`\<`string`, `any`\> | Type of value to match |
+| Type Parameter | Description |
+| ------ | ------ |
+| <a id="type-parameter-t-10"></a> `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
 
 #### Parameters
 
-| Parameter | Type                            | Description                                |
-| --------- | ------------------------------- | ------------------------------------------ |
-| `pattern` | [`Query`](#query)\<`T`\>        | The query/pattern specification to compile |
-| `ctx?`    | [`FinnaContext`](#finnacontext) | Optional query context                     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern specification to compile |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
@@ -653,9 +1308,36 @@ A compiled predicate function `(value) => boolean`
 
 #### Throws
 
-If the query contains invalid or unregistered operators or invalid arguments.
+If compilation or evaluation fails; runtime failures include located diagnostics.
 
----
+***
+
+### compileResult()
+
+```ts
+function compileResult<T>(query, context?): CompilationResult<T>;
+```
+
+Compiles with diagnostics; throwErrors=false returns a null predicate on failure.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| <a id="type-parameter-t-11"></a> `T` *extends* `Record`\<`string`, `any`\> |
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `query` | [`Query`](#query)\<`T`\> |
+| `context?` | [`FinnaContext`](#finnacontext) |
+
+#### Returns
+
+[`CompilationResult`](#compilationresult)\<`T`\>
+
+***
 
 ### createAllPredicate()
 
@@ -667,10 +1349,10 @@ Creates a predicate requiring all requested values or every item to match.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                           |
-| ---------- | ------------------------------- | --------------------------------------------------------------------- |
-| `expected` | `any`                           | An array of required values, or a filter applied to every array item. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters.                       |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An array of required values, or a filter applied to every array item. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
 
 #### Returns
 
@@ -682,23 +1364,27 @@ A predicate that rejects non-arrays and checks membership or every item.
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createArrayPredicate()
 
 ```ts
-function createArrayPredicate(operator, expected, ctx): FilterPredicate;
+function createArrayPredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in array factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                               | Description                                           |
-| ---------- | -------------------------------------------------- | ----------------------------------------------------- |
-| `operator` | keyof [`ArrayOperators`](#arrayoperators)\<`any`\> | The array operator to compile.                        |
-| `expected` | `any`                                              | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)                    | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`ArrayOperators`](#arrayoperators)\<`any`\> | The array operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -710,23 +1396,27 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in array operator, or its factory rejects the argument.
 
----
+***
 
 ### createComparisonPredicate()
 
 ```ts
-function createComparisonPredicate(operator, expected, ctx): FilterPredicate;
+function createComparisonPredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in comparison factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                                         | Description                                           |
-| ---------- | ------------------------------------------------------------ | ----------------------------------------------------- |
-| `operator` | keyof [`ComparisonOperators`](#comparisonoperators)\<`any`\> | The comparison operator to compile.                   |
-| `expected` | `any`                                                        | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)                              | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`ComparisonOperators`](#comparisonoperators)\<`any`\> | The comparison operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -738,7 +1428,7 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in comparison operator, or its factory rejects the argument.
 
----
+***
 
 ### createDateOfMonthPredicate()
 
@@ -750,10 +1440,10 @@ Creates a predicate for the day of the month (1–31) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -765,23 +1455,27 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createDatePredicate()
 
 ```ts
-function createDatePredicate(operator, expected, ctx): FilterPredicate;
+function createDatePredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in date factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                    | Description                                           |
-| ---------- | --------------------------------------- | ----------------------------------------------------- |
-| `operator` | keyof [`DateOperators`](#dateoperators) | The date operator to compile.                         |
-| `expected` | `any`                                   | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)         | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`DateOperators`](#dateoperators) | The date operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -793,23 +1487,27 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in date operator, or its factory rejects the argument.
 
----
+***
 
 ### createElementPredicate()
 
 ```ts
-function createElementPredicate(operator, expected, ctx): FilterPredicate;
+function createElementPredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in element factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                          | Description                                           |
-| ---------- | --------------------------------------------- | ----------------------------------------------------- |
-| `operator` | keyof [`ElementOperators`](#elementoperators) | The element operator to compile.                      |
-| `expected` | `any`                                         | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)               | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`ElementOperators`](#elementoperators) | The element operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -821,22 +1519,22 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in element operator, or its factory rejects the argument.
 
----
+***
 
 ### createEndsWithPredicate()
 
 ```ts
-function createEndsWithPredicate(expected, ctx): FilterPredicate;
+function createEndsWithPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring a string that ends with the expected text.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | Text or a $field reference whose resolved value is converted to a string. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Text or a $field reference whose resolved value is converted to a string. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -844,22 +1542,22 @@ Creates a predicate requiring a string that ends with the expected text.
 
 A predicate that rejects non-strings and checks whether the string ends with the resolved text.
 
----
+***
 
 ### createEqPredicate()
 
 ```ts
-function createEqPredicate(expected, ctx): FilterPredicate;
+function createEqPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate for deep equality.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | A literal value or a $field reference resolved against the root value.   |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A literal value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -867,23 +1565,27 @@ Creates a predicate for deep equality.
 
 A predicate that matches deeply equal values.
 
----
+***
 
 ### createEqualityPredicate()
 
 ```ts
-function createEqualityPredicate(operator, expected, ctx): FilterPredicate;
+function createEqualityPredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in equality factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                                     | Description                                           |
-| ---------- | -------------------------------------------------------- | ----------------------------------------------------- |
-| `operator` | keyof [`EqualityOperators`](#equalityoperators)\<`any`\> | The equality operator to compile.                     |
-| `expected` | `any`                                                    | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)                          | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`EqualityOperators`](#equalityoperators)\<`any`\> | The equality operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -895,22 +1597,22 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in equality operator, or its factory rejects the argument.
 
----
+***
 
 ### createExistsPredicate()
 
 ```ts
-function createExistsPredicate(expected, ctx): FilterPredicate;
+function createExistsPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate for the presence or absence of a value.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | Whether a defined value is required; falsy values request undefined.     |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Whether a defined value is required; falsy values request undefined. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -918,44 +1620,65 @@ Creates a predicate for the presence or absence of a value.
 
 A predicate testing whether the actual value is defined or undefined.
 
----
+***
+
+### createFalsyPredicate()
+
+```ts
+function createFalsyPredicate(_expected, _ctx): FilterPredicate;
+```
+
+Creates a predicate for falsy values.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `_expected` | `any` |
+| `_ctx` | [`FinnaContext`](#finnacontext) |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate checking whether the value is falsy.
+
+***
 
 ### createFinnaContext()
 
 ```ts
-function createFinnaContext(useUTC?): FinnaContext;
+function createFinnaContext(options?): FinnaContext;
 ```
 
-Creates a compilation context with an empty diagnostic collection.
+Creates an explicitly configured context; a boolean remains shorthand for useUTC.
 
 #### Parameters
 
-| Parameter | Type      | Default value | Description                                                   |
-| --------- | --------- | ------------- | ------------------------------------------------------------- |
-| `useUTC`  | `boolean` | `false`       | Whether date operators use UTC components; defaults to false. |
+| Parameter | Type |
+| ------ | ------ |
+| `options?` | `boolean` \| [`FinnaContextOptions`](#finnacontextoptions) |
 
 #### Returns
 
 [`FinnaContext`](#finnacontext)
 
-A new context with the requested date mode and an empty errors array.
-
----
+***
 
 ### createGtePredicate()
 
 ```ts
-function createGtePredicate(expected, ctx): FilterPredicate;
+function createGtePredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring the actual value to be greater than or equal to the expected value.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | A comparison value or a $field reference resolved against the root value. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A comparison value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -963,22 +1686,22 @@ Creates a predicate requiring the actual value to be greater than or equal to th
 
 A predicate testing whether the actual value is greater than or equal to the resolved value.
 
----
+***
 
 ### createGtPredicate()
 
 ```ts
-function createGtPredicate(expected, ctx): FilterPredicate;
+function createGtPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring the actual value to be greater than the expected value.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | A comparison value or a $field reference resolved against the root value. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A comparison value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -986,7 +1709,7 @@ Creates a predicate requiring the actual value to be greater than the expected v
 
 A predicate testing whether the actual value is greater than the resolved value.
 
----
+***
 
 ### createHourPredicate()
 
@@ -998,10 +1721,10 @@ Creates a predicate for the hour (0–23) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1013,22 +1736,22 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createIncludesPredicate()
 
 ```ts
-function createIncludesPredicate(expected, ctx): FilterPredicate;
+function createIncludesPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring a string that contains the expected text.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | Text or a $field reference whose resolved value is converted to a string. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Text or a $field reference whose resolved value is converted to a string. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1036,22 +1759,22 @@ Creates a predicate requiring a string that contains the expected text.
 
 A predicate that rejects non-strings and checks whether the string contains the resolved text.
 
----
+***
 
 ### createInPredicate()
 
 ```ts
-function createInPredicate(expected, ctx): FilterPredicate;
+function createInPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate for membership using deep equality.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | An array of allowed values.                                              |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An array of allowed values. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1063,22 +1786,45 @@ A predicate that matches a value deeply equal to at least one allowed value.
 
 If expected is not an array.
 
----
+***
+
+### createLowercasePredicate()
+
+```ts
+function createLowercasePredicate(expected, ctx): FilterPredicate;
+```
+
+Tests a temporary lowercase string without changing the input or root document.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Predicate or nested query applied to the transformed string. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the nested query. |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate rejecting non-strings and testing the transformed string.
+
+***
 
 ### createLtePredicate()
 
 ```ts
-function createLtePredicate(expected, ctx): FilterPredicate;
+function createLtePredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring the actual value to be less than or equal to the expected value.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | A comparison value or a $field reference resolved against the root value. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A comparison value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1086,22 +1832,22 @@ Creates a predicate requiring the actual value to be less than or equal to the e
 
 A predicate testing whether the actual value is less than or equal to the resolved value.
 
----
+***
 
 ### createLtPredicate()
 
 ```ts
-function createLtPredicate(expected, ctx): FilterPredicate;
+function createLtPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring the actual value to be less than the expected value.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | A comparison value or a $field reference resolved against the root value. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A comparison value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1109,7 +1855,7 @@ Creates a predicate requiring the actual value to be less than the expected valu
 
 A predicate testing whether the actual value is less than the resolved value.
 
----
+***
 
 ### createMinutePredicate()
 
@@ -1121,10 +1867,10 @@ Creates a predicate for the minute (0–59) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1136,7 +1882,7 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createMonthPredicate()
 
@@ -1148,10 +1894,10 @@ Creates a predicate for the zero-based month (0–11) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1163,7 +1909,7 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createMsPredicate()
 
@@ -1175,10 +1921,10 @@ Creates a predicate for the millisecond (0–999) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1190,22 +1936,22 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createNePredicate()
 
 ```ts
-function createNePredicate(expected, ctx): FilterPredicate;
+function createNePredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate for deep inequality.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | A literal value or a $field reference resolved against the root value.   |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A literal value or a $field reference resolved against the root value. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1213,22 +1959,22 @@ Creates a predicate for deep inequality.
 
 A predicate that matches values that are not deeply equal.
 
----
+***
 
 ### createNinPredicate()
 
 ```ts
-function createNinPredicate(expected, ctx): FilterPredicate;
+function createNinPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate for excluded membership using deep equality.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | An array of excluded values.                                             |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An array of excluded values. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1240,7 +1986,7 @@ A predicate that matches values not deeply equal to any excluded value.
 
 If expected is not an array.
 
----
+***
 
 ### createNonePredicate()
 
@@ -1252,10 +1998,10 @@ Creates a predicate requiring no requested values or matching items.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                            |
-| ---------- | ------------------------------- | ---------------------------------------------------------------------- |
-| `expected` | `any`                           | An array of excluded values, or a filter that no array item may match. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters.                        |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An array of excluded values, or a filter that no array item may match. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
 
 #### Returns
 
@@ -1267,12 +2013,39 @@ A predicate that rejects non-arrays and requires no matching items.
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
+
+### createNullishPredicate()
+
+```ts
+function createNullishPredicate(_expected, _ctx): FilterPredicate;
+```
+
+Creats a predicate for nullish values.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `_expected` | `any` |
+| `_ctx` | [`FinnaContext`](#finnacontext) |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate checking whether the value is nullish.
+
+***
 
 ### createOperatorPredicate()
 
 ```ts
-function createOperatorPredicate<T>(operator, expected, ctx): FilterPredicate<T>;
+function createOperatorPredicate<T>(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate<T>;
 ```
 
 Create a predicate for a specific operator.
@@ -1280,16 +2053,16 @@ Create a predicate for a specific operator.
 #### Type Parameters
 
 | Type Parameter | Default type | Description |
-| -------------- | ------------ | ----------- |
-| `T`            | `any`        |             |
+| ------ | ------ | ------ |
+| <a id="type-parameter-t-12"></a> `T` | `any` |  |
 
 #### Parameters
 
-| Parameter  | Type                            | Description                             |
-| ---------- | ------------------------------- | --------------------------------------- |
-| `operator` | `` `$${string}` ``              | The operator string (e.g. '$eq', '$gt') |
-| `expected` | `any`                           | The expected value or nested filter     |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Query context                           |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | `` `$${string}` `` | The operator string (e.g. '$eq', '$gt') |
+| `expected` | `any` | The expected value or nested filter |
+| `ctx` | [`FinnaContext`](#finnacontext) | Query context |
 
 #### Returns
 
@@ -1299,9 +2072,9 @@ A predicate function for the operator
 
 #### Throws
 
-If the query contains invalid or unregistered operators or invalid arguments.
+If compilation or evaluation fails; runtime failures include located diagnostics.
 
----
+***
 
 ### createPredicate()
 
@@ -1313,16 +2086,16 @@ Create a predicate function from a query value.
 
 #### Type Parameters
 
-| Type Parameter | Default type | Description               |
-| -------------- | ------------ | ------------------------- |
-| `T`            | `any`        | Type of the value to test |
+| Type Parameter | Default type | Description |
+| ------ | ------ | ------ |
+| <a id="type-parameter-t-13"></a> `T` | `any` | Type of the value to test |
 
 #### Parameters
 
-| Parameter | Type                            | Description                                |
-| --------- | ------------------------------- | ------------------------------------------ |
-| `filter`  | `any`                           | The query filter to create a predicate for |
-| `ctx?`    | [`FinnaContext`](#finnacontext) | Optional query context                     |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `filter` | `any` | The query filter to create a predicate for |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
@@ -1332,24 +2105,24 @@ A predicate function for the given filter
 
 #### Throws
 
-If the query contains invalid or unregistered operators or invalid arguments.
+If compilation or evaluation fails; runtime failures include located diagnostics.
 
----
+***
 
 ### createRegexPredicate()
 
 ```ts
-function createRegexPredicate(expected, ctx): FilterPredicate;
+function createRegexPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate matching strings against a regular expression.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                   |
-| ---------- | ------------------------------- | ----------------------------------------------------------------------------- |
-| `expected` | `any`                           | A RegExp instance or a value converted to a regular expression source string. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.      |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A RegExp instance or a value converted to a regular expression source string. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1361,7 +2134,61 @@ A predicate that rejects non-strings and tests the regular expression.
 
 If the regular expression source is invalid.
 
----
+***
+
+### createReplaceAllPredicate()
+
+```ts
+function createReplaceAllPredicate(expected, ctx): FilterPredicate;
+```
+
+Replaces all occurrences and tests the temporary string.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Search, replacement, and required then predicate; arguments may reference root fields. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the then predicate. |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate rejecting non-strings and invalid resolved arguments.
+
+#### Throws
+
+If literal arguments are invalid or then is missing.
+
+***
+
+### createReplacePredicate()
+
+```ts
+function createReplacePredicate(expected, ctx): FilterPredicate;
+```
+
+Replaces matches using JavaScript replace semantics and tests the temporary string.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Search, replacement, and required then predicate; arguments may reference root fields. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the then predicate. |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate rejecting non-strings and invalid resolved arguments.
+
+#### Throws
+
+If literal arguments are invalid or then is missing.
+
+***
 
 ### createSecondPredicate()
 
@@ -1373,10 +2200,10 @@ Creates a predicate for the second (0–59) of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1388,7 +2215,7 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createSizePredicate()
 
@@ -1400,10 +2227,10 @@ Creates a predicate for an array's length.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                               |
-| ---------- | ------------------------------- | --------------------------------------------------------- |
-| `expected` | `any`                           | An exact length, or a filter applied to the array length. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters.           |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact length, or a filter applied to the array length. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
 
 #### Returns
 
@@ -1415,7 +2242,7 @@ A predicate that rejects non-arrays and tests their length.
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createSomePredicate()
 
@@ -1427,10 +2254,10 @@ Creates a predicate requiring at least one requested value or matching item.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                       |
-| ---------- | ------------------------------- | ----------------------------------------------------------------- |
-| `expected` | `any`                           | An array of candidate values, or a filter applied to array items. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters.                   |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An array of candidate values, or a filter applied to array items. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
 
 #### Returns
 
@@ -1442,22 +2269,22 @@ A predicate that rejects non-arrays and requires at least one match.
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createStartsWithPredicate()
 
 ```ts
-function createStartsWithPredicate(expected, ctx): FilterPredicate;
+function createStartsWithPredicate(expected, _ctx): FilterPredicate;
 ```
 
 Creates a predicate requiring a string that starts with the expected text.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                               |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `expected` | `any`                           | Text or a $field reference whose resolved value is converted to a string. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface.  |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Text or a $field reference whose resolved value is converted to a string. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | - |
 
 #### Returns
 
@@ -1465,23 +2292,27 @@ Creates a predicate requiring a string that starts with the expected text.
 
 A predicate that rejects non-strings and checks whether the string starts with the resolved text.
 
----
+***
 
 ### createStringPredicate()
 
 ```ts
-function createStringPredicate(operator, expected, ctx): FilterPredicate;
+function createStringPredicate(
+   operator, 
+   expected, 
+   ctx
+): FilterPredicate;
 ```
 
 Creates a predicate using a built-in string factory without registering it.
 
 #### Parameters
 
-| Parameter  | Type                                        | Description                                           |
-| ---------- | ------------------------------------------- | ----------------------------------------------------- |
-| `operator` | keyof [`StringOperators`](#stringoperators) | The string operator to compile.                       |
-| `expected` | `any`                                       | The operator argument or nested filter.               |
-| `ctx`      | [`FinnaContext`](#finnacontext)             | Compilation context shared with the selected factory. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | keyof [`StringOperators`](#stringoperators) | The string operator to compile. |
+| `expected` | `any` | The operator argument or nested filter. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the selected factory. |
 
 #### Returns
 
@@ -1493,22 +2324,45 @@ The compiled predicate returned by the selected factory.
 
 If operator is not a built-in string operator, or its factory rejects the argument.
 
----
+***
+
+### createTruthyPredicate()
+
+```ts
+function createTruthyPredicate(_expected, _ctx): FilterPredicate;
+```
+
+Creates a predicate for truthy values.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `_expected` | `any` |
+| `_ctx` | [`FinnaContext`](#finnacontext) |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate checking whether the value is truthy.
+
+***
 
 ### createTypePredicate()
 
 ```ts
-function createTypePredicate(expected, ctx): FilterPredicate;
+function createTypePredicate(expected, _ctx): FilterPredicate;
 ```
 
-Creates a predicate for a JavaScript value type.
+Creates a Hvat-backed type predicate, with array, date, null, and int extensions.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                              |
-| ---------- | ------------------------------- | ------------------------------------------------------------------------ |
-| `expected` | `any`                           | The requested type name, including array, date, null, and undefined.     |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context, accepted for the common operator factory interface. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A supported type name. |
+| `_ctx` | [`FinnaContext`](#finnacontext) | Compilation context. |
 
 #### Returns
 
@@ -1516,7 +2370,34 @@ Creates a predicate for a JavaScript value type.
 
 A predicate checking the requested type.
 
----
+#### Throws
+
+If the type name is unsupported.
+
+***
+
+### createUppercasePredicate()
+
+```ts
+function createUppercasePredicate(expected, ctx): FilterPredicate;
+```
+
+Tests a temporary uppercase string without changing the input or root document.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | Predicate or nested query applied to the transformed string. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with the nested query. |
+
+#### Returns
+
+[`FilterPredicate`](#filterpredicate)
+
+A predicate rejecting non-strings and testing the transformed string.
+
+***
 
 ### createUtcPredicate()
 
@@ -1528,10 +2409,10 @@ Creates a nested predicate using UTC date components.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                     |
-| ---------- | ------------------------------- | ----------------------------------------------- |
-| `expected` | `any`                           | A nested date filter compiled with UTC enabled. |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | A nested date filter compiled with UTC enabled. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context shared with nested filters. |
 
 #### Returns
 
@@ -1543,7 +2424,7 @@ A predicate evaluating the nested filter with UTC date operations.
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createWeekdayPredicate()
 
@@ -1555,10 +2436,10 @@ Creates a predicate for the day of the week (0–6, starting with Sunday) of a d
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1570,7 +2451,7 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
 
 ### createYearPredicate()
 
@@ -1582,10 +2463,10 @@ Creates a predicate for the full year of a date or timestamp.
 
 #### Parameters
 
-| Parameter  | Type                            | Description                                                                |
-| ---------- | ------------------------------- | -------------------------------------------------------------------------- |
-| `expected` | `any`                           | An exact component value, or a filter applied to the extracted component.  |
-| `ctx`      | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `expected` | `any` | An exact component value, or a filter applied to the extracted component. |
+| `ctx` | [`FinnaContext`](#finnacontext) | Compilation context; useUTC selects UTC rather than local date components. |
 
 #### Returns
 
@@ -1597,7 +2478,69 @@ A predicate that rejects invalid dates and non-date values, and tests the date c
 
 If a nested filter is invalid when compiled outside another compilation.
 
----
+***
+
+### evaluate()
+
+```ts
+function evaluate<T>(
+   value, 
+   query, 
+   context?
+): EvaluationResult;
+```
+
+Compiles and evaluates a query; null indicates failure rather than an ordinary non-match.
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| <a id="type-parameter-t-14"></a> `T` *extends* `Record`\<`string`, `any`\> |
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `value` | `T` |
+| `query` | [`Query`](#query)\<`T`\> |
+| `context?` | [`FinnaContext`](#finnacontext) |
+
+#### Returns
+
+[`EvaluationResult`](#evaluationresult)
+
+***
+
+### fieldReference()
+
+```ts
+function fieldReference<T, P>(value, root): FieldReference;
+```
+
+Resolves a value, which could be a literal or a field reference.
+
+#### Type Parameters
+
+| Type Parameter | Default type | Description |
+| ------ | ------ | ------ |
+| <a id="type-parameter-t-15"></a> `T` *extends* `object` | `any` | Type of root containerr |
+| <a id="type-parameter-p"></a> `P` *extends* `string` | `string` | Type of field reference path |
+
+#### Parameters
+
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `value` | [`FieldReference`](#fieldreference) | Value to resolve |
+| `root` | `T` | Root value for field resolution |
+
+#### Returns
+
+[`FieldReference`](#fieldreference)
+
+The referenced root field, undefined if unavailable, or the unchanged literal value.
+
+***
 
 ### getOperator()
 
@@ -1609,8 +2552,8 @@ Looks up the factory for an installed filter operator.
 
 #### Parameters
 
-| Parameter  | Type               | Description                          |
-| ---------- | ------------------ | ------------------------------------ |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
 | `operator` | `` `$${string}` `` | The dollar-prefixed name to look up. |
 
 #### Returns
@@ -1619,7 +2562,7 @@ Looks up the factory for an installed filter operator.
 
 The installed factory, or undefined if the operator is unavailable.
 
----
+***
 
 ### hasOperator()
 
@@ -1631,8 +2574,8 @@ Checks whether a filter operator is installed.
 
 #### Parameters
 
-| Parameter  | Type               | Description                          |
-| ---------- | ------------------ | ------------------------------------ |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
 | `operator` | `` `$${string}` `` | The dollar-prefixed name to look up. |
 
 #### Returns
@@ -1641,7 +2584,7 @@ Checks whether a filter operator is installed.
 
 True if the operator is currently registered.
 
----
+***
 
 ### isOperatorObject()
 
@@ -1653,9 +2596,9 @@ Checks if a value is a nonempty operator object whose keys all start with $.
 
 #### Parameters
 
-| Parameter | Type  | Description    |
-| --------- | ----- | -------------- |
-| `val`     | `any` | Value to check |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `val` | `any` | Value to check |
 
 #### Returns
 
@@ -1663,7 +2606,7 @@ Checks if a value is a nonempty operator object whose keys all start with $.
 
 `true` if it's an operator object, `false` otherwise
 
----
+***
 
 ### listOperators()
 
@@ -1679,29 +2622,33 @@ Copies the currently installed operator names and factories.
 
 An independent map snapshot; modifying it does not affect the registry.
 
----
+***
 
 ### match()
 
 ```ts
-function match<T>(value, pattern, ctx?): value is T;
+function match<T>(
+   value, 
+   pattern, 
+   ctx?
+): value is T;
 ```
 
 Checks if a value satisfies a query/pattern specification.
 
 #### Type Parameters
 
-| Type Parameter                            | Description            |
-| ----------------------------------------- | ---------------------- |
-| `T` _extends_ `Record`\<`string`, `any`\> | Type of value to match |
+| Type Parameter | Description |
+| ------ | ------ |
+| <a id="type-parameter-t-16"></a> `T` *extends* `Record`\<`string`, `any`\> | Type of value to match |
 
 #### Parameters
 
-| Parameter | Type                            | Description                        |
-| --------- | ------------------------------- | ---------------------------------- |
-| `value`   | `T`                             | The target value to test           |
-| `pattern` | [`Query`](#query)\<`T`\>        | The query/pattern to match against |
-| `ctx?`    | [`FinnaContext`](#finnacontext) | Optional query context             |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `value` | `T` | The target value to test |
+| `pattern` | [`Query`](#query)\<`T`\> | The query/pattern to match against |
+| `ctx?` | [`FinnaContext`](#finnacontext) | Optional query context |
 
 #### Returns
 
@@ -1711,9 +2658,9 @@ Checks if a value satisfies a query/pattern specification.
 
 #### Throws
 
-If the query contains invalid or unregistered operators or invalid arguments.
+If compilation or evaluation fails; runtime failures include located diagnostics.
 
----
+***
 
 ### registerAllOperators()
 
@@ -1721,19 +2668,20 @@ If the query contains invalid or unregistered operators or invalid arguments.
 function registerAllOperators(): () => void;
 ```
 
-Registers every built-in filter operator atomically.
+Registers core (including arrays), date, and extended operators in a single atomic batch.
+For smaller bundles use the group helpers or register individual imported factories.
 
 #### Returns
 
-An idempotent cleanup function removing only operators installed by this call.
+An idempotent cleanup removing only this call's installations.
 
 () => `void`
 
 #### Throws
 
-If a built-in name already has a different factory installed.
+If any built-in conflicts; no registrations are changed.
 
----
+***
 
 ### registerArrayOperators()
 
@@ -1753,7 +2701,7 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
 
 ### registerComparisonOperators()
 
@@ -1773,7 +2721,27 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
+
+### registerCoreOperators()
+
+```ts
+function registerCoreOperators(): () => void;
+```
+
+Registers basic operators without importing dates or extended operators.
+
+#### Returns
+
+An idempotent cleanup removing only this call's installations.
+
+() => `void`
+
+#### Throws
+
+If any operator conflicts; no registrations are changed.
+
+***
 
 ### registerDateOperators()
 
@@ -1793,7 +2761,7 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
 
 ### registerElementOperators()
 
@@ -1813,7 +2781,7 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
 
 ### registerEqualityOperators()
 
@@ -1833,24 +2801,49 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
+
+### registerExtendedOperators()
+
+```ts
+function registerExtendedOperators(): () => void;
+```
+
+Registers extended element and string operations; basic operators remain opt-in.
+Nested queries also require registration of any operators they use.
+
+#### Returns
+
+An idempotent cleanup removing only this call's installations.
+
+() => `void`
+
+#### Throws
+
+If any operator conflicts; no registrations are changed.
+
+***
 
 ### registerOperator()
 
 ```ts
-function registerOperator(operator, factory, options?): () => void;
+function registerOperator(
+   operator, 
+   factory, 
+   options?
+): () => void;
 ```
 
 Registers one filter operator; identical registrations are no-ops.
 
 #### Parameters
 
-| Parameter          | Type                                  | Description                                                                |
-| ------------------ | ------------------------------------- | -------------------------------------------------------------------------- |
-| `operator`         | `` `$${string}` ``                    | A nonempty dollar-prefixed operator name.                                  |
-| `factory`          | [`OperatorFactory`](#operatorfactory) | The function compiling an argument into a predicate.                       |
-| `options`          | \{ `replace?`: `boolean`; \}          | Registration options; replacement is disabled by default.                  |
-| `options.replace?` | `boolean`                             | Whether to replace a different factory already registered under this name. |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `operator` | `` `$${string}` `` | A nonempty dollar-prefixed operator name. |
+| `factory` | [`OperatorFactory`](#operatorfactory) | The function compiling an argument into a predicate. |
+| `options?` | \{ `replace?`: `boolean`; \} | Registration options; replacement is disabled by default. |
+| `options.replace?` | `boolean` | Whether to replace a different factory already registered under this name. |
 
 #### Returns
 
@@ -1866,7 +2859,7 @@ If the name or factory is invalid.
 
 If a different factory is already installed and replacement is disabled.
 
----
+***
 
 ### registerOperators()
 
@@ -1878,11 +2871,11 @@ Registers a batch atomically; identical registrations are no-ops.
 
 #### Parameters
 
-| Parameter          | Type                                                                                 | Description                                                                  |
-| ------------------ | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `entries`          | `Iterable`\<readonly \[`` `$${string}` ``, [`OperatorFactory`](#operatorfactory)\]\> | An iterable of dollar-prefixed operator names and their predicate factories. |
-| `options`          | \{ `replace?`: `boolean`; \}                                                         | Registration options; replacement is disabled by default.                    |
-| `options.replace?` | `boolean`                                                                            | Whether conflicting factories may be replaced, including within the batch.   |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
+| `entries` | `Iterable`\<readonly \[`` `$${string}` ``, [`OperatorFactory`](#operatorfactory)\]\> | An iterable of dollar-prefixed operator names and their predicate factories. |
+| `options?` | \{ `replace?`: `boolean`; \} | Registration options; replacement is disabled by default. |
+| `options.replace?` | `boolean` | Whether conflicting factories may be replaced, including within the batch. |
 
 #### Returns
 
@@ -1898,7 +2891,7 @@ If a name or factory is invalid.
 
 If conflicting factories are found and replacement is disabled.
 
----
+***
 
 ### registerStringOperators()
 
@@ -1918,30 +2911,49 @@ An idempotent cleanup function removing only operators installed by this call.
 
 If an operator name is already registered with a different factory.
 
----
+***
 
-### resolveValue()
+### reportError()
 
 ```ts
-function resolveValue(value, root?): any;
+function reportError(ctx, cause): void;
 ```
 
-Resolves a value, which could be a literal or a field reference.
+Records an error; strict APIs aggregate errors at the outer operation boundary.
 
 #### Parameters
 
-| Parameter | Type  | Description                     |
-| --------- | ----- | ------------------------------- |
-| `value`   | `any` | Value to resolve                |
-| `root?`   | `any` | Root value for field resolution |
+| Parameter | Type |
+| ------ | ------ |
+| `ctx` | [`FinnaContext`](#finnacontext) |
+| `cause` | `unknown` |
 
 #### Returns
 
-`any`
+`void`
 
-The referenced root field, undefined if unavailable, or the unchanged literal value.
+***
 
----
+### reportWarning()
+
+```ts
+function reportWarning(ctx, cause): void;
+```
+
+Records a warning once, preserving warning severity when escalation is enabled.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `ctx` | [`FinnaContext`](#finnacontext) |
+| `cause` | `unknown` |
+
+#### Returns
+
+`void`
+
+***
 
 ### unregisterOperator()
 
@@ -1953,8 +2965,8 @@ Removes a registered filter operator by name.
 
 #### Parameters
 
-| Parameter  | Type               | Description                         |
-| ---------- | ------------------ | ----------------------------------- |
+| Parameter | Type | Description |
+| ------ | ------ | ------ |
 | `operator` | `` `$${string}` `` | The dollar-prefixed name to remove. |
 
 #### Returns

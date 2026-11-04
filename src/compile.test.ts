@@ -1,8 +1,10 @@
 import { beforeEach as setupBeforeEach } from "vitest";
 import { registerAllOperators as installOperators } from "./index.js";
+
 setupBeforeEach(() => {
   installOperators();
 });
+
 import { describe, expect, it } from "vitest";
 import { compile } from "./compile.js";
 import { createFinnaContext } from "./context.js";

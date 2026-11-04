@@ -1,5 +1,14 @@
 export { compile, match } from "./compile.js";
-export { createFinnaContext, QueryCompilationError } from "./context.js";
+export { compileResult } from "./compile-result.js";
+export {
+  createFinnaContext,
+  QueryCompilationError,
+  QueryDiagnostic,
+  QueryEvaluationError,
+  reportError,
+  reportWarning,
+} from "./context.js";
+export { evaluate } from "./evaluate.js";
 export * from "./operators/index.js";
 export {
   clearOperators,

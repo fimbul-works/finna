@@ -1,5 +1,5 @@
 import { isClass, isFn, isObj, isStr } from "@fimbul-works/hvat";
-import { childContext, createFinnaContext, withCompilation } from "./context.js";
+import { childContext, createFinnaContext, guardPredicate, operatorContext, withCompilation } from "./context.js";
 import { getOperator } from "./operators/operator-registry.js";
 import type { FilterPredicate, FinnaContext, OperatorName } from "./types.js";
 import { isDeepEqual, isOperatorObject } from "./util.js";
@@ -12,7 +12,7 @@ import { isDeepEqual, isOperatorObject } from "./util.js";
  * @param {any} filter - The query filter to create a predicate for
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {FilterPredicate<T>} A predicate function for the given filter
- * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
+ * @throws {AggregateError} If compilation or evaluation fails; runtime failures include located diagnostics.
  */
 export function createPredicate<T = any>(filter: any, ctx: FinnaContext = createFinnaContext()): FilterPredicate<T> {
   return withCompilation(
@@ -40,16 +40,17 @@ export function createPredicate<T = any>(filter: any, ctx: FinnaContext = create
       }
 
       if (isObj(filter) && !isClass(filter, Date) && !isClass(filter, RegExp)) {
-        const entries = Object.entries(filter).map(
-          ([key, subFilter]) => [key, createPredicate(subFilter, childContext(ctx, key))] as const,
-        );
+        const entries = Object.entries(filter).map(([key, subFilter]) => {
+          const nested = childContext(ctx, key);
+          const predicate = createPredicate(subFilter, nested);
+          return guardPredicate(
+            ((actual: any, root?: any) => predicate(actual[key], root ?? actual)) as FilterPredicate,
+            nested,
+          );
+        });
         return ((actual: any, root?: any) => {
-          if (!isObj(actual) || isClass(actual, Date) || isClass(actual, RegExp)) {
-            return false;
-          }
-          return entries.every(([key, subPredicate]) => {
-            return subPredicate((actual as any)[key], root ?? actual);
-          });
+          if (!isObj(actual) || isClass(actual, Date) || isClass(actual, RegExp)) return false;
+          return entries.every((predicate) => predicate(actual, root));
         }) as FilterPredicate<T>;
       }
 
@@ -67,7 +68,7 @@ export function createPredicate<T = any>(filter: any, ctx: FinnaContext = create
  * @param {any} expected - The expected value or nested filter
  * @param {FinnaContext} ctx - Query context
  * @returns {FilterPredicate<T>} A predicate function for the operator
- * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
+ * @throws {AggregateError} If compilation or evaluation fails; runtime failures include located diagnostics.
  */
 export function createOperatorPredicate<T = any>(
   operator: OperatorName,
@@ -79,7 +80,7 @@ export function createOperatorPredicate<T = any>(
     () => {
       const factory = getOperator(operator);
       if (!factory) throw new Error(`Invalid or unregistered query operator: ${operator}`);
-      return factory(expected, ctx) as FilterPredicate<T>;
+      return factory(expected, operatorContext(ctx)) as FilterPredicate<T>;
     },
     (() => false) as unknown as FilterPredicate<T>,
   );

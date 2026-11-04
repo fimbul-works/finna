@@ -1,13 +1,11 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createUtcPredicate as fieldSubjectFactory } from "./utc.js";
-import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
-import { createHourPredicate as fieldHourFactory } from "./hour.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { clearOperators } from "../operator-registry.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
+import { clearOperators, registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createHourPredicate as fieldHourFactory } from "./hour.js";
 import { registerDateOperators } from "./index.js";
-import { createUtcPredicate } from "./utc.js";
+import { createUtcPredicate, createUtcPredicate as fieldSubjectFactory } from "./utc.js";
 
 describe("createUtcPredicate", () => {
   beforeEach(() => {
@@ -56,5 +54,12 @@ describe("createUtcPredicate", () => {
     } finally {
       for (const undo of cleanups.reverse()) undo();
     }
+  });
+  it("is idempotent for an explicitly configured UTC context", () => {
+    const ctx = createFinnaContext({ useUTC: true, throwErrors: false, warningsAsErrors: true });
+    const predicate = createUtcPredicate({ $utc: { $hour: 12 } }, ctx);
+    expect(predicate(new Date("2023-10-23T12:00:00Z"))).toBe(true);
+    expect(predicate(new Date("2023-10-23T13:00:00Z"))).toBe(false);
+    expect(ctx).toEqual(createFinnaContext({ useUTC: true, throwErrors: false, warningsAsErrors: true }));
   });
 });

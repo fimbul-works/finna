@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createInPredicate as fieldSubjectFactory } from "./in.js";
-import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createInPredicate } from "./in.js";
+import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createInPredicate, createInPredicate as fieldSubjectFactory } from "./in.js";
 
 describe("createInPredicate", () => {
   it("tests membership using deep equality", () => {

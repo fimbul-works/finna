@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createExistsPredicate as fieldSubjectFactory } from "./exists.js";
-import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createExistsPredicate } from "./exists.js";
+import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createExistsPredicate, createExistsPredicate as fieldSubjectFactory } from "./exists.js";
 
 describe("createExistsPredicate", () => {
   it.each(["value", null, 0, false, [], {}])("recognizes defined values %j", (actual) => {

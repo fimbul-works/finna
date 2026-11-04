@@ -1,6 +1,6 @@
-import type { DateOperator, FilterPredicate, FinnaContext, OperatorMap } from "../../types.js";
+import type { DateOperator, FilterPredicate, FinnaContext, OperatorFactory } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
-import { createDateOfMonthPredicate } from "./date-of-month.js";
+import { createDateOfMonthPredicate } from "./date.js";
 import { createHourPredicate } from "./hour.js";
 import { createMinutePredicate } from "./minute.js";
 import { createMonthPredicate } from "./month.js";
@@ -10,7 +10,7 @@ import { createUtcPredicate } from "./utc.js";
 import { createWeekdayPredicate } from "./weekday.js";
 import { createYearPredicate } from "./year.js";
 
-export * from "./date-of-month.js";
+export * from "./date.js";
 export * from "./hour.js";
 export * from "./minute.js";
 export * from "./month.js";
@@ -21,7 +21,7 @@ export * from "./utc.js";
 export * from "./weekday.js";
 export * from "./year.js";
 
-const dateOperators: OperatorMap<DateOperator> = new Map([
+export const dateOperators: ReadonlyMap<DateOperator, OperatorFactory> = new Map<DateOperator, OperatorFactory>([
   ["$date", createDateOfMonthPredicate],
   ["$hour", createHourPredicate],
   ["$minute", createMinutePredicate],

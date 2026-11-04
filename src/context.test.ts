@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { childContext, QueryDiagnostic, reportError, reportWarning } from "./context.js";
 import {
   clearOperators,
   compile,
@@ -92,5 +93,72 @@ describe("compilation diagnostics", () => {
     expect(predicate({ value: 10, limits: { minimum: 9 } })).toBe(true);
     expect(predicate({ value: 10 })).toBe(false);
     expect(ctx.errors).toEqual([]);
+  });
+  it("defaults to local time, strict errors, nonfatal warnings, and silent logging", () => {
+    expect(createFinnaContext()).toEqual({
+      useUTC: false,
+      throwErrors: true,
+      warningsAsErrors: false,
+      captureStacks: false,
+      logger: undefined,
+      errors: [],
+      warnings: [],
+    });
+    expect(createFinnaContext(true).useUTC).toBe(true);
+    expect(createFinnaContext({ useUTC: true }).useUTC).toBe(true);
+    expect(createFinnaContext().errors).not.toBe(createFinnaContext().errors);
+  });
+
+  it("records located diagnostics with optional full stacks and original causes", () => {
+    const cause = new Error("original");
+    const ctx = createFinnaContext();
+    reportError(childContext(ctx, "$custom"), cause);
+    expect(ctx.errors[0]).toMatchObject({ phase: "compile", severity: "error", operator: "$custom", cause });
+    expect(ctx.errors[0].stack).toBeUndefined();
+    const debug = createFinnaContext({ captureStacks: true });
+    reportWarning(childContext(debug, "field"), "advice");
+    expect(debug.warnings[0]).toBeInstanceOf(QueryDiagnostic);
+    expect(debug.warnings[0].stack).toContain("QueryDiagnostic");
+    expect(debug.warnings[0]).toMatchObject({ phase: "compile", severity: "warning", path: ["field"] });
+  });
+
+  it("isolates logger failures and logs direct compilation pushes once", () => {
+    const error = vi.fn(() => {
+      throw new Error("logger unavailable");
+    });
+    const ctx = createFinnaContext({ logger: { error, warn: vi.fn() } });
+    registerOperator("$directError", (_, nested) => {
+      nested.errors.push(new Error("invalid argument"));
+      return (() => true) as unknown as FilterPredicate;
+    });
+    expect(() => compile({ value: { $directError: true } }, ctx)).toThrow(AggregateError);
+    expect(ctx.errors).toHaveLength(1);
+    expect(ctx.errors[0]).toMatchObject({ phase: "compile", path: ["value", "$directError"] });
+    expect(error).toHaveBeenCalledTimes(1);
+  });
+
+  it("preserves diagnostic configuration through repeated UTC modifiers without changing the parent", () => {
+    const ctx = createFinnaContext({ warningsAsErrors: true, captureStacks: true });
+    const seen: boolean[] = [];
+    registerOperator("$observeUTC", (_, nested) => {
+      expect(nested.warningsAsErrors).toBe(true);
+      expect(nested.captureStacks).toBe(true);
+      return (() => {
+        seen.push(nested.useUTC);
+        return true;
+      }) as unknown as FilterPredicate;
+    });
+    const predicate = compile(
+      {
+        local: { $observeUTC: true },
+        utc: { $utc: { $utc: { $observeUTC: true } } },
+      },
+      ctx,
+    );
+    expect(predicate({ local: new Date(), utc: new Date() })).toBe(true);
+    expect(seen).toEqual([false, true]);
+    expect(ctx.useUTC).toBe(false);
+    expect(ctx.errors).toEqual([]);
+    expect(ctx.warnings).toEqual([]);
   });
 });

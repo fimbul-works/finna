@@ -1,180 +1,133 @@
-import { beforeEach as setupBeforeEach } from "vitest";
-import { registerAllOperators as installOperators } from "./index.js";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import ts from "typescript";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import * as finna from "./index.js";
 
-setupBeforeEach(() => {
-  installOperators();
-});
+const projectDirectory = fileURLToPath(new URL("../", import.meta.url));
+const readme = readFileSync(resolve(projectDirectory, "README.md"), "utf8");
+const pkg = JSON.parse(readFileSync(resolve(projectDirectory, "package.json"), "utf8"));
+const examples = [...readme.matchAll(/<!-- example: ([\w-]+) -->\s*```typescript\n([\s\S]*?)```/g)].map(
+  ([, id, source]) => ({ id, source }),
+);
+const operatorModules = import.meta.glob(["./operators/**/*.ts", "!./operators/**/*.test.ts"], { eager: true });
 
-import { afterAll, describe, expect, it } from "vitest";
-import {
-  clearOperators,
-  compile,
-  type FilterPredicate,
-  match,
-  registerAllOperators,
-  registerComparisonOperators,
-  registerEqualityOperators,
-  registerOperator,
-} from "./index.js";
-
-describe("README usage examples", () => {
-  afterAll(() => {
-    registerAllOperators();
-  });
-
-  it("1. Basic Pattern Matching (match & finna)", () => {
-    const user = {
-      name: "Alice",
-      age: 28,
-      tags: ["admin", "editor"],
-      profile: { score: 95 },
-      createdAt: new Date("2024-01-15T08:00:00Z"),
-    };
-
-    // Evaluate with match()
-    const isMatch = match(user, {
-      name: "Alice",
-      age: { $gte: 18, $lt: 65 },
-      "profile.score": { $gt: 90 },
-      tags: { $some: "admin" },
-    });
-    expect(isMatch).toBe(true);
-  });
-
-  it("2. Compiled Predicates (compile)", () => {
-    interface Product {
-      id: string;
-      title: string;
-      price: number;
-      inStock: boolean;
+/** Resolve only entry points actually advertised by package.json, against their source modules. */
+function sourceForImport(specifier: string): string {
+  if (specifier !== pkg.name && !specifier.startsWith(`${pkg.name}/`)) {
+    throw new Error(`Unexpected README import: ${specifier}`);
+  }
+  const key = specifier === pkg.name ? "." : `.${specifier.slice(pkg.name.length)}`;
+  let entry = pkg.exports[key];
+  let wildcard = "";
+  if (!entry) {
+    for (const [pattern, target] of Object.entries(pkg.exports)) {
+      const [prefix, suffix] = pattern.split("*");
+      if (suffix !== undefined && key.startsWith(prefix) && key.endsWith(suffix)) {
+        entry = target;
+        wildcard = key.slice(prefix.length, suffix ? -suffix.length : undefined);
+        break;
+      }
     }
+  }
+  if (!entry) throw new Error(`README uses an unavailable package export: ${specifier}`);
+  return entry.import
+    .replace("*", wildcard)
+    .replace(/^\.\/dist\/esm\//, "./")
+    .replace(/\.js$/, ".ts");
+}
 
-    const inventory: Product[] = [
-      { id: "1", title: "Mechanical Keyboard", price: 120, inStock: true },
-      { id: "2", title: "Gaming Mouse", price: 60, inStock: false },
-      { id: "3", title: "USB-C Hub", price: 35, inStock: true },
-    ];
+function requireExample(specifier: string): unknown {
+  const source = sourceForImport(specifier);
+  if (source === "./index.ts") return finna;
+  const module = operatorModules[source];
+  if (!module) throw new Error(`README import has no source module: ${specifier}`);
+  return module;
+}
 
-    // Compile once into a reusable predicate function
-    const isAffordableAndInStock = compile<Product>({
-      price: { $lte: 100 },
-      inStock: true,
-    });
+const expectedOutput: Record<string, { logs: unknown[][]; errors?: unknown[][] }> = {
+  "all-operators": { logs: [[true]] },
+  "ast-core": { logs: [[true]] },
+  "individual-factories": { logs: [[true]] },
+  match: { logs: [[true]] },
+  compile: { logs: [[[{ id: "3", title: "USB-C Hub", price: 35, inStock: true }]]] },
+  categories: { logs: [[true]] },
+  "field-dates": { logs: [[true], [true]] },
+  predicates: { logs: [[true], [true], [true]] },
+  transformations: { logs: [[true], [true]] },
+  "custom-operator": { logs: [[true]] },
+  "compilation-errors": {
+    logs: [],
+    errors: [
+      ["compile", "age.$in"],
+      ["compile", "role.$nin"],
+    ],
+  },
+  "result-apis": { logs: [[true], [true], [null], [1]] },
+  "custom-logger": { logs: [[null], [1, 0], [["evaluate:value.$positive"]]] },
+};
 
-    // Efficiently filter arrays
-    const available = inventory.filter((item) => isAffordableAndInStock(item));
+describe("README examples", () => {
+  beforeEach(finna.clearOperators);
+  afterEach(finna.clearOperators);
 
-    expect(available).toEqual([{ id: "3", title: "USB-C Hub", price: 35, inStock: true }]);
+  it("covers every TypeScript block with a distinct example and expected output", () => {
+    expect(examples.length).toBe([...readme.matchAll(/```typescript\n/g)].length);
+    expect(new Set(examples.map(({ id }) => id)).size).toBe(examples.length);
+    expect(examples.map(({ id }) => id).sort()).toEqual(Object.keys(expectedOutput).sort());
   });
 
-  it("3. AST Pattern Matching Example", () => {
-    interface ASTNode {
-      type: string;
-      name?: string;
-      qualifier?: string;
-      async?: boolean;
-    }
+  it.each(examples)("executes $id independently with its documented output", ({ id, source }) => {
+    const console = { log: vi.fn(), error: vi.fn(), warn: vi.fn() };
+    const javascript = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ESNext },
+    }).outputText;
+    // The README is trusted repository code. Each block gets only its own imports and setup.
+    new Function("require", "exports", "console", javascript)(requireExample, {}, console);
+    expect(console.log.mock.calls).toEqual(expectedOutput[id].logs);
+    expect(console.error.mock.calls).toEqual(expectedOutput[id].errors ?? []);
+    expect(console.warn).not.toHaveBeenCalled();
+  });
 
-    const glslUniform: ASTNode = {
-      type: "VariableDeclaration",
-      name: "u_time",
-      qualifier: "uniform",
+  it("type-checks the exact examples against current source exports", () => {
+    const options: ts.CompilerOptions = {
+      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ESNext,
+      moduleResolution: ts.ModuleResolutionKind.Bundler,
+      strict: true,
+      noEmit: true,
+      skipLibCheck: true,
+      types: ["node"],
     };
-
-    // Match AST patterns
-    expect(match(glslUniform, { qualifier: "uniform", name: /^u_/ })).toBe(true);
-  });
-
-  it("4. Tree-Shaking with the Core Export (/core)", () => {
-    // The /core export does NOT register any operators by default.
-    clearOperators();
-
-    // Verify operator fails before registration
-    expect(() => match({ score: 85 }, { score: { $gte: 80 } })).toThrow();
-
-    // Register only the operator groups your bundle requires:
-    registerEqualityOperators();
-    registerComparisonOperators();
-
-    const record = { score: 85, rank: "gold" };
-
-    const isEligible = match(record, {
-      score: { $gte: 80 },
-      rank: { $eq: "gold" },
-    });
-
-    expect(isEligible).toBe(true);
-
-    // Restore all operators for subsequent tests
-    registerAllOperators();
-  });
-
-  it("5. Cross-Field References & Date Queries", () => {
-    const task = {
-      title: "Deliver Project",
-      createdAt: new Date("2024-03-01T09:00:00Z"),
-      deadline: new Date("2024-03-15T18:00:00Z"),
-      metrics: { initialScore: 40, targetScore: 90 },
-    };
-
-    // 1. Cross-field comparison using $field
-    const isValidDeadline = match(task, {
-      deadline: { $gt: { $field: "createdAt" } },
-      "metrics.targetScore": { $gt: { $field: "metrics.initialScore" } },
-    });
-    expect(isValidDeadline).toBe(true);
-
-    // 2. Granular date component queries & UTC modifier
-    const isMarch2024 = match(task, {
-      createdAt: {
-        $utc: {
-          $year: 2024,
-          $month: 2, // 0-indexed month (2 = March)
-          $date: { $lte: 15 },
-        },
-      },
-    });
-    expect(isMarch2024).toBe(true);
-  });
-
-  it("6. Predicate Functions as Filters", () => {
-    const order = {
-      items: 3,
-      unitPrice: 25,
-      budget: 100,
-      tags: ["priority", "express"],
-    };
-
-    // 1. Field-level predicate receiving (value, root)
-    const withinBudget = match(order, {
-      items: (qty, root) => qty * root.unitPrice <= root.budget,
-    });
-    expect(withinBudget).toBe(true);
-
-    // 2. Predicates inside array operators
-    const hasShortTag = match(order, {
-      tags: { $some: (tag) => tag.length < 8 },
-    });
-    expect(hasShortTag).toBe(true);
-
-    // 3. Root-level predicate function
-    const isQualifying = compile<typeof order>((val, root) => val.items * root.unitPrice > 50);
-    expect(isQualifying(order)).toBe(true);
-  });
-
-  it("7. Custom Operator Registration", () => {
-    // Define and register a custom operator (e.g., $divisibleBy)
-    const unregister = registerOperator(
-      "$divisibleBy",
-      (expected) => ((actual: any) => typeof actual === "number" && actual % expected === 0) as FilterPredicate<number>,
+    const virtualFiles = new Map(
+      examples.map(({ id, source }) => [resolve(projectDirectory, "src", ".readme-examples", `${id}.ts`), source]),
     );
-
-    const isEven = compile({ count: { $divisibleBy: 2 } as any });
-    expect(isEven({ count: 42 })).toBe(true);
-    expect(isEven({ count: 43 })).toBe(false);
-
-    // Unregister when no longer needed
-    unregister();
-    expect(() => compile({ count: { $divisibleBy: 2 } as any })({ count: 42 })).toThrow();
+    const host = ts.createCompilerHost(options);
+    const originalGetSourceFile = host.getSourceFile.bind(host);
+    host.getSourceFile = (filename, languageVersion, onError, shouldCreateNewSourceFile) => {
+      const source = virtualFiles.get(filename);
+      return source === undefined
+        ? originalGetSourceFile(filename, languageVersion, onError, shouldCreateNewSourceFile)
+        : ts.createSourceFile(filename, source, ts.ScriptTarget.ESNext, true);
+    };
+    host.resolveModuleNames = (specifiers, containingFile) =>
+      specifiers.map((specifier) => {
+        if (specifier === pkg.name || specifier.startsWith(`${pkg.name}/`)) {
+          return {
+            resolvedFileName: resolve(projectDirectory, "src", sourceForImport(specifier)),
+            extension: ts.Extension.Ts,
+          };
+        }
+        return ts.resolveModuleName(specifier, containingFile, options, host).resolvedModule;
+      });
+    const program = ts.createProgram([...virtualFiles.keys()], options, host);
+    const diagnostics = ts.getPreEmitDiagnostics(program);
+    const formatted = ts.formatDiagnosticsWithColorAndContext(diagnostics, {
+      getCanonicalFileName: (filename) => filename,
+      getCurrentDirectory: () => projectDirectory,
+      getNewLine: () => "\n",
+    });
+    expect(formatted).toBe("");
   });
 });

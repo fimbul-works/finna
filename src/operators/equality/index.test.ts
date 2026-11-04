@@ -1,6 +1,6 @@
-import { match } from "../../match.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
+import { match } from "../../match.js";
 import { clearOperators, listOperators } from "../operator-registry.js";
 import { registerEqualityOperators } from "./index.js";
 

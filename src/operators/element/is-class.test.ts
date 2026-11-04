@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { registerOperator } from "../operator-registry.js";
 import { createEqPredicate } from "../equality/eq.js";
+import { registerOperator } from "../operator-registry.js";
 import { createIsClassPredicate } from "./is-class.js";
 
 class Example {

@@ -1,4 +1,4 @@
-import type { EqualityOperator, FilterPredicate, FinnaContext, OperatorMap } from "../../types.js";
+import type { EqualityOperator, FilterPredicate, FinnaContext, OperatorFactory } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
 import { createEqPredicate } from "./eq.js";
 import { createInPredicate } from "./in.js";
@@ -10,7 +10,10 @@ export * from "./in.js";
 export * from "./ne.js";
 export * from "./nin.js";
 
-const equalityOperators: OperatorMap<EqualityOperator> = new Map([
+export const equalityOperators: ReadonlyMap<EqualityOperator, OperatorFactory> = new Map<
+  EqualityOperator,
+  OperatorFactory
+>([
   ["$eq", createEqPredicate],
   ["$in", createInPredicate],
   ["$ne", createNePredicate],

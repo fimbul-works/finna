@@ -1,6 +1,6 @@
 import { isArr, isClass, isFn, isObj } from "@fimbul-works/hvat";
 import { getAtPath } from "@fimbul-works/nested-path";
-import { childContext, createFinnaContext, withCompilation } from "./context.js";
+import { childContext, createFinnaContext, guardPredicate, withCompilation } from "./context.js";
 import { createPredicate } from "./predicate.js";
 import type { FilterPredicate, FinnaContext, Query } from "./types.js";
 
@@ -11,7 +11,7 @@ import type { FilterPredicate, FinnaContext, Query } from "./types.js";
  * @param {Query<T>} pattern - The query/pattern specification to compile
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {FilterPredicate<T>} A compiled predicate function `(value) => boolean`
- * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
+ * @throws {AggregateError} If compilation or evaluation fails; runtime failures include located diagnostics.
  */
 export function compile<T extends Record<string, any>>(
   pattern: Query<T>,
@@ -59,7 +59,10 @@ export function compile<T extends Record<string, any>>(
         const predicate = createPredicate(filter, nested);
         // Query keys are runtime paths; nested-path's public types require literal paths.
         const readPath = getAtPath as (input: T, path: string) => unknown;
-        return (value: T, root?: any) => predicate(readPath(value, key), root ?? value);
+        return guardPredicate(
+          ((value: T, root?: any) => predicate(readPath(value, key), root ?? value)) as FilterPredicate<T>,
+          nested,
+        );
       });
 
       return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as FilterPredicate<T>;
@@ -91,7 +94,7 @@ function compileLogicalArray<T extends Record<string, any>>(filter: any, ctx: Fi
  * @param {Query<T>} pattern - The query/pattern to match against
  * @param {FinnaContext} [ctx=createFinnaContext()] - Optional query context
  * @returns {value is T} `true` if the value matches, `false` otherwise
- * @throws {AggregateError} If the query contains invalid or unregistered operators or invalid arguments.
+ * @throws {AggregateError} If compilation or evaluation fails; runtime failures include located diagnostics.
  */
 export function match<T extends Record<string, any>>(
   value: T,

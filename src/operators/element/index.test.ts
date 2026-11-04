@@ -1,9 +1,8 @@
-import { match } from "../../match.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
-import { clearOperators, listOperators } from "../operator-registry.js";
+import { match } from "../../match.js";
+import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
+import { clearOperators, registerOperator as installFieldOperator, listOperators } from "../operator-registry.js";
 import { registerElementOperators } from "./index.js";
 
 describe("element operators integration", () => {

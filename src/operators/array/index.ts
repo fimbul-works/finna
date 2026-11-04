@@ -1,4 +1,4 @@
-import type { ArrayOperator, FilterPredicate, FinnaContext, OperatorMap } from "../../types.js";
+import type { ArrayOperator, FilterPredicate, FinnaContext, OperatorFactory } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
 import { createAllPredicate } from "./all.js";
 import { createNonePredicate } from "./none.js";
@@ -10,7 +10,7 @@ export * from "./none.js";
 export * from "./size.js";
 export * from "./some.js";
 
-const arrayOperators: OperatorMap<ArrayOperator> = new Map([
+export const arrayOperators: ReadonlyMap<ArrayOperator, OperatorFactory> = new Map<ArrayOperator, OperatorFactory>([
   ["$all", createAllPredicate],
   ["$none", createNonePredicate],
   ["$size", createSizePredicate],

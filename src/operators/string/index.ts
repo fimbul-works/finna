@@ -21,12 +21,12 @@ export * from "./uppercase.js";
 export const stringOperators: ReadonlyMap<StringOperator, OperatorFactory> = new Map<StringOperator, OperatorFactory>([
   ["$endsWith", createEndsWithPredicate],
   ["$includes", createIncludesPredicate],
-  ["$regex", createRegexPredicate],
-  ["$uppercase", createUppercasePredicate],
   ["$lowercase", createLowercasePredicate],
-  ["$replace", createReplacePredicate],
+  ["$regex", createRegexPredicate],
   ["$replaceAll", createReplaceAllPredicate],
+  ["$replace", createReplacePredicate],
   ["$startsWith", createStartsWithPredicate],
+  ["$uppercase", createUppercasePredicate],
 ]);
 
 /**

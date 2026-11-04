@@ -19,7 +19,7 @@ describe("createLowercasePredicate", () => {
     expect(predicate(document)).toBe(true);
     expect(predicate({ name: "Bob" })).toBe(false);
     expect(document.name).toBe("Alice");
-    expect(ctx).toEqual({ useUTC: false, errors: [] });
+    expect(ctx).toEqual(createFinnaContext());
   });
 
   it("preserves the original root for nested $field comparisons", () => {

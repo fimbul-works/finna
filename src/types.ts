@@ -249,16 +249,59 @@ export type QueryObject<T> = {
  */
 export type Query<T> = QueryObject<T> | FilterPredicate<T>;
 
-/**
- * Context for a predicate execution.
- */
+/** Where a diagnostic originated. */
+export type DiagnosticPhase = "compile" | "evaluate";
+/** Severity remains warning even when warningsAsErrors escalates it. */
+export type DiagnosticSeverity = "error" | "warning";
+
+/** Structured logging fields; document values are never included automatically. */
+export interface FinnaLogDetails {
+  err: Error;
+  phase: DiagnosticPhase;
+  severity: DiagnosticSeverity;
+  path: readonly (string | number)[];
+  operator?: OperatorName;
+}
+
+/** Structural logger interface compatible with Pino; no logger dependency is required. */
+export interface FinnaLogger {
+  warn(details: FinnaLogDetails, message: string): void;
+  error(details: FinnaLogDetails, message: string): void;
+}
+
+/** Explicit diagnostic policy; no settings are inferred from NODE_ENV. */
+export interface FinnaContextOptions {
+  useUTC?: boolean;
+  /** Result APIs throw by default. Strict boolean/predicate APIs always throw on failure. */
+  throwErrors?: boolean;
+  warningsAsErrors?: boolean;
+  captureStacks?: boolean;
+  logger?: FinnaLogger;
+}
+
+/** Context shared by nested queries; UTC modifiers preserve diagnostic policy. */
 export interface FinnaContext extends Record<string, any> {
-  /** Whether to use UTC for date-related comparisons */
   useUTC: boolean;
-  /** Errors collected during compilation; matching never appends to this array. */
+  throwErrors: boolean;
+  warningsAsErrors: boolean;
+  captureStacks: boolean;
+  logger?: FinnaLogger;
+  /** Diagnostic history, including compilation and completed evaluations. */
   errors: Error[];
-  /** Location within the query, used in compilation diagnostics. */
+  warnings: Error[];
   path?: readonly (string | number)[];
+}
+
+/** Failed compilation never returns a partial predicate. */
+export interface CompilationResult<T = any> {
+  predicate: FilterPredicate<T> | null;
+  context: FinnaContext;
+}
+
+/** Null distinguishes failed execution from a legitimate non-match. */
+export interface EvaluationResult {
+  matched: boolean | null;
+  context: FinnaContext;
 }
 
 /**

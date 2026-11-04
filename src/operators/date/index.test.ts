@@ -1,7 +1,6 @@
-import { createPredicate } from "../../predicate.js";
-
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
+import { createPredicate } from "../../predicate.js";
 import { registerComparisonOperators } from "../comparison/index.js";
 import { clearOperators, listOperators } from "../operator-registry.js";
 import { registerDateOperators } from "./index.js";

@@ -1,4 +1,4 @@
-import type { ComparisonOperator, FilterPredicate, FinnaContext, OperatorMap } from "../../types.js";
+import type { ComparisonOperator, FilterPredicate, FinnaContext, OperatorFactory } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
 import { createGtPredicate } from "./gt.js";
 import { createGtePredicate } from "./gte.js";
@@ -10,7 +10,10 @@ export * from "./gte.js";
 export * from "./lt.js";
 export * from "./lte.js";
 
-const comparisonOperators: OperatorMap<ComparisonOperator> = new Map([
+export const comparisonOperators: ReadonlyMap<ComparisonOperator, OperatorFactory> = new Map<
+  ComparisonOperator,
+  OperatorFactory
+>([
   ["$gte", createGtePredicate],
   ["$gt", createGtPredicate],
   ["$lte", createLtePredicate],

@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createSizePredicate as fieldSubjectFactory } from "./size.js";
-import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createSizePredicate } from "./size.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createSizePredicate, createSizePredicate as fieldSubjectFactory } from "./size.js";
 
 describe("createSizePredicate", () => {
   it("matches the exact array length", () => {

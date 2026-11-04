@@ -1,10 +1,9 @@
-import { compile as compileFieldQuery } from "../../compile.js";
-import { registerOperator as installFieldOperator } from "../operator-registry.js";
-import { createHourPredicate as fieldSubjectFactory } from "./hour.js";
-import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
 import { describe, expect, it } from "vitest";
+import { compile as compileFieldQuery } from "../../compile.js";
 import { createFinnaContext } from "../../context.js";
-import { createHourPredicate } from "./hour.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createHourPredicate, createHourPredicate as fieldSubjectFactory } from "./hour.js";
 
 describe("createHourPredicate", () => {
   const date = new Date("2023-10-23T12:30:45.500Z");
