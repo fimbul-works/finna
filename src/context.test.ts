@@ -86,4 +86,11 @@ describe("compilation diagnostics", () => {
     }
     expect(ctx.errors).toEqual([]);
   });
+  it("resolves missing $field paths without adding compilation diagnostics", () => {
+    const ctx = createFinnaContext();
+    const predicate = compile({ value: { $gt: { $field: "limits.minimum" } } }, ctx);
+    expect(predicate({ value: 10, limits: { minimum: 9 } })).toBe(true);
+    expect(predicate({ value: 10 })).toBe(false);
+    expect(ctx.errors).toEqual([]);
+  });
 });

@@ -1,3 +1,7 @@
+import { compile as compileFieldQuery } from "../../compile.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createSomePredicate as fieldSubjectFactory } from "./some.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
 import { describe, expect, it } from "vitest";
 import { createFinnaContext } from "../../context.js";
 import { createSomePredicate } from "./some.js";
@@ -26,5 +30,47 @@ describe("createSomePredicate", () => {
 
   it.each([null, undefined, "array", 3, {}])("rejects non-array input %j", (actual) => {
     expect(createSomePredicate([1], createFinnaContext())(actual)).toBe(false);
+  });
+  it("evaluates $field references against the root document", () => {
+    const cleanups = [
+      installFieldOperator("$some", fieldSubjectFactory),
+      installFieldOperator("$gte", fieldComparisonFactory),
+    ];
+    try {
+      const predicate = compileFieldQuery({ "nested.values": { $some: { $gte: { $field: "limits.minimum" } } } });
+      expect(predicate({ nested: { values: [10, 20] }, limits: { minimum: 10 } })).toBe(true);
+      expect(predicate({ nested: { values: [10, 20] }, limits: { minimum: 21 } })).toBe(false);
+    } finally {
+      for (const undo of cleanups.reverse()) undo();
+    }
+  });
+
+  it("matches object subqueries using the document root for $field", () => {
+    const cleanups = [
+      installFieldOperator("$some", fieldSubjectFactory),
+      installFieldOperator("$gte", fieldComparisonFactory),
+    ];
+    try {
+      const predicate = compileFieldQuery({ users: { $some: { age: { $gte: { $field: "limits.age" } } } } });
+      const users = [{ age: 25 }, { age: 30 }];
+      expect(predicate({ users, limits: { age: 25 } })).toBe(true);
+      expect(predicate({ users, limits: { age: 31 } })).toBe(false);
+    } finally {
+      for (const undo of cleanups.reverse()) undo();
+    }
+  });
+
+  it("matches object subqueries without field references", () => {
+    const cleanups = [
+      installFieldOperator("$some", fieldSubjectFactory),
+      installFieldOperator("$gte", fieldComparisonFactory),
+    ];
+    try {
+      const users = [{ age: 25 }, { age: 30 }, { age: 40 }];
+      expect(compileFieldQuery({ users: { $some: { age: { $gte: 35 } } } })({ users })).toBe(true);
+      expect(compileFieldQuery({ users: { $some: { age: { $gte: 41 } } } })({ users })).toBe(false);
+    } finally {
+      for (const undo of cleanups.reverse()) undo();
+    }
   });
 });

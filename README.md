@@ -74,24 +74,18 @@ Each built-in filter operator has its own implementation module and exported fac
 
 - `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
 - `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
-- `registerElementOperators()`: `$exists`, `$type`
-- `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`
+- `registerElementOperators()`: `$exists`, `$type`, `$truthy`, `$falsy`, `$nullish`, and the `$is…` type checks
+- `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`, `$uppercase`, `$lowercase`, `$replace`, `$replaceAll`
 - `registerDateOperators()`: `$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`, `$utc`
 - `registerArrayOperators()`: `$all`, `$some`, `$none`, `$size`
 
 The registry lists configurable **filter operators**. Logical query composition (`$and`, `$or`, `$not`, `$nor`), literal matching, predicate functions, and `$field` value references remain core syntax and do not require registration.
 
---- | :--- | :--- |
-| `@fimbul-works/finna` | **All** built-in operators (`registerAllOperators()` is invoked automatically) | Standard applications wanting complete pattern matching capabilities out of the box with zero setup. |
-| `@fimbul-works/finna/core` | **None** (operator registry starts completely empty) | Bundle-size-critical environments and tree-shaking; register only the operator groups you actually need. |
+Importing Finna leaves the registry empty. Call `registerAllOperators()` for all built-ins, a category helper for a subset, or `registerOperator()` for an individual factory.
 
-When using `@fimbul-works/finna/core`, you can selectively import and invoke individual operator group registers:
-- `registerEqualityOperators()`: `$eq`, `$ne`, `$in`, `$nin`
-- `registerComparisonOperators()`: `$gt`, `$gte`, `$lt`, `$lte`
-- `registerElementOperators()`: `$exists`, `$type`
-- `registerStringOperators()`: `$regex`, `$startsWith`, `$endsWith`, `$includes`
-- `registerDateOperators()`: `$year`, `$month`, `$date`, `$weekday`, `$hour`, `$minute`, `$second`, `$ms`, `$utc`
-- `registerArrayOperators()`: `$all`, `$some`, `$none`, `$size`
+Element operators include `$truthy`, `$falsy`, and `$nullish` (their arguments are ignored), plus `$isNumber`, `$isString`, `$isInteger`, `$isObject`, `$isArray`, `$isDate`, and `$isSymbol`. The `$is…` checks take a boolean: `true` checks the type and `false` checks its inverse. `$isClass` takes a constructor, for example `{ value: { $isClass: MyClass } }`.
+
+These checks use Hvat semantics: numbers include `NaN` and infinities; objects exclude null and arrays but include class instances; dates are Date instances, including invalid dates. `$type` accepts all JavaScript `typeof` names plus `array`, `date`, `null`, and `int`; its `object` check additionally excludes Date instances. Unsupported type names produce compilation errors. `$isTimestamp` is deferred until its representation is defined.
 
 ---
 
@@ -240,6 +234,52 @@ console.log(hasShortTag); // true
 const isQualifying = compile<typeof order>((val, root) => val.items * root.unitPrice > 50);
 console.log(isQualifying(order)); // true
 ```
+
+### String transformations
+
+`$uppercase` and `$lowercase` transform a string and apply a nested filter. `$replace` and `$replaceAll` take `{ search, replace, then }`, where `then` tests the replaced string. These operations leave the document unchanged. Nest transformations to specify their order; sibling operators each receive the original field value.
+
+```typescript
+import { compile, registerAllOperators } from "@fimbul-works/finna";
+
+registerAllOperators();
+
+const matchesSlug = compile({
+  title: {
+    $lowercase: {
+      $replaceAll: {
+        search: /\s+/g,
+        replace: "-",
+        then: { $eq: { $field: "expectedSlug" } },
+      },
+    },
+  },
+});
+
+matchesSlug({ title: "Hello World", expectedSlug: "hello-world" }); // true
+
+const matchesReplacement = compile({
+  message: {
+    $replaceAll: {
+      search: { $field: "rules.search" },
+      replace: { $field: "rules.replacement" },
+      then: { $eq: { $field: "expectedMessage" } },
+    },
+  },
+});
+
+matchesReplacement({
+  message: "Hi NAME, welcome NAME",
+  rules: { search: "NAME", replacement: "Alice" },
+  expectedMessage: "Hi Alice, welcome Alice",
+}); // true
+```
+
+Searches accept literal strings, RegExp instances, or `$field` references to either. Replacement text accepts a string or `$field` reference. All references resolve against the original root document on every evaluation, including inside nested transformations.
+
+`$replace` follows JavaScript `String.replace`: a string search replaces its first occurrence, and regex flags determine regex matching. `$replaceAll` replaces every string occurrence and requires `g` on regex searches. String searches are literal. Replacement strings use JavaScript substitution syntax, including `$$`, `$&`, and regex captures such as `$1`. Regex matching starts at index zero on each evaluation and leaves the supplied regex's `lastIndex` unchanged.
+
+Non-string inputs and invalid referenced arguments return `false`. Invalid literal replacement arguments, a missing `then`, or a literal regex without `g` for `$replaceAll` produce compilation errors. Transformations keep intermediate strings local to each evaluation; they do not store temporary values in `FinnaContext`.
 
 ### 6. Custom Operator Registration
 

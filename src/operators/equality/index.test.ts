@@ -1,3 +1,4 @@
+import { match } from "../../match.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
 import { clearOperators, listOperators } from "../operator-registry.js";
@@ -26,5 +27,12 @@ describe("equality operators integration", () => {
     expect(predicate({ role: "guest", requiredRole: "guest" })).toBe(false);
     expect(predicate({ role: "owner", requiredRole: "owner" })).toBe(false);
     expect(predicate({ role: "banned", requiredRole: "banned" })).toBe(false);
+  });
+  it("should match equality operators in core", () => {
+    registerEqualityOperators();
+    expect(match({ x: 10 }, { x: { $eq: 10 } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $ne: 5 } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $in: [5, 10, 15] } })).toBe(true);
+    expect(match({ x: 10 }, { x: { $nin: [1, 2, 3] } })).toBe(true);
   });
 });

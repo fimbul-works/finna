@@ -73,4 +73,9 @@ describe("compile", () => {
     const p = compile<{ date: Date }>({ date: { $hour: 12 } }, ctx);
     expect(p({ date })).toBe(true);
   });
+  it("resolves $field from the document root across logical and dotted queries", () => {
+    const predicate = compile({ $and: [{ "nested.value": { $gte: { $field: "limits.minimum" } } }] });
+    expect(predicate({ nested: { value: 10 }, limits: { minimum: 10 } })).toBe(true);
+    expect(predicate({ nested: { value: 10 }, limits: { minimum: 11 } })).toBe(false);
+  });
 });

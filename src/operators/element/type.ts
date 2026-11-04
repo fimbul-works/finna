@@ -1,22 +1,44 @@
-import { isArr, isBigInt, isClass, isInt, isNull, isObj, isUndef } from "@fimbul-works/hvat";
-import type { FilterPredicate, FinnaContext } from "../../types.js";
+import {
+  isArr,
+  isBigInt,
+  isBool,
+  isClass,
+  isFn,
+  isInt,
+  isNull,
+  isNum,
+  isObj,
+  isStr,
+  isSym,
+  isUndef,
+} from "@fimbul-works/hvat";
+import type { FilterPredicate, FinnaContext, TypeString } from "../../types.js";
+
+const typeGuards: Record<TypeString, (value: any) => boolean> = {
+  string: isStr,
+  number: isNum,
+  boolean: isBool,
+  array: isArr,
+  object: (value) => isObj(value) && !isClass(value, Date),
+  null: isNull,
+  undefined: isUndef,
+  date: (value) => isClass(value, Date),
+  bigint: isBigInt,
+  int: isInt,
+  symbol: isSym,
+  function: isFn,
+};
 
 /**
- * Creates a predicate for a JavaScript value type.
- *
- * @param expected - The requested type name, including array, date, null, and undefined.
- * @param ctx - Compilation context, accepted for the common operator factory interface.
+ * Creates a Hvat-backed type predicate, with array, date, null, and int extensions.
+ * @param expected - A supported type name.
+ * @param _ctx - Compilation context.
  * @returns A predicate checking the requested type.
+ * @throws {TypeError} If the type name is unsupported.
  */
 export function createTypePredicate(expected: any, _ctx: FinnaContext): FilterPredicate {
-  return ((actual: any) => {
-    if (expected === "array") return isArr(actual);
-    if (expected === "bigint") return isBigInt(actual);
-    if (expected === "date") return isClass(actual, Date);
-    if (expected === "int") return isInt(actual);
-    if (expected === "null") return isNull(actual);
-    if (expected === "object") return isObj(actual) && !isClass(actual, Date);
-    if (expected === "undefined") return isUndef(actual);
-    return typeof actual === expected;
-  }) as FilterPredicate;
+  if (!isStr(expected) || !Object.hasOwn(typeGuards, expected)) {
+    throw new TypeError(`Unsupported $type: ${String(expected)}`);
+  }
+  return typeGuards[expected as TypeString] as FilterPredicate;
 }

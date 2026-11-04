@@ -111,4 +111,9 @@ describe("match", () => {
       }),
     ).toBe(true);
   });
+  it("resolves $field against the supplied root document", () => {
+    const query = { "nested.value": { $eq: { $field: "expected.value" } } };
+    expect(match({ nested: { value: 10 }, expected: { value: 10 } }, query)).toBe(true);
+    expect(match({ nested: { value: 10 }, expected: { value: 11 } }, query)).toBe(false);
+  });
 });

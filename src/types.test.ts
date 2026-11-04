@@ -1,3 +1,5 @@
+import { compile, createGtPredicate } from "./index.js";
+import type { FieldReference, Query } from "./types.js";
 import { expect, expectTypeOf, it } from "vitest";
 import { registerOperator, registerOperators } from "./operators/operator-registry.js";
 import type { OperatorFactory, OperatorMap, OperatorName } from "./types.js";
@@ -22,3 +24,16 @@ function checkOperatorNames(factory: OperatorFactory) {
   registerOperators(new Map([["custom", factory]]));
 }
 void checkOperatorNames;
+
+it("accepts typed $field comparisons in queries", () => {
+  const reference: FieldReference = { $field: "limits.minimum" };
+  const query: Query<{ value: number; limits: { minimum: number } }> = { value: { $gt: reference } };
+  const undo = registerOperator("$gt", createGtPredicate);
+  try {
+    const predicate = compile(query);
+    expect(predicate({ value: 10, limits: { minimum: 9 } })).toBe(true);
+    expect(predicate({ value: 10, limits: { minimum: 10 } })).toBe(false);
+  } finally {
+    undo();
+  }
+});

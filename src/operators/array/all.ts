@@ -11,10 +11,11 @@ import type { FilterPredicate, FinnaContext } from "../../types.js";
  * @throws {AggregateError} If a nested filter is invalid when compiled outside another compilation.
  */
 export function createAllPredicate(expected: any, ctx: FinnaContext): FilterPredicate {
-  const predicate = isArr(expected) ? undefined : createPredicate(expected, ctx); // TODO: should predicate be undefined, or be: `() => false`?
-  return ((actual: any, root?: any) => {
-    if (!isArr(actual)) return false; // TODO?
-    if (isArr(expected)) return expected.every((value: any) => actual.indexOf(value) !== -1); // TODO: would this work better as a Set?
-    return actual.every((item: any) => predicate?.(item, root));
-  }) as FilterPredicate;
+  if (isArr(expected)) {
+    return ((actual: any) =>
+      isArr(actual) && expected.every((value: any) => actual.indexOf(value) !== -1)) as FilterPredicate;
+  }
+  const predicate = createPredicate(expected, ctx);
+  return ((actual: any, root?: any) =>
+    isArr(actual) && actual.every((item: any) => predicate(item, root))) as FilterPredicate;
 }

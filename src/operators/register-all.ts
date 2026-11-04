@@ -16,17 +16,13 @@ import { createSecondPredicate } from "./date/second.js";
 import { createUtcPredicate } from "./date/utc.js";
 import { createWeekdayPredicate } from "./date/weekday.js";
 import { createYearPredicate } from "./date/year.js";
-import { createExistsPredicate } from "./element/exists.js";
-import { createTypePredicate } from "./element/type.js";
+import { elementOperators } from "./element/index.js";
 import { createEqPredicate } from "./equality/eq.js";
 import { createInPredicate } from "./equality/in.js";
 import { createNePredicate } from "./equality/ne.js";
 import { createNinPredicate } from "./equality/nin.js";
 import { registerOperators } from "./operator-registry.js";
-import { createEndsWithPredicate } from "./string/endsWith.js";
-import { createIncludesPredicate } from "./string/includes.js";
-import { createRegexPredicate } from "./string/regex.js";
-import { createStartsWithPredicate } from "./string/startsWith.js";
+import { stringOperators } from "./string/index.js";
 
 /**
  * Registers every built-in filter operator atomically.
@@ -45,12 +41,8 @@ export function registerAllOperators(): () => void {
       ["$gte", createGtePredicate],
       ["$lt", createLtPredicate],
       ["$lte", createLtePredicate],
-      ["$exists", createExistsPredicate],
-      ["$type", createTypePredicate],
-      ["$regex", createRegexPredicate],
-      ["$startsWith", createStartsWithPredicate],
-      ["$endsWith", createEndsWithPredicate],
-      ["$includes", createIncludesPredicate],
+      ...elementOperators,
+      ...stringOperators,
       ["$year", createYearPredicate],
       ["$month", createMonthPredicate],
       ["$date", createDateOfMonthPredicate],

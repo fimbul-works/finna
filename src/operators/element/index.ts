@@ -1,18 +1,45 @@
-import type { ElementOperator, FilterPredicate, FinnaContext, OperatorMap } from "../../types.js";
+import type { ElementOperator, FilterPredicate, FinnaContext, OperatorFactory } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
 import { createExistsPredicate } from "./exists.js";
 import { createFalsyPredicate } from "./falsy.js";
+import { createIsArrayPredicate } from "./is-array.js";
+import { createIsClassPredicate } from "./is-class.js";
+import { createIsDatePredicate } from "./is-date.js";
+import { createIsIntegerPredicate } from "./is-integer.js";
+import { createIsNumberPredicate } from "./is-number.js";
+import { createIsObjectPredicate } from "./is-object.js";
+import { createIsStringPredicate } from "./is-string.js";
+import { createIsSymbolPredicate } from "./is-symbol.js";
 import { createNullishPredicate } from "./nullish.js";
 import { createTruthyPredicate } from "./truthy.js";
 import { createTypePredicate } from "./type.js";
 
 export * from "./exists.js";
 export * from "./falsy.js";
+export * from "./is-array.js";
+export * from "./is-class.js";
+export * from "./is-date.js";
+export * from "./is-integer.js";
+export * from "./is-number.js";
+export * from "./is-object.js";
+export * from "./is-string.js";
+export * from "./is-symbol.js";
 export * from "./nullish.js";
 export * from "./truthy.js";
 export * from "./type.js";
 
-const elementOperators: OperatorMap<ElementOperator> = new Map([
+export const elementOperators: ReadonlyMap<ElementOperator, OperatorFactory> = new Map<
+  ElementOperator,
+  OperatorFactory
+>([
+  ["$isNumber", createIsNumberPredicate],
+  ["$isString", createIsStringPredicate],
+  ["$isInteger", createIsIntegerPredicate],
+  ["$isObject", createIsObjectPredicate],
+  ["$isArray", createIsArrayPredicate],
+  ["$isDate", createIsDatePredicate],
+  ["$isSymbol", createIsSymbolPredicate],
+  ["$isClass", createIsClassPredicate],
   ["$exists", createExistsPredicate],
   ["$falsy", createFalsyPredicate],
   ["$nullish", createNullishPredicate],

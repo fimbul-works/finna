@@ -1,3 +1,4 @@
+import { createPredicate } from "../../predicate.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
 import { registerComparisonOperators } from "../comparison/index.js";
@@ -49,5 +50,15 @@ describe("array operators integration", () => {
     expect(predicate({ scores: [10, 20], minimum: 15, target: 15 })).toBe(false);
     expect(predicate({ scores: [10, 20], minimum: 10, target: 20 })).toBe(false);
     expect(predicate({ scores: [-1, 20], minimum: -5, target: 15 })).toBe(false);
+  });
+  it("should not match array operators until registered", () => {
+    const data = { tags: [1, 2, 3] };
+
+    expect(() => createPredicate({ tags: { $size: 3 } })).toThrow(AggregateError);
+
+    // Register array operators
+    registerArrayOperators();
+    const pArrayAfter = createPredicate({ tags: { $size: 3 } });
+    expect(pArrayAfter(data)).toBe(true);
   });
 });

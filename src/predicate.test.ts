@@ -1,3 +1,4 @@
+import { match } from "./match.js";
 import { beforeEach as setupBeforeEach } from "vitest";
 import { registerAllOperators as installOperators } from "./index.js";
 setupBeforeEach(() => {
@@ -87,5 +88,47 @@ describe("createPredicate (Integration)", () => {
       expect(p({ user: { age: 25 }, minAge: 18 })).toBe(true);
       expect(p({ user: { age: 16 }, minAge: 18 })).toBe(false);
     });
+  });
+
+  describe("deep equality and exact query", () => {
+    const doc = {
+      profile: { name: "John", age: 30 },
+      tags: ["a", "b"],
+    };
+
+    it("should handle deep equality with naked arrays", () => {
+      expect(match(doc, { tags: ["a", "b"] })).toBe(true);
+      expect(match(doc, { tags: ["a", "c"] })).toBe(false);
+      expect(match(doc, { tags: ["a"] })).toBe(false);
+    });
+
+    it("should handle partial match with naked objects", () => {
+      expect(match(doc, { profile: { name: "John" } })).toBe(true);
+    });
+
+    it("should handle exact match with $eq for objects", () => {
+      expect(match(doc, { profile: { $eq: { name: "John", age: 30 } } })).toBe(true);
+      expect(match(doc, { profile: { $eq: { name: "John" } } })).toBe(false);
+    });
+
+    it("should handle deep equality in $in", () => {
+      expect(
+        match(doc, {
+          tags: {
+            $in: [
+              ["a", "b"],
+              ["x", "y"],
+            ],
+          },
+        }),
+      ).toBe(true);
+      expect(match(doc, { tags: { $in: [["a"], ["b"]] } })).toBe(false);
+    });
+  });
+
+  it("preserves the document root while matching nested $field comparisons", () => {
+    const predicate = createPredicate({ nested: { value: { $gte: { $field: "limits.minimum" } } } });
+    expect(predicate({ nested: { value: 10 }, limits: { minimum: 10 } })).toBe(true);
+    expect(predicate({ nested: { value: 10 }, limits: { minimum: 11 } })).toBe(false);
   });
 });

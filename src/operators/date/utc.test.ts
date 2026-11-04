@@ -1,3 +1,8 @@
+import { compile as compileFieldQuery } from "../../compile.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createUtcPredicate as fieldSubjectFactory } from "./utc.js";
+import { createGtePredicate as fieldComparisonFactory } from "../comparison/gte.js";
+import { createHourPredicate as fieldHourFactory } from "./hour.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createFinnaContext } from "../../context.js";
 import { clearOperators } from "../operator-registry.js";
@@ -30,5 +35,26 @@ describe("createUtcPredicate", () => {
     const ctx = createFinnaContext();
     expect(() => createUtcPredicate({ $unknown: true }, ctx)).toThrow(AggregateError);
     expect(ctx.errors).toHaveLength(1);
+  });
+  it("evaluates $field references against the root document", () => {
+    const cleanups = [
+      installFieldOperator("$utc", fieldSubjectFactory),
+      installFieldOperator("$gte", fieldComparisonFactory),
+      installFieldOperator("$hour", fieldHourFactory),
+    ];
+    try {
+      const predicate = compileFieldQuery(
+        { "nested.created": { $utc: { $hour: { $gte: { $field: "limits.minimum" } } } } },
+        createFinnaContext(true),
+      );
+      expect(predicate({ nested: { created: new Date("2023-10-23T12:30:45.500Z") }, limits: { minimum: 12 } })).toBe(
+        true,
+      );
+      expect(predicate({ nested: { created: new Date("2023-10-23T12:30:45.500Z") }, limits: { minimum: 13 } })).toBe(
+        false,
+      );
+    } finally {
+      for (const undo of cleanups.reverse()) undo();
+    }
   });
 });

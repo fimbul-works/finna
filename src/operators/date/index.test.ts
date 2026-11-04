@@ -1,3 +1,5 @@
+import { createPredicate } from "../../predicate.js";
+
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { compile } from "../../compile.js";
 import { registerComparisonOperators } from "../comparison/index.js";
@@ -57,5 +59,23 @@ describe("date operators integration", () => {
     ]) {
       expect(predicate({ created: new Date(other) })).toBe(false);
     }
+  });
+  it("uses $field with category-registered factories", () => {
+    registerDateOperators();
+    registerComparisonOperators();
+    const predicate = compile({ created: { $utc: { $year: { $gte: { $field: "limits.year" } } } } });
+    expect(predicate({ created: new Date("2023-01-01T00:00:00Z"), limits: { year: 2023 } })).toBe(true);
+    expect(predicate({ created: new Date("2023-01-01T00:00:00Z"), limits: { year: 2024 } })).toBe(false);
+  });
+
+  it("should not match date operators until registered", () => {
+    const date = new Date("2024-05-10T00:00:00Z");
+
+    expect(() => createPredicate({ $year: 2024 })).toThrow();
+
+    // Register date operators
+    registerDateOperators();
+    const pDateAfter = createPredicate({ $year: 2024 });
+    expect(pDateAfter(date)).toBe(true);
   });
 });

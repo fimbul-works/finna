@@ -10,7 +10,6 @@ import {
   listOperators,
   type OperatorFactory,
   operatorMap,
-  registerAllOperators,
   registerOperator,
   registerOperators,
   unregisterOperator,
@@ -97,14 +96,12 @@ describe("operator registry", () => {
     expect(() => registerOperator("bad", first)).toThrow(TypeError);
   });
 
-  it("registers all operators atomically and idempotently", () => {
-    registerAllOperators();
-    const count = operatorMap.size;
-    registerAllOperators();
-    expect(operatorMap.size).toBe(count);
-    clearOperators();
-    registerOperator("$size", first);
-    expect(() => registerAllOperators()).toThrow();
-    expect([...operatorMap.keys()]).toEqual(["$size"]);
+  it("retains $field resolution in predicates compiled before cleanup", () => {
+    const undo = registerOperator("$gt", createGtPredicate);
+    const predicate = compile({ value: { $gt: { $field: "limits.minimum" } } });
+    undo();
+    expect(predicate({ value: 10, limits: { minimum: 9 } })).toBe(true);
+    expect(predicate({ value: 10, limits: { minimum: 10 } })).toBe(false);
+    expect(hasOperator("$gt")).toBe(false);
   });
 });

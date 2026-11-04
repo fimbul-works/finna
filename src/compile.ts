@@ -57,7 +57,9 @@ export function compile<T extends Record<string, any>>(
 
         // Field matching
         const predicate = createPredicate(filter, nested);
-        return (value: T, root?: any) => predicate(getAtPath(value, key), root ?? value);
+        // Query keys are runtime paths; nested-path's public types require literal paths.
+        const readPath = getAtPath as (input: T, path: string) => unknown;
+        return (value: T, root?: any) => predicate(readPath(value, key), root ?? value);
       });
 
       return ((value: T, root?: any) => predicates.every((f) => f(value, root ?? value))) as FilterPredicate<T>;

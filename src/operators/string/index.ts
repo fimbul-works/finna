@@ -1,19 +1,31 @@
-import type { FilterPredicate, FinnaContext, OperatorMap, StringOperator } from "../../types.js";
+import type { FilterPredicate, FinnaContext, OperatorFactory, StringOperator } from "../../types.js";
 import { registerOperators } from "../operator-registry.js";
 import { createEndsWithPredicate } from "./endsWith.js";
 import { createIncludesPredicate } from "./includes.js";
+import { createLowercasePredicate } from "./lowercase.js";
 import { createRegexPredicate } from "./regex.js";
+import { createReplacePredicate } from "./replace.js";
+import { createReplaceAllPredicate } from "./replaceAll.js";
 import { createStartsWithPredicate } from "./startsWith.js";
+import { createUppercasePredicate } from "./uppercase.js";
 
 export * from "./endsWith.js";
 export * from "./includes.js";
+export * from "./lowercase.js";
 export * from "./regex.js";
+export * from "./replace.js";
+export * from "./replaceAll.js";
 export * from "./startsWith.js";
+export * from "./uppercase.js";
 
-const stringOperators: OperatorMap<StringOperator> = new Map([
+export const stringOperators: ReadonlyMap<StringOperator, OperatorFactory> = new Map<StringOperator, OperatorFactory>([
   ["$endsWith", createEndsWithPredicate],
   ["$includes", createIncludesPredicate],
   ["$regex", createRegexPredicate],
+  ["$uppercase", createUppercasePredicate],
+  ["$lowercase", createLowercasePredicate],
+  ["$replace", createReplacePredicate],
+  ["$replaceAll", createReplaceAllPredicate],
   ["$startsWith", createStartsWithPredicate],
 ]);
 

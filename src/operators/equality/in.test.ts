@@ -1,3 +1,7 @@
+import { compile as compileFieldQuery } from "../../compile.js";
+import { registerOperator as installFieldOperator } from "../operator-registry.js";
+import { createInPredicate as fieldSubjectFactory } from "./in.js";
+import { createEqPredicate as fieldComparisonFactory } from "../equality/eq.js";
 import { describe, expect, it } from "vitest";
 import { createFinnaContext } from "../../context.js";
 import { createInPredicate } from "./in.js";
@@ -15,5 +19,20 @@ describe("createInPredicate", () => {
   });
   it.each([null, undefined, "foo", 1, {}])("rejects invalid arguments %j", (expected) => {
     expect(() => createInPredicate(expected, createFinnaContext())).toThrow(TypeError);
+  });
+  it("evaluates $field references against the root document", () => {
+    const cleanups = [
+      installFieldOperator("$in", fieldSubjectFactory),
+      installFieldOperator("$eq", fieldComparisonFactory),
+    ];
+    try {
+      const predicate = compileFieldQuery({
+        "nested.value": { $in: ["hello", "world"], $eq: { $field: "expected.value" } },
+      });
+      expect(predicate({ nested: { value: "hello" }, expected: { value: "hello" } })).toBe(true);
+      expect(predicate({ nested: { value: "hello" }, expected: { value: "different" } })).toBe(false);
+    } finally {
+      for (const undo of cleanups.reverse()) undo();
+    }
   });
 });

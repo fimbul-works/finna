@@ -69,6 +69,24 @@ export interface StringOperators {
   $endsWith?: string | FieldReference;
   /** Includes substring */
   $includes?: string | FieldReference;
+  /** Test the uppercased string without mutating the document. */
+  $uppercase?: QueryValue<string>;
+  /** Test the lowercased string without mutating the document. */
+  $lowercase?: QueryValue<string>;
+  /** Replace using JavaScript replace semantics, then test the result. */
+  $replace?: StringReplacement;
+  /** Replace every occurrence; RegExp searches must have the global flag. */
+  $replaceAll?: StringReplacement;
+}
+
+/** Arguments for a string replacement followed by a nested predicate. */
+export interface StringReplacement {
+  /** Literal text, a RegExp, or a reference resolved against the original root. */
+  search: string | RegExp | FieldReference;
+  /** Replacement text with JavaScript substitution syntax, or a root reference. */
+  replace: string | FieldReference;
+  /** Query applied to the replaced string, retaining the original root. */
+  then: QueryValue<string>;
 }
 
 /**
@@ -88,7 +106,10 @@ export type TypeString =
   | "null"
   | "undefined"
   | "date"
-  | "bigint";
+  | "bigint"
+  | "int"
+  | "symbol"
+  | "function";
 
 /**
  * Element-specific query operators.
@@ -99,11 +120,25 @@ export interface ElementOperators {
   /** Check property type */
   $type?: TypeString;
   /** Check property truthiness */
-  $truthy?: TypeString;
+  $truthy?: boolean;
   /** Check property falsiness */
-  $falsy?: TypeString;
+  $falsy?: boolean;
   /** Check property nullishness (null, undefined) */
-  $nullish?: TypeString;
+  $nullish?: boolean;
+  /** Check a Hvat number (including NaN and Infinity). */
+  $isNumber?: boolean;
+  $isString?: boolean;
+  $isInteger?: boolean;
+  /** Check a Hvat object: non-null, non-array; includes class instances. */
+  $isObject?: boolean;
+  $isArray?: boolean;
+  /** Check a Date instance, including invalid dates. */
+  $isDate?: boolean;
+  $isSymbol?: boolean;
+  /** Check instanceof the supplied constructor, including subclasses. */
+  $isClass?: abstract new (
+    ...args: any[]
+  ) => any;
 }
 
 /**
@@ -177,19 +212,6 @@ export interface LogicalOperators<T> {
  * Supported operator strings for internal matching logic.
  */
 export type LogicalOperator = keyof LogicalOperators<any>;
-
-/**
- * Reference operators for creating field references.
- */
-export interface ReferenceOperators {
-  /** Reference to another field in the same root value */
-  $field?: string;
-}
-
-/**
- * Supported reference operators.
- */
-export type ReferenceOperator = keyof ReferenceOperators;
 
 /**
  * Full operator query for a value.

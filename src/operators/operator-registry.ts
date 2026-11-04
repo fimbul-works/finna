@@ -64,24 +64,30 @@ export function registerOperators(
   options: { replace?: boolean } = {},
 ): () => void {
   const batch = new Map<OperatorName, OperatorFactory>();
+
   for (const [operator, factory] of entries) {
     if (!isStr(operator) || !operator.startsWith("$") || operator.length === 1 || !isFn(factory)) {
       throw new TypeError("An operator registration requires a $name and a predicate factory");
     }
+
     const existing = batch.get(operator) ?? operators.get(operator);
     if (existing && existing !== factory && !options.replace) {
       throw new Error(`Operator already registered: ${operator}`);
     }
+
     batch.set(operator, factory);
   }
+
   const token = {};
   const installed: OperatorName[] = [];
+
   for (const [operator, factory] of batch) {
     if (operators.get(operator) === factory) continue;
     operators.set(operator, factory);
     registrations.set(operator, token);
     installed.push(operator);
   }
+
   let active = true;
   return () => {
     if (!active) return;
